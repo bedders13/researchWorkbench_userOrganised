@@ -41,7 +41,8 @@ public class DataLayer {
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO UserList (ListName, IsPrivate, DateCreated, DateModified, UserId) VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO UserList " +
+                    "(ListName, IsPrivate, DateCreated, DateModified, UserId) VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             //set parameters for the statement
             pStatement.setString(1, userList.getUserListName());
             pStatement.setBoolean(2, userList.getIsPrivate());
@@ -58,7 +59,7 @@ public class DataLayer {
                 }
             }
         } catch(SQLException e){
-            System.out.println("Error inserting into UserList: " + e.getMessage());
+            System.out.println("Error inserting UserList: " + e.getMessage());
         } finally {
             try{
                 if(resultSet != null){resultSet.close();}
@@ -68,6 +69,37 @@ public class DataLayer {
 
         }
         return userListId;
+    }
+
+    public int createListItem(ListItem listItem) {
+        int listItemId = -1;
+        ResultSet resultSet = null;
+        try {
+            //prepare the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (listObject, userListId) VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+            //set parameters for the statement
+            pStatement.setString(1, listItem.getListObject());
+            pStatement.setInt(2, listItem.getUserListId());
+            //execute the query
+            boolean result = pStatement.execute();
+            if (result == true){
+                //get the userListId
+                resultSet = pStatement.getGeneratedKeys();
+                if (resultSet.next()){
+                    listItemId = resultSet.getInt(1);
+                }
+            }
+        } catch(SQLException e){
+            System.out.println("Error inserting ListItem: " + e.getMessage());
+        } finally {
+            try{
+                if(resultSet != null){resultSet.close();}
+            } catch (SQLException e){
+                System.out.println("Couldn't close connection: " + e.getMessage());
+            }
+
+        }
+        return listItemId;
     }
 
     //read methods
@@ -175,7 +207,9 @@ public class DataLayer {
             //create the sql statement
             Statement statement = databaseConnection.createStatement();
             //execute the query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM UserList INNER JOIN ListItem ON UserList.UserListId = ListItem.UserListId WHERE ListItem.ListItemId =" + listItemId + "AND UserList.IsPrivate = false");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM UserList INNER JOIN ListItem ON " +
+                    "UserList.UserListId = ListItem.UserListId " +
+                    "WHERE ListItem.ListItemId =" + listItemId + "AND UserList.IsPrivate = false");
 
             //set the UserList variables
             while (resultSet.next()){
@@ -195,5 +229,98 @@ public class DataLayer {
         return userLists;
     }
 
+    //update methods
+    public int updateUserList(UserList userList) {
+        int userListId = -1;
+        ResultSet resultSet = null;
+        try {
+            //prepare the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE UserList SET UserListName = ?, " +
+                    "IsPrivate = ?, DateCreated = ?, DateModified = ?, UserId = ? WHERE UserListId = ?", Statement.RETURN_GENERATED_KEYS);
+            //set parameters for the statement
+            pStatement.setString(1, userList.getUserListName());
+            pStatement.setBoolean(2, userList.getIsPrivate());
+            pStatement.setDate(3, (Date)userList.getDateCreated());
+            pStatement.setDate(4, (Date)userList.getDateModified());
+            pStatement.setInt(5, userList.getUserId());
+            pStatement.setInt(6, userList.getUserListId());
+            //execute the query
+            boolean result = pStatement.execute();
+            if (result == true){
+                //get the userListId
+                resultSet = pStatement.getGeneratedKeys();
+                if (resultSet.next()){
+                    userListId = resultSet.getInt(1);
+                }
+            }
+        } catch(SQLException e){
+            System.out.println("Error inserting UserList: " + e.getMessage());
+        } finally {
+            try{
+                if(resultSet != null){resultSet.close();}
+            } catch (SQLException e){
+                System.out.println("Couldn't close connection: " + e.getMessage());
+            }
+
+        }
+        return userListId;
+    }
+
+    public int updateListItem(ListItem listItem) {
+        int listItemId = -1;
+        ResultSet resultSet = null;
+        try {
+            //prepare the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE ListItem " +
+                    "SET ListObject = ?, UserListId = ? WHERE ListItemId = ? ", Statement.RETURN_GENERATED_KEYS);
+            //set parameters for the statement
+            pStatement.setString(1, listItem.getListObject());
+            pStatement.setInt(2, listItem.getUserListId());
+            pStatement.setInt(3, listItem.getListItemId());
+            //execute the query
+            boolean result = pStatement.execute();
+            if (result == true){
+                //get the userListId
+                resultSet = pStatement.getGeneratedKeys();
+                if (resultSet.next()){
+                    listItemId = resultSet.getInt(1);
+                }
+            }
+        } catch(SQLException e){
+            System.out.println("Error inserting ListItem: " + e.getMessage());
+        } finally {
+            try{
+                if(resultSet != null){resultSet.close();}
+            } catch (SQLException e){
+                System.out.println("Couldn't close connection: " + e.getMessage());
+            }
+
+        }
+        return listItemId;
+    }
+
+    public boolean deleteUserList(int userListId){
+        boolean result = false;
+        try{
+            Statement statement = databaseConnection.createStatement();
+            //execute the query
+            result = statement.execute("DELETE FROM UserList WHERE UserListId =" + userListId);
+        } catch (SQLException e) {
+            System.out.println("Sql Error occurred: " + e);
+        }
+        return result;
+    }
+
+    public boolean deleteListItem(int listItemId){
+        boolean result = false;
+        try{
+            Statement statement = databaseConnection.createStatement();
+            //execute the query
+            result = statement.execute("DELETE FROM ListITem WHERE ListItemId =" + listItemId);
+        } catch (SQLException e) {
+            System.out.println("Sql Error occurred: " + e);
+        }
+        return result;
+    }
 
 }
