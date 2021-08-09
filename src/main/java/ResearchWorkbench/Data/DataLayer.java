@@ -1,54 +1,94 @@
 package ResearchWorkbench.Data;
 
 import ResearchWorkbench.Models.ListItem;
+import ResearchWorkbench.Models.User;
 import ResearchWorkbench.Models.UserList;
 
+import java.io.File;
+import java.io.PrintStream;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class DataLayer {
     private String connectionString;
+    private String databaseUser;
+    private String databaseUserPassword;
     protected java.sql.Connection databaseConnection;
 
     public DataLayer(){
         connectionString = "";
+        databaseUser = "";
+        databaseUserPassword = "";
         databaseConnection = null;
     }
 
-    public DataLayer(String connectionString){
+    public DataLayer(String connectionString, String databaseUser, String databaseUserPassword) {
+        this.connectionString = connectionString;
+        this.databaseUser = databaseUser;
+        this.databaseUserPassword = databaseUserPassword;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             this.initConnection();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("JDBC driver not found");
         }
-
-        this.connectionString = connectionString;
     }
 
     public void initConnection() {
         try {
-            databaseConnection = java.sql.DriverManager.getConnection(connectionString);
+//            PrintStream outStream = new PrintStream(new File("out.txt"));
+//            System.setOut(outStream);
+//            System.out.println("initConnection: connect: " + connectionString + " user: " + databaseUser + " pass: " + databaseUserPassword);
+            databaseConnection = java.sql.DriverManager.getConnection(connectionString, databaseUser, databaseUserPassword);
+//            outStream.close();
         } catch (Exception e) {
-            System.out.println("Error. Counldn't open database");
+            System.out.println("Error. Couldn't open database");
         }
     }
 
     //create methods
-    public int createUserlist(UserList userList) {
+    public int createUser(User user){
+        int userId = -1;
+        try {
+            //prepare the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO User " +
+                    "(user_name, user_email) VALUES(?, ?);");
+            //set parameters for the statement
+            pStatement.setString(1, user.getUserName());
+            pStatement.setString(2, user.getUserEmail());
+            //execute the query
+            boolean result = pStatement.execute();
+//            resultSet = pStatement.getGeneratedKeys();
+//            resultSet.next();
+//            userId = resultSet.getInt(1);
+            userId = getUser(user.getUserEmail()).getUserId();
+//            if (resultSet.next()){
+//                userId = resultSet.getInt(1);
+//            }
+//            if (result == true){
+//                //get the userListId
+//
+//            }
+        } catch(SQLException e){
+            System.out.println("Error inserting UserList: " + e.getMessage());
+        }
+        return userId;
+
+    }
+
+    public int createUserList(UserList userList) {
         int userListId = -1;
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
             PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO UserList " +
-                    "(ListName, IsPrivate, DateCreated, DateModified, UserId) VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    "(name, is_private, user_id) VALUES(?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             //set parameters for the statement
             pStatement.setString(1, userList.getUserListName());
             pStatement.setBoolean(2, userList.getIsPrivate());
-            pStatement.setDate(3, (Date)userList.getDateCreated());
-            pStatement.setDate(4, (Date)userList.getDateModified());
-            pStatement.setInt(5, userList.getUserId());
+//            pStatement.setDate(3, (new java.sql.Date(userList.getDateCreated())));
+//            pStatement.setDate(4, (java.sql.Date)userList.getDateModified());
+            pStatement.setInt(3, userList.getUserId());
             //execute the query
             boolean result = pStatement.execute();
             if (result == true){
@@ -76,7 +116,8 @@ public class DataLayer {
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (listObject, userListId) VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (lsit_object, user_list_id);" +
+                    "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
             //set parameters for the statement
             pStatement.setString(1, listItem.getListObject());
             pStatement.setInt(2, listItem.getUserListId());
@@ -103,26 +144,53 @@ public class DataLayer {
     }
 
     //read methods
+    public User getUser(String userEmail){
+        User user = new User();
+
+        try{
+
+
+//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM User WHERE user_email = ?;");
+            //execute the query
+            pStatement.setString(1, userEmail);
+            ResultSet resultSet = pStatement.executeQuery();
+            boolean hasNext = resultSet.next();
+            if (!hasNext){
+                return user;
+            }
+            //set the UserList variables
+            user.setUserId(resultSet.getInt("user_id"));
+            user.setUserEmail(resultSet.getString("user_email"));
+            user.setUserName(resultSet.getString("user_name"));
+
+        } catch (SQLException e){
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return user;
+    }
+
     public UserList getUserList(int userListId){
         UserList userList = new UserList();
 
         try{
 
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM UserList WHERE user_list_id = ?;");
             //execute the query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM UserList WHERE UserListId =" + userListId);
+            pStatement.setInt(1, userListId);
+            ResultSet resultSet = pStatement.executeQuery();
             resultSet.next();
 
             //set the UserList variables
-            userList.setUserListId(resultSet.getInt("UserListId"));
+            userList.setUserListId(resultSet.getInt("user_list_id"));
             userList.setUserListName(resultSet.getString("name"));
-            userList.setIsPrivate(resultSet.getBoolean("IsPrivate"));
-            userList.setDateCreated(resultSet.getDate("DateCreated"));
-            userList.setDateModified(resultSet.getDate("DateModified"));
-            userList.setUserId(resultSet.getInt("UserId"));
+            userList.setIsPrivate(resultSet.getBoolean("is_private"));
+            userList.setDateCreated(resultSet.getDate("date_created"));
+            userList.setDateModified(resultSet.getDate("date_modified"));
+            userList.setUserId(resultSet.getInt("user_id"));
 
         } catch (SQLException e){
-            System.out.println("Sql Error occured: " + e);
+            System.out.println("Sql Error occurred: " + e.getMessage());
         }
         return userList;
     }
@@ -132,25 +200,26 @@ public class DataLayer {
 
         try{
             //create the sql statement
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM UserList WHERE user_id = ?;");
             //execute the query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM UserList WHERE UserId =" + userId);
+            pStatement.setInt(1, userId);
+            ResultSet resultSet = pStatement.executeQuery();
 
             //set the UserList variables
             while(resultSet.next()){
                 UserList userList = new UserList();
-                userList.setUserListId(resultSet.getInt("UserListId"));
+                userList.setUserListId(resultSet.getInt("user_list_id"));
                 userList.setUserListName(resultSet.getString("name"));
-                userList.setIsPrivate(resultSet.getBoolean("IsPrivate"));
-                userList.setDateCreated(resultSet.getDate("DateCreated"));
-                userList.setDateModified(resultSet.getDate("DateModified"));
-                userList.setUserId(resultSet.getInt("UserId"));
+                userList.setIsPrivate(resultSet.getBoolean("is_private"));
+                userList.setDateCreated(resultSet.getDate("date_created"));
+                userList.setDateModified(resultSet.getDate("date_modified"));
+                userList.setUserId(resultSet.getInt("user_id"));
                 //add the user list to the list of user lists
                 userLists.add(userList);
             }
 
         } catch (SQLException e){
-            System.out.println("Sql Error occured: " + e);
+            System.out.println("Sql Error occurred: " + e.getMessage());
         }
         return userLists;
     }
@@ -160,18 +229,19 @@ public class DataLayer {
 
         try{
             //create the sql statement
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM ListItem WHERE list_item_id = ?;");
             //execute the query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM ListItem WHERE ListItemId =" + listItemId);
+            pStatement.setInt(1, listItemId);
+            ResultSet resultSet = pStatement.executeQuery();
             resultSet.next();
 
             //set the ListItem variables
-            listItem.setListItemId(resultSet.getInt("ListItemId"));
-            listItem.setListObject(resultSet.getString("ListObject"));
-            listItem.setUserListId(resultSet.getInt("UserListId"));
+            listItem.setListItemId(resultSet.getInt("list_item_id"));
+            listItem.setListObject(resultSet.getString("list_object"));
+            listItem.setUserListId(resultSet.getInt("user_list_id"));
 
         } catch (SQLException e){
-            System.out.println("Sql Error occured: " + e);
+            System.out.println("Sql Error occurred: " + e.getMessage());
         }
         return listItem;
     }
@@ -181,22 +251,23 @@ public class DataLayer {
 
         try{
             //create the sql statement
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM ListItem WHERE user_list_id = ?;");
             //execute the query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM ListItem WHERE UserListId =" + userListId);
+            pStatement.setInt(1, userListId);
+            ResultSet resultSet = pStatement.executeQuery();
 
             //set the ListItem variables
             while(resultSet.next()){
                 ListItem listItem = new ListItem();
-                listItem.setListItemId(resultSet.getInt("ListItemId"));
-                listItem.setListObject(resultSet.getString("ListObject"));
-                listItem.setUserListId(resultSet.getInt("UserListId"));
+                listItem.setListItemId(resultSet.getInt("list_item_id"));
+                listItem.setListObject(resultSet.getString("list_object"));
+                listItem.setUserListId(resultSet.getInt("user_list_id"));
                 //add the user list to the list of user lists
                 listItems.add(listItem);
             }
 
         } catch (SQLException e){
-            System.out.println("Sql Error occured: " + e);
+            System.out.println("Sql Error occurred: " + e.getMessage());
         }
         return listItems;
     }
@@ -209,19 +280,20 @@ public class DataLayer {
             //execute the query
             ResultSet resultSet = statement.executeQuery("SELECT * FROM UserList INNER JOIN ListItem ON " +
                     "UserList.UserListId = ListItem.UserListId " +
-                    "WHERE ListItem.ListItemId =" + listItemId + "AND UserList.IsPrivate = false");
+                    "WHERE ListItem.list_item_id =" + listItemId + "AND UserList.is_private = false;");
 
             //set the UserList variables
             while (resultSet.next()){
                 UserList userList = new UserList();
-                userList.setUserListId(resultSet.getInt("UserListId"));
+                userList.setUserListId(resultSet.getInt("user_list_id"));
                 userList.setUserListName(resultSet.getString("name"));
-                userList.setIsPrivate(resultSet.getBoolean("IsPrivate"));
-                userList.setDateCreated(resultSet.getDate("DateCreated"));
-                userList.setDateModified(resultSet.getDate("DateModified"));
-                userList.setUserId(resultSet.getInt("UserId"));
+                userList.setIsPrivate(resultSet.getBoolean("is_private"));
+                userList.setDateCreated(resultSet.getDate("date_created"));
+                userList.setDateModified(resultSet.getDate("date_modified"));
+                userList.setUserId(resultSet.getInt("user_id"));
                 //add the user list to the list of user lists
                 userLists.add(userList);
+
             }
         } catch(SQLException e){
             System.out.println("There was an error searching the lists: " + e);
@@ -235,8 +307,8 @@ public class DataLayer {
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE UserList SET UserListName = ?, " +
-                    "IsPrivate = ?, DateCreated = ?, DateModified = ?, UserId = ? WHERE UserListId = ?", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE UserList SET name = ?, " +
+                    "is_private = ?, date_created = ?, date_modified = ?, user_id = ? WHERE user_list_id = ?;", Statement.RETURN_GENERATED_KEYS);
             //set parameters for the statement
             pStatement.setString(1, userList.getUserListName());
             pStatement.setBoolean(2, userList.getIsPrivate());
@@ -272,7 +344,7 @@ public class DataLayer {
         try {
             //prepare the sql statement
             PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE ListItem " +
-                    "SET ListObject = ?, UserListId = ? WHERE ListItemId = ? ", Statement.RETURN_GENERATED_KEYS);
+                    "SET list_object = ?, user_list_id = ? WHERE list_item_id = ?;", Statement.RETURN_GENERATED_KEYS);
             //set parameters for the statement
             pStatement.setString(1, listItem.getListObject());
             pStatement.setInt(2, listItem.getUserListId());
@@ -299,12 +371,25 @@ public class DataLayer {
         return listItemId;
     }
 
+    //delete methods
+    public boolean deleteUser(int userId){
+        boolean result = false;
+        try{
+            Statement statement = databaseConnection.createStatement();
+            //execute the query
+            result = statement.execute("DELETE FROM User WHERE user_id =" + userId + ";");
+        } catch (SQLException e) {
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return result;
+    }
+
     public boolean deleteUserList(int userListId){
         boolean result = false;
         try{
             Statement statement = databaseConnection.createStatement();
             //execute the query
-            result = statement.execute("DELETE FROM UserList WHERE UserListId =" + userListId);
+            result = statement.execute("DELETE FROM UserList WHERE user_list_id =" + userListId + ";");
         } catch (SQLException e) {
             System.out.println("Sql Error occurred: " + e);
         }
@@ -316,7 +401,7 @@ public class DataLayer {
         try{
             Statement statement = databaseConnection.createStatement();
             //execute the query
-            result = statement.execute("DELETE FROM ListITem WHERE ListItemId =" + listItemId);
+            result = statement.execute("DELETE FROM ListITem WHERE list_item_id =" + listItemId + ";");
         } catch (SQLException e) {
             System.out.println("Sql Error occurred: " + e);
         }

@@ -19,13 +19,17 @@ public class UserList {
         this.userId = 0;
     }
 
-    public UserList(int userListId, String userListName, Boolean isPrivate, Date dateCreated, Date dateModified, int userId){
+    public UserList(int userListId, String userListName, Boolean isPrivate, int userId){
         this.userListId = userListId;
         this.userListName = userListName;
         this.isPrivate = isPrivate;
-        this.dateCreated = dateCreated;
-        this.dateModified = dateModified;
+        this.dateCreated = new Date();
+        this.dateModified = new Date();
         this.userId = userId;
+    }
+
+    public UserList(String userListName, Boolean isPrivate, int userId){
+        this(0, userListName, isPrivate, userId);
     }
 
     public int getUserListId() {
