@@ -23,7 +23,7 @@
 <!-- Navigation-->
 <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
-        <a class="navbar-brand" href="#!">Research Workbench</a>
+        <a class="navbar-brand" href="index.jsp">Research Workbench</a>
         <div id="signUpAndLogInBtn">
             <a class="btn btn-primary" href="sign_up.jsp">Create profile </a>
             <a class="btn btn-primary" href="create_profile.jsp">Log in  </a>
@@ -33,8 +33,8 @@
 
         </div>
         <div id="loggedInNavBar" class="hideP">
-            <% String userName = (String)(session.getAttribute("userName"));%>
-            <p>Welcome, <%= userName %> !</p>
+            <% String userName = (String)(session.getAttribute("user_name"));%>
+            <p>Welcome, <%= userName %>!</p>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     Menu
@@ -42,13 +42,15 @@
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="index.jsp">Home</a></li>
                     <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
+                    <li><a class="dropdown-item" href="">Read Later</a></li>
                     <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
                 </ul>
             </div>
     </div>
     </div>
     <input type="hidden" id="hiddenLoggedIn" value="<%= (Integer)(session.getAttribute("logged_in")) %>">
-    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("userId")) %>">
+    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("user_id")) %>">
+    <input type="hidden" id="hiddenUserName" value="<%= (session.getAttribute("user_name")) %>">
 </nav>
 
 <script type="text/javascript">
@@ -56,6 +58,9 @@
         document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
         console.log("this should fire");
         document.getElementById("loggedInNavBar").classList.toggle("hideP");
+        sessionStorage.setItem("logged_in", 1+"");
+        sessionStorage.setItem("user_id", document.getElementById("hiddenUserId").value)
+        sessionStorage.setItem("user_name", document.getElementById("hiddenUserName").value)
     }
     // } else{
     //     document.getElementById("loggedInNavBar").classList.toggle('hideP');
@@ -78,11 +83,11 @@
                     <!-- To make this form functional, sign up at-->
                     <!-- https://startbootstrap.com/solution/contact-forms-->
                     <!-- to get an API token!-->
-                    <form class="form-subscribe" id="contactForm" data-sb-form-api-token="API_TOKEN">
+                    <form action="search.html" method="get" class="form-subscribe" id="searchForm">
                         <!-- Email address input-->
                         <div class="row">
                             <div class="col">
-                                <input class="form-control form-control-lg" id="searchField" type="email" placeholder="Type something to start searching... " />
+                                <input class="form-control form-control-lg" id="searchField" type="text" name="q" placeholder="Type something to start searching... " />
 <%--                                <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:required">Email Address is required.</div>--%>
 <%--                                <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:email">Email Address Email is not valid.</div>--%>
                             </div>

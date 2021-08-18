@@ -1,0 +1,217 @@
+<html lang="en">
+<head>
+    <title>Research Workbench Search</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script type="text/javascript" src="js/scripts.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="js/bootstrap.bundle.js" rel="script"/>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light static-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.jsp">Research Workbench</a>
+        <div id="signUpAndLogInBtn">
+            <a class="btn btn-primary" href="sign_up.jsp">Create profile </a>
+            <a class="btn btn-primary" href="create_profile.jsp">Log in  </a>
+        </div>
+        <div id="loggedInNavBar" class="hideP">
+            <p id="loggedInMessage"></p>
+
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Menu
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="index.jsp">Home</a></li>
+                    <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
+                    <li><a class="dropdown-item" href="">Read Later</a></li>
+                    <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<!--    <input type="hidden" id="hiddenLoggedIn" value="<%= (Integer)(session.getAttribute("logged_in")) %>">-->
+<!--    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("userId")) %>">-->
+</nav>
+
+<script type="text/javascript">
+    const solrUrl = 'http://localhost:8983/solr/collection1';
+    //show log in buttons in navbar is not logged in
+    if(Number(sessionStorage.getItem("logged_in")) === 1) {
+        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
+        console.log("this should fire");
+        document.getElementById("loggedInNavBar").classList.toggle("hideP");
+        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
+    }
+
+    //functions for handling solr queries
+    function getSuggestions(response){
+        let output = [];
+        if (response.hasOwnProperty("spellcheck")){
+            const suggestionsBlock = response.spellcheck.suggestions;
+            for (let i = 0; i < suggestionsBlock.length; i += 2){
+                if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
+                    output.push(suggestionsBlock[i+1]);
+                }
+            }
+        }
+    }
+
+    //function for creating link to show document
+    function getLinkForDoc(id){
+        return `show.jsp?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
+    }
+
+    //function to create link for another search
+    function getLinkForAnotherSearch(query){
+        return `search.html?id=${query}`;
+    }
+
+    //function to create link for tag search
+    function getLinkForTagSearch(tag){
+        return `search.html?q=subject:"${tag}"`;
+    }
+
+    //Returns a get value if it exists
+    function getIfSet(key){
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.has(key) && urlParams.get(key) !== null){
+            return urlParams.get(key);
+        } else {
+            return null;
+        }
+    }
+
+    function getFacetList(facetName){
+        const facet = getIfSet(facetName);
+        if (facet !== null) {
+            return (Array.isArray(facet)) ? facet : [facet];
+        }
+        return null;
+    }
+
+    //build the facet query
+    function buildFacetString(facetName) {
+        const facet = getFacetList(facetName);
+        if (facet !== null) {
+            const facetString = facet.join(" OR ");
+            return `+${facetName}:(${facetString})`;
+        } else {
+            return "";
+        }
+    }
+
+    //build facet date query
+    function buildDateFacetString(){
+        let yearStartFacet = getIfSet("year_start");
+        let yearEndFacet = getIfSet("year_end");
+        const today = new Date();
+        //check if either the start year or end year exists
+        if(yearStartFacet !== null || yearEndFacet !== null){
+            if (yearStartFacet !== null){
+                //check whether start date is before today and after 1970
+                yearStartFacet = Math.min(Math.max(Number(yearStartFacet), 1970), today.getFullYear());
+            } else{
+                //if start date does not exist, set it to 1070
+                yearStartFacet = 1970
+            }
+
+            if (yearEndFacet !== null){
+                //check whether end date is less than today and after 1970
+                yearEndFacet = Math.max(Math.min(Number(yearEndFacet), today.getFullYear()), 1970);
+            } else {
+                yearEndFacet = today.getFullYear();
+            }
+
+        }
+        if (yearStartFacet !== null && yearEndFacet !== null){
+            return `+date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z`;
+        }
+    }
+
+    //build link to different page
+    function buildPageLink(startPage){
+        return `search.html${window.location.search}&start=${startPage}`;
+    }
+
+    //check whether facet is selected
+    function isFacetSelected(facet, facetList){
+        return (facetList !== null && facetList.includes(facet));
+    }
+
+    function buildSearchQuery(){
+        const queryString = window.location.search;
+        const getParams = new URLSearchParams(queryString);
+        const q = getParams.get('q');
+        return `${solrUrl}/main_query?q=${q}&callback=?&json.wrf=on_data`;
+    }
+
+    window.documents = null;
+    const solrQuery = buildSearchQuery();
+    // $.get(solrQuery, function (data){
+    //     documents = JSON.parse(data);
+    // });
+
+    $.getJSON({
+        type: 'GET',
+        url: solrQuery,
+        // dataType: "jsonp",
+        // jsonp: 'json.wrf',
+        success: function (data) {
+            console.log("gets here");
+            documents = data;
+        }
+    });
+
+    function on_data(data){
+        documents = data;
+        console.log("called this");
+        console.log(`documents found: ${data["response"]["numFound"]}`)
+        console.log(documents);
+        console.log(`documents found: ${documents["response"]["numFound"]}`)
+        console.log(data);
+    }
+
+    // console.log(`documents found: ${documents["response"]["numFound"]}`)
+    console.log(JSON.stringify(documents));
+    console.log(sessionStorage.getItem("logged_in"))
+
+
+
+
+    console.log(`host: ${window.location.host} path: ${window.location.pathname} search: ${window.location.search}`);
+
+</script>
+
+<div class="container-lg">
+    <div class="row">
+        <div class="col-lg-3">
+            test
+        </div>
+        <div class="col-lg-9">
+            <h3>Search Results</h3>
+            <table class="table-bordered">
+                <tbody>
+
+                </tbody>
+
+
+
+            </table>
+
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

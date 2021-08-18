@@ -2,6 +2,12 @@ package ResearchWorkbench.Servlets;
 
 import ResearchWorkbench.Controllers.BusinessLayer;
 import ResearchWorkbench.Models.User;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.XMLResponseParser;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -32,8 +38,8 @@ public class ProfileServlet extends HttpServlet {
         //set the servlet context attribute to get user in the MainServlet
         HttpSession session = request.getSession();
         session.setAttribute("logged_in", new Integer(1));
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("userName", user.getUserName());
+        session.setAttribute("user_id", user.getUserId());
+        session.setAttribute("user_name", user.getUserName());
         response.sendRedirect("index.jsp");
     }
 }

@@ -1,9 +1,11 @@
 package ResearchWorkbench.Data;
 
+import ResearchWorkbench.Models.Bookmark;
 import ResearchWorkbench.Models.ListItem;
 import ResearchWorkbench.Models.User;
 import ResearchWorkbench.Models.UserList;
 
+import java.awt.print.Book;
 import java.io.File;
 import java.io.PrintStream;
 import java.sql.*;
@@ -116,7 +118,7 @@ public class DataLayer {
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (lsit_object, user_list_id);" +
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (list_object_id, user_list_id);" +
                     "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
             //set parameters for the statement
             pStatement.setString(1, listItem.getListObject());
@@ -141,6 +143,38 @@ public class DataLayer {
 
         }
         return listItemId;
+    }
+
+    public int createBookmark(Bookmark bookmark){
+        int bookmarkId = -1;
+        ResultSet resultSet = null;
+        try {
+            //prepare the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO Bookmark (object_id, user_id);" +
+                    "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+            //set parameters for the statement
+            pStatement.setString(1, bookmark.getObjectId());
+            pStatement.setInt(2, bookmark.getUserId());
+            //execute the query
+            boolean result = pStatement.execute();
+            if (result == true){
+                //get the userListId
+                resultSet = pStatement.getGeneratedKeys();
+                if (resultSet.next()){
+                    bookmarkId = resultSet.getInt(1);
+                }
+            }
+        } catch(SQLException e){
+            System.out.println("Error inserting Bookmark: " + e.getMessage());
+        } finally {
+            try{
+                if(resultSet != null){resultSet.close();}
+            } catch (SQLException e){
+                System.out.println("Couldn't close connection: " + e.getMessage());
+            }
+
+        }
+        return bookmarkId;
     }
 
     //read methods
@@ -301,6 +335,31 @@ public class DataLayer {
         return userLists;
     }
 
+    public ArrayList<Bookmark> getBookmarks(int userId){
+        ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
+
+        try{
+            //create the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM Bookmark WHERE user_id = ?;");
+            //execute the query
+            pStatement.setInt(1, userId);
+            ResultSet resultSet = pStatement.executeQuery();
+
+            //set the ListItem variables
+            while(resultSet.next()){
+                Bookmark bookmark = new Bookmark();
+                bookmark.setBookmarkId(resultSet.getInt("bookmark_id"));
+                bookmark.setObjectId(resultSet.getString("object_id"));
+                bookmark.setUserId(resultSet.getInt("user_id"));
+                //add the user list to the list of user lists
+                bookmarks.add(bookmark);
+            }
+
+        } catch (SQLException e){
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return bookmarks;
+    }
     //update methods
     public int updateUserList(UserList userList) {
         int userListId = -1;
@@ -375,9 +434,10 @@ public class DataLayer {
     public boolean deleteUser(int userId){
         boolean result = false;
         try{
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM User WHERE user_id = ?;");
+            pStatement.setInt(1, userId);
             //execute the query
-            result = statement.execute("DELETE FROM User WHERE user_id =" + userId + ";");
+            result = pStatement.execute();
         } catch (SQLException e) {
             System.out.println("Sql Error occurred: " + e.getMessage());
         }
@@ -387,9 +447,10 @@ public class DataLayer {
     public boolean deleteUserList(int userListId){
         boolean result = false;
         try{
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM UserList WHERE user_list_id = ?;");
+            pStatement.setInt(1, userListId);
             //execute the query
-            result = statement.execute("DELETE FROM UserList WHERE user_list_id =" + userListId + ";");
+            result = pStatement.execute();
         } catch (SQLException e) {
             System.out.println("Sql Error occurred: " + e);
         }
@@ -399,13 +460,26 @@ public class DataLayer {
     public boolean deleteListItem(int listItemId){
         boolean result = false;
         try{
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM ListITem WHERE list_item_id = ?;");
+            pStatement.setInt(1, listItemId);
             //execute the query
-            result = statement.execute("DELETE FROM ListITem WHERE list_item_id =" + listItemId + ";");
+            result = pStatement.execute();
         } catch (SQLException e) {
             System.out.println("Sql Error occurred: " + e);
         }
         return result;
     }
 
+    public boolean deleteBookmark(int bookmarkId){
+        boolean result = false;
+        try{
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM Bookmark WHERE bookmark_id = ?;");
+            pStatement.setInt(1, bookmarkId);
+            //execute the query
+            result = pStatement.execute();
+        } catch (SQLException e) {
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return result;
+    }
 }

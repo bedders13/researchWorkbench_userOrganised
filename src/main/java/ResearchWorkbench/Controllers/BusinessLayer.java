@@ -1,6 +1,7 @@
 package ResearchWorkbench.Controllers;
 
 import ResearchWorkbench.Data.DataLayer;
+import ResearchWorkbench.Models.Bookmark;
 import ResearchWorkbench.Models.ListItem;
 import ResearchWorkbench.Models.User;
 import ResearchWorkbench.Models.UserList;
@@ -9,7 +10,8 @@ import java.util.ArrayList;
 
 public class BusinessLayer {
     ResearchWorkbench.Data.DataLayer dataLayer;
-    String connectionString = "jdbc:mysql://3.135.208.122/user_organised";
+    String connectionString = "jdbc:mysql://localhost/user_organised";
+//    String connectionString = "jdbc:mysql://localhost/user_organised";
     String databaseUser = "hugh";
     String databasePassword = "AWS-mysql99";
 
@@ -32,6 +34,10 @@ public class BusinessLayer {
 
     public int createListItem(ListItem listItem) {
         return dataLayer.createListItem(listItem);
+    }
+
+    public int createBookmark(Bookmark bookmark){
+        return dataLayer.createBookmark(bookmark);
     }
 
     //read methods
@@ -59,6 +65,10 @@ public class BusinessLayer {
         return dataLayer.getUserListsContainingListItem(listItemId);
     }
 
+    public ArrayList<Bookmark> getBookmarks(int userId){
+        return dataLayer.getBookmarks(userId);
+    }
+
     //update methods
     public int updateUserList(UserList userList) {
         return dataLayer.updateUserList(userList);
@@ -79,5 +89,9 @@ public class BusinessLayer {
 
     public boolean deleteListItem(int listItemId){
         return dataLayer.deleteListItem(listItemId);
+    }
+
+    public boolean deleteBookmark(int bookmarkId){
+        return dataLayer.deleteBookmark(bookmarkId);
     }
 }
