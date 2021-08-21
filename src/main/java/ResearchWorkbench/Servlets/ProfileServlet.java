@@ -2,12 +2,7 @@ package ResearchWorkbench.Servlets;
 
 import ResearchWorkbench.Controllers.BusinessLayer;
 import ResearchWorkbench.Models.User;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.client.solrj.impl.XMLResponseParser;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
+
 
 import javax.servlet.*;
 import javax.servlet.http.*;

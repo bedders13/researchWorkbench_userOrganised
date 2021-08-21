@@ -13,7 +13,7 @@ public class BusinessLayer {
     String connectionString = "jdbc:mysql://localhost/user_organised";
 //    String connectionString = "jdbc:mysql://localhost/user_organised";
     String databaseUser = "hugh";
-    String databasePassword = "AWS-mysql99";
+    String databasePassword = "AZURE-mysql99";
 
 //    public BusinessLayer() {
 //        dataLayer = new DataLayer();

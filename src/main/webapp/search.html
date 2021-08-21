@@ -14,45 +14,28 @@
     <link href="css/styles.css" rel="stylesheet" />
     <link href="js/bootstrap.bundle.js" rel="script"/>
 </head>
-<body>
-<nav class="navbar navbar-light bg-light static-top">
-    <div class="container">
-        <a class="navbar-brand" href="index.jsp">Research Workbench</a>
-        <div id="signUpAndLogInBtn">
-            <a class="btn btn-primary" href="sign_up.jsp">Create profile </a>
-            <a class="btn btn-primary" href="create_profile.jsp">Log in  </a>
-        </div>
-        <div id="loggedInNavBar" class="hideP">
-            <p id="loggedInMessage"></p>
-
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    Menu
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="index.jsp">Home</a></li>
-                    <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
-                    <li><a class="dropdown-item" href="">Read Later</a></li>
-                    <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-<!--    <input type="hidden" id="hiddenLoggedIn" value="<%= (Integer)(session.getAttribute("logged_in")) %>">-->
-<!--    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("userId")) %>">-->
-</nav>
-
 <script type="text/javascript">
-    const solrUrl = 'http://localhost:8983/solr/collection1';
-    //show log in buttons in navbar is not logged in
-    if(Number(sessionStorage.getItem("logged_in")) === 1) {
-        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
-        console.log("this should fire");
-        document.getElementById("loggedInNavBar").classList.toggle("hideP");
-        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
-    }
+    //variables needed for search
+    let documents;
+    let data;
+    let totalCount;
+    let cursor;
+    let batchSize;
+    let queryTime;
+    let suggestions;
 
-    //functions for handling solr queries
+    //facet variables
+    let selectedLanguageFacets = getFacetList('language');
+    let selectedSubjectFacets = getFacetList('subject');
+    let selectedSourceSetNamesFacets = getFacetList('source_set_names');
+    let selectedYearStartFacet = getIfSet('year_start');
+    let selectedYearEndFacet = getIfSet('year_end');
+    let languageFacets;
+    let subjectFacets;
+    let sourceSetNamesFacets;
+
+
+        //functions for handling solr queries
     function getSuggestions(response){
         let output = [];
         if (response.hasOwnProperty("spellcheck")){
@@ -67,7 +50,7 @@
 
     //function for creating link to show document
     function getLinkForDoc(id){
-        return `show.jsp?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
+        return `show.html?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
     }
 
     //function to create link for another search
@@ -100,10 +83,15 @@
     }
 
     //build the facet query
-    function buildFacetString(facetName) {
-        const facet = getFacetList(facetName);
-        if (facet !== null) {
-            const facetString = facet.join(" OR ");
+    function buildFacetString(facetName, mustWrapQuotes = false) {
+        let facets = getFacetList(facetName);
+        if (facets !== null) {
+            if (mustWrapQuotes){
+                facets = facets.map(function (facet){
+                    return '"' + facet + '"';
+                })
+            }
+            const facetString = facets.join(" OR ");
             return `+${facetName}:(${facetString})`;
         } else {
             return "";
@@ -135,6 +123,8 @@
         }
         if (yearStartFacet !== null && yearEndFacet !== null){
             return `+date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z`;
+        } else{
+            return "";
         }
     }
 
@@ -148,57 +138,238 @@
         return (facetList !== null && facetList.includes(facet));
     }
 
-    function buildSearchQuery(){
+    //function to build the main_query
+    function buildMainQueryString(){
         const queryString = window.location.search;
         const getParams = new URLSearchParams(queryString);
         const q = getParams.get('q');
-        return `${solrUrl}/main_query?q=${q}&callback=?&json.wrf=on_data`;
+        const start = (getParams.has("start") ? Math.max(Number(getParams.get("start")), 0) : 0 );
+        const language = buildFacetString("language");
+        const subject = buildFacetString("subject");
+        const sourceSetNames = buildFacetString("sourceSetNames");
+        const date = buildDateFacetString();
+        // const facetQuery = `${buildFacetString("language")}${buildFacetString("subject")}${buildFacetString("source_set_names", true)}${buildDateFacetString()}`
+        const facetQuery = language + subject + sourceSetNames + date;
+        return `q=${q}&start=${start}&fq=${facetQuery}`;
     }
 
-    window.documents = null;
-    const solrQuery = buildSearchQuery();
-    // $.get(solrQuery, function (data){
-    //     documents = JSON.parse(data);
-    // });
+    //function to send main_query on page load
+    // function getMainQuery(){
+    $(document).ready(function() {
+        $.get({
+            url: "SolrServlet",
+            data: {
+                queryType: "main_query",
+                queryString: buildMainQueryString(),
+            },
+            dataType: "json",
+            success: function (data){
+                document.getElementById("raw").innerHTML = (typeof data);
+                document.getElementById("result").innerHTML = data.response.numFound;
 
-    $.getJSON({
-        type: 'GET',
-        url: solrQuery,
-        // dataType: "jsonp",
-        // jsonp: 'json.wrf',
-        success: function (data) {
-            console.log("gets here");
-            documents = data;
-        }
-    });
+                documents = data.response.docs;
+                totalCount = data.response.numFound;
+                cursor = data.response.start;
+                batchSize = documents.length;
+                queryTime = data.responseHeader.QTime / 1000;
 
-    function on_data(data){
-        documents = data;
-        console.log("called this");
-        console.log(`documents found: ${data["response"]["numFound"]}`)
-        console.log(documents);
-        console.log(`documents found: ${documents["response"]["numFound"]}`)
-        console.log(data);
-    }
+                suggestions = getSuggestions(data);
 
-    // console.log(`documents found: ${documents["response"]["numFound"]}`)
-    console.log(JSON.stringify(documents));
-    console.log(sessionStorage.getItem("logged_in"))
+                //facets
+                languageFacets = data.facet_counts.facet_fields.language;
+                subjectFacets = data.facet_counts.facet_fields.subject;
+                sourceSetNamesFacets = data.facet_counts.facet_fields.source_set_names;
+            }
 
+        })
 
+    })
 
+    // }
 
-    console.log(`host: ${window.location.host} path: ${window.location.pathname} search: ${window.location.search}`);
+    //******** to try
+    //on page load, call Java servlet with query url and retrieve json from java
+    //this will mean the data is fetched in the backend, which will circumvent the CORS issue with the browser
+    //use https://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java to fetch the JSON in Java
+    //use
 
 </script>
+
+<body >
+<nav class="navbar navbar-light bg-light static-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.jsp">Research Workbench</a>
+        <div id="signUpAndLogInBtn">
+            <a class="btn btn-primary" href="sign_up.jsp">Create profile </a>
+            <a class="btn btn-primary" href="create_profile.jsp">Log in  </a>
+        </div>
+        <div id="loggedInNavBar" class="hideP">
+            <p id="loggedInMessage"></p>
+
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Menu
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="index.jsp">Home</a></li>
+                    <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
+                    <li><a class="dropdown-item" href="">Read Later</a></li>
+                    <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<!--    <input type="hidden" id="hiddenLoggedIn" value="<%= (Integer)(session.getAttribute("logged_in")) %>">-->
+<!--    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("userId")) %>">-->
+</nav>
+<script type="text/javascript">
+    //show log in buttons in navbar is not logged in
+    if(Number(sessionStorage.getItem("logged_in")) === 1) {
+        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
+        console.log("this should fire");
+        document.getElementById("loggedInNavBar").classList.toggle("hideP");
+        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
+    }
+</script>
+
 
 <div class="container-lg">
     <div class="row">
         <div class="col-lg-3">
-            test
+            <div class="page-header">
+                <img src="assets/img/ndltd.gif" />
+            </div>
+            <form method="get" autocomplete="off">
+                <ul class="list-group">
+                    <li class="list-group-item header">
+                        Refine Query
+                    </li>
+                    <li class="list-group-item query">
+                        <input id="refineQuery" type="text" name="q" value="" placeholder="Type something to start searching...">
+                    </li>
+                    <li class="list-group-item" style="height: 52px; padding-right: 10px; padding-top: 10px;">
+                        <input type="submit" class="btn btn-primary btn-sm pull-right" value="Apply">
+                    </li>
+                    <script type="text/javascript">
+                        const queryString = window.location.search;
+                        const getParams = new URLSearchParams(queryString);
+                        const q = getParams.get('q');
+                        document.getElementById("refineQuery").value = q;
+                    </script>
+
+                    <!-- Source set facets -->
+                    <li class="list-group-item header">
+                        Source
+                    </li>
+                    <li class="list-group-item institution-dropdown">
+                        <select id="source_set_names" name="source_set_names" class="form-control">
+                            <option value="" disabled selected>Filter by source</option>
+                        </select>
+                    </li>
+                    <script type="text/javascript">
+                        const select = document.getElementById("source_set_names");
+                        for (let i = 0; i < sourceSetNamesFacets.length; i+= 2){
+                            let opt = document.createElement("option");
+                            opt.textContent = `${sourceSetNamesFacets[i]} [${sourceSetNamesFacets[i+1]}]`;
+                            opt.value = sourceSetNamesFacets[i];
+                            if (selectedSourceSetNamesFacets !== null && selectedLanguageFacets.includes(sourceSetNamesFacets[i])){
+                                opt.selected = true;
+                            }
+                            select.appendChild(opt);
+                        }
+                    </script>
+                    <!-- End source set facets -->
+
+                    <!-- Date range facet -->
+                    <li class="list-group-item header">
+                        Publication year
+                    </li>
+                    <li class="list-group-item year">
+                        <input type="number" class="year-facet" name="year_start" id="year_start" value="" placeholder="Start year">
+                        to
+                        <input type="number" class="year-facet" name="year_end" id="year_end" value="" placeholder="End year">
+                    </li>
+                    <script type="text/javascript">
+                        if (selectedYearStartFacet !== null){
+                            document.getElementById("year_start").value = selectedYearStartFacet;
+                        }
+                        if (selectedYearEndFacet !== null){
+                            document.getElementById("year_end").value = selectedYearEndFacet;
+                        }
+                    </script>
+                    <!-- End date range facet -->
+
+                    <!-- Language facets -->
+                    <li class="list-group-item header">
+                        Language
+                    </li>
+                    <div id="languageList">
+
+                    </div>
+
+                    <script type="text/javascript">
+                        let nonZeroFacets = 0;
+                        const languageListDiv = document.getElementById("languageList");
+                        for (let i = 0; i < languageFacets.length; i+=2){
+                            if (languageFacets[i+1] === 0){
+                                continue;
+                            } else{
+                                nonZeroFacets++;
+                            }
+                            if (languageFacets[i] === 'zh'){
+                                languageFacets[i] = 'Zh-Tw';
+                            }
+                            languageListDiv.innerHTML +=  `<li class="list-group-item"> <div className="checkbox"> <label className="plain"> <input type="checkbox" name="language[]" value='${languageFacets[i]}'`;
+                            if (isFacetSelected(languageFacets[i], selectedLanguageFacets)){
+                                languageListDiv.innerHTML += "checked";
+                            }
+                            languageListDiv.innerHTML += `</label> <span className="badge document-count pull-right ">${languageFacets[i+1]}</span> </div> </li>`;
+                        }
+                        if (nonZeroFacets === 0){
+                            languageListDiv.innerHTML = '<li className="list-group-item"><em>No language data</em></li>';
+                        }
+                    </script>
+                    <!-- End language facets -->
+
+                    <!-- Subject facets -->
+                    <li class="list-group-item header">
+                        Tagged with
+                    </li>
+                    <div id="subjectsList">
+
+                    </div>
+
+                    <!-- End subject facets -->
+                    <li class="list-group-item" style="height: 52px; padding-right: 10px; padding-top: 10px;">
+                        <input type="submit" class="btn btn-primary btn-sm pull-right" value="Refine Search">
+                    </li>
+                    <script type="text/javascript">
+                        nonZeroFacets = 0;
+                        const subjectListDiv = document.getElementById("subjectsList");
+                        for (let i = 0; i < subjectFacets.length; i+=2){
+                            if (subjectFacets[i+1] === 0){
+                                continue;
+                            } else{
+                                nonZeroFacets++;
+                            }
+                            subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
+                            if (isFacetSelected(subjectFacets[i], selectedSubjectFacets)){
+                                subjectListDiv.innerHTML += "checked";
+                            }
+                            subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
+                        }
+                        //check if there are any subject tags
+                        if (nonZeroFacets === 0){
+                            subjectFacets.innerHTML = '<li className="list-group-item"><em>No subject tags</em></li>';
+                        }
+                    </script>
+                </ul>
+            </form>
         </div>
         <div class="col-lg-9">
             <h3>Search Results</h3>
+            <div id="raw"></div>
+            <div id="result"></div>
             <table class="table-bordered">
                 <tbody>
 

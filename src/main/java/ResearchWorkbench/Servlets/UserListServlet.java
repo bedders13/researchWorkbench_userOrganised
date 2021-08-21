@@ -10,13 +10,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+
 @WebServlet(name = "UserListServlet", value = "/UserListServlet")
 public class UserListServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        int userId = (Integer)session.getAttribute("userId");
+        int userId = (Integer)session.getAttribute("user_id");
         BusinessLayer library = new BusinessLayer();
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         userLists = library.getUserLists(userId);
@@ -62,7 +63,7 @@ public class UserListServlet extends HttpServlet {
 
 //        boolean isPrivate = Boolean.parseBoolean(request.getParameter("userListIsPrivate"));
         HttpSession session = request.getSession();
-        int userId = (Integer)session.getAttribute("userId");
+        int userId = (Integer)session.getAttribute("user_id");
 
         //create the UserList object
         UserList userList = new UserList(listName, isPrivate, userId);
