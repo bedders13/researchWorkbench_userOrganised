@@ -7,20 +7,24 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.json.*;
 
 @WebServlet(name = "SolrServlet", value = "/SolrServlet")
 public class SolrServlet extends HttpServlet {
-    String solrUrl = "http://localhost:8983/solr/collection1";
+    String solrUrl = "http://20.87.26.56:8983/solr/collection1";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //read the get parameters
         String queryType = request.getParameter("queryType");
         String queryString = request.getParameter("queryString");
+//        String queryStringUrl = URLEncoder.encode(queryString, "UTF-8");
         //build the query url
+//        if(queryString.contains(" "))
+//            queryString = queryString.replace(" ", "%20");
         String queryUrl = getQueryUrl(queryType, queryString);
 
         //read the json
@@ -65,6 +69,7 @@ public class SolrServlet extends HttpServlet {
     }
 
     public static JSONObject readJsonFromUrl(String url) throws IOException {
+//        url = URLEncoder.encode(url, "UTF-8");
         InputStream is = new URL(url).openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));

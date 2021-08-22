@@ -15,175 +15,175 @@
     <link href="js/bootstrap.bundle.js" rel="script"/>
 </head>
 <script type="text/javascript">
-    //variables needed for search
-    let documents;
-    let data;
-    let totalCount;
-    let cursor;
-    let batchSize;
-    let queryTime;
-    let suggestions;
-
-    //facet variables
-    let selectedLanguageFacets = getFacetList('language');
-    let selectedSubjectFacets = getFacetList('subject');
-    let selectedSourceSetNamesFacets = getFacetList('source_set_names');
-    let selectedYearStartFacet = getIfSet('year_start');
-    let selectedYearEndFacet = getIfSet('year_end');
-    let languageFacets;
-    let subjectFacets;
-    let sourceSetNamesFacets;
-
-
-        //functions for handling solr queries
-    function getSuggestions(response){
-        let output = [];
-        if (response.hasOwnProperty("spellcheck")){
-            const suggestionsBlock = response.spellcheck.suggestions;
-            for (let i = 0; i < suggestionsBlock.length; i += 2){
-                if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
-                    output.push(suggestionsBlock[i+1]);
-                }
-            }
-        }
-    }
-
-    //function for creating link to show document
-    function getLinkForDoc(id){
-        return `show.html?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
-    }
-
-    //function to create link for another search
-    function getLinkForAnotherSearch(query){
-        return `search.html?id=${query}`;
-    }
-
-    //function to create link for tag search
-    function getLinkForTagSearch(tag){
-        return `search.html?q=subject:"${tag}"`;
-    }
-
-    //Returns a get value if it exists
-    function getIfSet(key){
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        if (urlParams.has(key) && urlParams.get(key) !== null){
-            return urlParams.get(key);
-        } else {
-            return null;
-        }
-    }
-
-    function getFacetList(facetName){
-        const facet = getIfSet(facetName);
-        if (facet !== null) {
-            return (Array.isArray(facet)) ? facet : [facet];
-        }
-        return null;
-    }
-
-    //build the facet query
-    function buildFacetString(facetName, mustWrapQuotes = false) {
-        let facets = getFacetList(facetName);
-        if (facets !== null) {
-            if (mustWrapQuotes){
-                facets = facets.map(function (facet){
-                    return '"' + facet + '"';
-                })
-            }
-            const facetString = facets.join(" OR ");
-            return `+${facetName}:(${facetString})`;
-        } else {
-            return "";
-        }
-    }
-
-    //build facet date query
-    function buildDateFacetString(){
-        let yearStartFacet = getIfSet("year_start");
-        let yearEndFacet = getIfSet("year_end");
-        const today = new Date();
-        //check if either the start year or end year exists
-        if(yearStartFacet !== null || yearEndFacet !== null){
-            if (yearStartFacet !== null){
-                //check whether start date is before today and after 1970
-                yearStartFacet = Math.min(Math.max(Number(yearStartFacet), 1970), today.getFullYear());
-            } else{
-                //if start date does not exist, set it to 1070
-                yearStartFacet = 1970
-            }
-
-            if (yearEndFacet !== null){
-                //check whether end date is less than today and after 1970
-                yearEndFacet = Math.max(Math.min(Number(yearEndFacet), today.getFullYear()), 1970);
-            } else {
-                yearEndFacet = today.getFullYear();
-            }
-
-        }
-        if (yearStartFacet !== null && yearEndFacet !== null){
-            return `+date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z`;
-        } else{
-            return "";
-        }
-    }
-
-    //build link to different page
-    function buildPageLink(startPage){
-        return `search.html${window.location.search}&start=${startPage}`;
-    }
-
-    //check whether facet is selected
-    function isFacetSelected(facet, facetList){
-        return (facetList !== null && facetList.includes(facet));
-    }
-
-    //function to build the main_query
-    function buildMainQueryString(){
-        const queryString = window.location.search;
-        const getParams = new URLSearchParams(queryString);
-        const q = getParams.get('q');
-        const start = (getParams.has("start") ? Math.max(Number(getParams.get("start")), 0) : 0 );
-        const language = buildFacetString("language");
-        const subject = buildFacetString("subject");
-        const sourceSetNames = buildFacetString("sourceSetNames");
-        const date = buildDateFacetString();
-        // const facetQuery = `${buildFacetString("language")}${buildFacetString("subject")}${buildFacetString("source_set_names", true)}${buildDateFacetString()}`
-        const facetQuery = language + subject + sourceSetNames + date;
-        return `q=${q}&start=${start}&fq=${facetQuery}`;
-    }
-
-    //function to send main_query on page load
-    // function getMainQuery(){
-    $(document).ready(function() {
-        $.get({
-            url: "SolrServlet",
-            data: {
-                queryType: "main_query",
-                queryString: buildMainQueryString(),
-            },
-            dataType: "json",
-            success: function (data){
-                document.getElementById("raw").innerHTML = (typeof data);
-                document.getElementById("result").innerHTML = data.response.numFound;
-
-                documents = data.response.docs;
-                totalCount = data.response.numFound;
-                cursor = data.response.start;
-                batchSize = documents.length;
-                queryTime = data.responseHeader.QTime / 1000;
-
-                suggestions = getSuggestions(data);
-
-                //facets
-                languageFacets = data.facet_counts.facet_fields.language;
-                subjectFacets = data.facet_counts.facet_fields.subject;
-                sourceSetNamesFacets = data.facet_counts.facet_fields.source_set_names;
-            }
-
-        })
-
-    })
+    // //variables needed for search
+    // // let documents;
+    // let data;
+    // let totalCount;
+    // let cursor;
+    // let batchSize;
+    // let queryTime;
+    // let suggestions;
+    //
+    // //facet variables
+    // let selectedLanguageFacets = getFacetList('language');
+    // let selectedSubjectFacets = getFacetList('subject');
+    // let selectedSourceSetNamesFacets = getFacetList('source_set_names');
+    // let selectedYearStartFacet = getIfSet('year_start');
+    // let selectedYearEndFacet = getIfSet('year_end');
+    // let languageFacets;
+    // let subjectFacets;
+    // let sourceSetNamesFacets;
+    //
+    //
+    //     //functions for handling solr queries
+    // function getSuggestions(response){
+    //     let output = [];
+    //     if (response.hasOwnProperty("spellcheck")){
+    //         const suggestionsBlock = response.spellcheck.suggestions;
+    //         for (let i = 0; i < suggestionsBlock.length; i += 2){
+    //             if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
+    //                 output.push(suggestionsBlock[i+1]);
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // //function for creating link to show document
+    // function getLinkForDoc(id){
+    //     return `show.html?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
+    // }
+    //
+    // //function to create link for another search
+    // function getLinkForAnotherSearch(query){
+    //     return `search.html?id=${query}`;
+    // }
+    //
+    // //function to create link for tag search
+    // function getLinkForTagSearch(tag){
+    //     return `search.html?q=subject:"${tag}"`;
+    // }
+    //
+    // //Returns a get value if it exists
+    // function getIfSet(key){
+    //     const queryString = window.location.search;
+    //     const urlParams = new URLSearchParams(queryString);
+    //     if (urlParams.has(key) && urlParams.get(key) !== null){
+    //         return urlParams.get(key);
+    //     } else {
+    //         return null;
+    //     }
+    // }
+    //
+    // function getFacetList(facetName){
+    //     const facet = getIfSet(facetName);
+    //     if (facet !== null) {
+    //         return (Array.isArray(facet)) ? facet : [facet];
+    //     }
+    //     return null;
+    // }
+    //
+    // //build the facet query
+    // function buildFacetString(facetName, mustWrapQuotes = false) {
+    //     let facets = getFacetList(facetName);
+    //     if (facets !== null) {
+    //         if (mustWrapQuotes){
+    //             facets = facets.map(function (facet){
+    //                 return '"' + facet + '"';
+    //             })
+    //         }
+    //         const facetString = facets.join(" OR ");
+    //         return `+${facetName}:(${facetString})`;
+    //     } else {
+    //         return "";
+    //     }
+    // }
+    //
+    // //build facet date query
+    // function buildDateFacetString(){
+    //     let yearStartFacet = getIfSet("year_start");
+    //     let yearEndFacet = getIfSet("year_end");
+    //     const today = new Date();
+    //     //check if either the start year or end year exists
+    //     if(yearStartFacet !== null || yearEndFacet !== null){
+    //         if (yearStartFacet !== null){
+    //             //check whether start date is before today and after 1970
+    //             yearStartFacet = Math.min(Math.max(Number(yearStartFacet), 1970), today.getFullYear());
+    //         } else{
+    //             //if start date does not exist, set it to 1070
+    //             yearStartFacet = 1970
+    //         }
+    //
+    //         if (yearEndFacet !== null){
+    //             //check whether end date is less than today and after 1970
+    //             yearEndFacet = Math.max(Math.min(Number(yearEndFacet), today.getFullYear()), 1970);
+    //         } else {
+    //             yearEndFacet = today.getFullYear();
+    //         }
+    //
+    //     }
+    //     if (yearStartFacet !== null && yearEndFacet !== null){
+    //         return `+date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z`;
+    //     } else{
+    //         return "";
+    //     }
+    // }
+    //
+    // //build link to different page
+    // function buildPageLink(startPage){
+    //     return `search.html${window.location.search}&start=${startPage}`;
+    // }
+    //
+    // //check whether facet is selected
+    // function isFacetSelected(facet, facetList){
+    //     return (facetList !== null && facetList.includes(facet));
+    // }
+    //
+    // //function to build the main_query
+    // function buildMainQueryString(){
+    //     const queryString = window.location.search;
+    //     const getParams = new URLSearchParams(queryString);
+    //     const q = getParams.get('q');
+    //     const start = (getParams.has("start") ? Math.max(Number(getParams.get("start")), 0) : 0 );
+    //     const language = buildFacetString("language");
+    //     const subject = buildFacetString("subject");
+    //     const sourceSetNames = buildFacetString("sourceSetNames");
+    //     const date = buildDateFacetString();
+    //     // const facetQuery = `${buildFacetString("language")}${buildFacetString("subject")}${buildFacetString("source_set_names", true)}${buildDateFacetString()}`
+    //     const facetQuery = language + subject + sourceSetNames + date;
+    //     return `q=${q}&start=${start}&fq=${facetQuery}`;
+    // }
+    //
+    // //function to send main_query on page load
+    // // function getMainQuery(){
+    // $(document).ready(function() {
+    //     $.get({
+    //         url: "SolrServlet",
+    //         data: {
+    //             queryType: "main_query",
+    //             queryString: buildMainQueryString(),
+    //         },
+    //         dataType: "json",
+    //         success: function (data){
+    //             document.getElementById("raw").innerHTML = (typeof data);
+    //             document.getElementById("result").innerHTML = data.response.numFound;
+    //
+    //             documents = data.response.docs;
+    //             totalCount = data.response.numFound;
+    //             cursor = data.response.start;
+    //             batchSize = documents.length;
+    //             queryTime = data.responseHeader.QTime / 1000;
+    //
+    //             suggestions = getSuggestions(data);
+    //
+    //             //facets
+    //             languageFacets = data.facet_counts.facet_fields.language;
+    //             subjectFacets = data.facet_counts.facet_fields.subject;
+    //             sourceSetNamesFacets = data.facet_counts.facet_fields.source_set_names;
+    //         }
+    //
+    //     })
+    //
+    // })
 
     // }
 
@@ -223,13 +223,13 @@
 <!--    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("userId")) %>">-->
 </nav>
 <script type="text/javascript">
-    //show log in buttons in navbar is not logged in
-    if(Number(sessionStorage.getItem("logged_in")) === 1) {
-        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
-        console.log("this should fire");
-        document.getElementById("loggedInNavBar").classList.toggle("hideP");
-        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
-    }
+    // //show log in buttons in navbar is not logged in
+    // if(Number(sessionStorage.getItem("logged_in")) === 1) {
+    //     document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
+    //     console.log("this should fire");
+    //     document.getElementById("loggedInNavBar").classList.toggle("hideP");
+    //     document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
+    // }
 </script>
 
 
@@ -239,9 +239,9 @@
             <div class="page-header">
                 <img src="assets/img/ndltd.gif" />
             </div>
-            <form method="get" autocomplete="off">
+            <form id="searchParamForm" method="get" autocomplete="off">
                 <ul class="list-group">
-                    <li class="list-group-item header">
+                    <li class="list-group-item">
                         Refine Query
                     </li>
                     <li class="list-group-item query">
@@ -251,10 +251,10 @@
                         <input type="submit" class="btn btn-primary btn-sm pull-right" value="Apply">
                     </li>
                     <script type="text/javascript">
-                        const queryString = window.location.search;
-                        const getParams = new URLSearchParams(queryString);
-                        const q = getParams.get('q');
-                        document.getElementById("refineQuery").value = q;
+                        // const queryString = window.location.search;
+                        // const getParams = new URLSearchParams(queryString);
+                        // const q = getParams.get('q');
+                        // document.getElementById("refineQuery").value = q;
                     </script>
 
                     <!-- Source set facets -->
@@ -267,16 +267,16 @@
                         </select>
                     </li>
                     <script type="text/javascript">
-                        const select = document.getElementById("source_set_names");
-                        for (let i = 0; i < sourceSetNamesFacets.length; i+= 2){
-                            let opt = document.createElement("option");
-                            opt.textContent = `${sourceSetNamesFacets[i]} [${sourceSetNamesFacets[i+1]}]`;
-                            opt.value = sourceSetNamesFacets[i];
-                            if (selectedSourceSetNamesFacets !== null && selectedLanguageFacets.includes(sourceSetNamesFacets[i])){
-                                opt.selected = true;
-                            }
-                            select.appendChild(opt);
-                        }
+                        // const select = document.getElementById("source_set_names");
+                        // for (let i = 0; i < sourceSetNamesFacets.length; i+= 2){
+                        //     let opt = document.createElement("option");
+                        //     opt.textContent = `${sourceSetNamesFacets[i]} [${sourceSetNamesFacets[i+1]}]`;
+                        //     opt.value = sourceSetNamesFacets[i];
+                        //     if (selectedSourceSetNamesFacets !== null && selectedLanguageFacets.includes(sourceSetNamesFacets[i])){
+                        //         opt.selected = true;
+                        //     }
+                        //     select.appendChild(opt);
+                        // }
                     </script>
                     <!-- End source set facets -->
 
@@ -290,12 +290,12 @@
                         <input type="number" class="year-facet" name="year_end" id="year_end" value="" placeholder="End year">
                     </li>
                     <script type="text/javascript">
-                        if (selectedYearStartFacet !== null){
-                            document.getElementById("year_start").value = selectedYearStartFacet;
-                        }
-                        if (selectedYearEndFacet !== null){
-                            document.getElementById("year_end").value = selectedYearEndFacet;
-                        }
+                        // if (selectedYearStartFacet !== null){
+                        //     document.getElementById("year_start").value = selectedYearStartFacet;
+                        // }
+                        // if (selectedYearEndFacet !== null){
+                        //     document.getElementById("year_end").value = selectedYearEndFacet;
+                        // }
                     </script>
                     <!-- End date range facet -->
 
@@ -308,26 +308,26 @@
                     </div>
 
                     <script type="text/javascript">
-                        let nonZeroFacets = 0;
-                        const languageListDiv = document.getElementById("languageList");
-                        for (let i = 0; i < languageFacets.length; i+=2){
-                            if (languageFacets[i+1] === 0){
-                                continue;
-                            } else{
-                                nonZeroFacets++;
-                            }
-                            if (languageFacets[i] === 'zh'){
-                                languageFacets[i] = 'Zh-Tw';
-                            }
-                            languageListDiv.innerHTML +=  `<li class="list-group-item"> <div className="checkbox"> <label className="plain"> <input type="checkbox" name="language[]" value='${languageFacets[i]}'`;
-                            if (isFacetSelected(languageFacets[i], selectedLanguageFacets)){
-                                languageListDiv.innerHTML += "checked";
-                            }
-                            languageListDiv.innerHTML += `</label> <span className="badge document-count pull-right ">${languageFacets[i+1]}</span> </div> </li>`;
-                        }
-                        if (nonZeroFacets === 0){
-                            languageListDiv.innerHTML = '<li className="list-group-item"><em>No language data</em></li>';
-                        }
+                        // let nonZeroFacets = 0;
+                        // const languageListDiv = document.getElementById("languageList");
+                        // for (let i = 0; i < languageFacets.length; i+=2){
+                        //     if (languageFacets[i+1] === 0){
+                        //         continue;
+                        //     } else{
+                        //         nonZeroFacets++;
+                        //     }
+                        //     if (languageFacets[i] === 'zh'){
+                        //         languageFacets[i] = 'Zh-Tw';
+                        //     }
+                        //     languageListDiv.innerHTML +=  `<li class="list-group-item"> <div className="checkbox"> <label className="plain"> <input type="checkbox" name="language[]" value='${languageFacets[i]}'`;
+                        //     if (isFacetSelected(languageFacets[i], selectedLanguageFacets)){
+                        //         languageListDiv.innerHTML += "checked";
+                        //     }
+                        //     languageListDiv.innerHTML += `</label> <span className="badge document-count pull-right ">${languageFacets[i+1]}</span> </div> </li>`;
+                        // }
+                        // if (nonZeroFacets === 0){
+                        //     languageListDiv.innerHTML = '<li className="list-group-item"><em>No language data</em></li>';
+                        // }
                     </script>
                     <!-- End language facets -->
 
@@ -344,32 +344,48 @@
                         <input type="submit" class="btn btn-primary btn-sm pull-right" value="Refine Search">
                     </li>
                     <script type="text/javascript">
-                        nonZeroFacets = 0;
-                        const subjectListDiv = document.getElementById("subjectsList");
-                        for (let i = 0; i < subjectFacets.length; i+=2){
-                            if (subjectFacets[i+1] === 0){
-                                continue;
-                            } else{
-                                nonZeroFacets++;
-                            }
-                            subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
-                            if (isFacetSelected(subjectFacets[i], selectedSubjectFacets)){
-                                subjectListDiv.innerHTML += "checked";
-                            }
-                            subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
-                        }
-                        //check if there are any subject tags
-                        if (nonZeroFacets === 0){
-                            subjectFacets.innerHTML = '<li className="list-group-item"><em>No subject tags</em></li>';
-                        }
+                        // nonZeroFacets = 0;
+                        // const subjectListDiv = document.getElementById("subjectsList");
+                        // for (let i = 0; i < subjectFacets.length; i+=2){
+                        //     if (subjectFacets[i+1] === 0){
+                        //         continue;
+                        //     } else{
+                        //         nonZeroFacets++;
+                        //     }
+                        //     subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
+                        //     if (isFacetSelected(subjectFacets[i], selectedSubjectFacets)){
+                        //         subjectListDiv.innerHTML += "checked";
+                        //     }
+                        //     subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
+                        // }
+                        // //check if there are any subject tags
+                        // if (nonZeroFacets === 0){
+                        //     subjectFacets.innerHTML = '<li className="list-group-item"><em>No subject tags</em></li>';
+                        // }
                     </script>
                 </ul>
             </form>
+            <ul class="list-group">
+                <li class="list-group-item header">
+                    About
+                </li>
+                <li class="list-group-item" style="height: 250px; font-size: small;">
+                    The Global ETD Search service is a free service for researchers
+                    to find electronic theses and dissertations.  This service is
+                    provided by the
+                    <a href="http://www.ndltd.org/">Networked Digital Library of Theses and Dissertations</a>.
+                    <br/>
+                    Our metadata is collected from universities around the world.  If you
+                    manage a university/consortium/country archive and want to be added, details can
+                    be found on the <a href="http://www.ndltd.org/resources/manage-etds/help-build-global-etd-search">NDLTD website</a>.
+                </li>
+            </ul>
         </div>
         <div class="col-lg-9">
             <h3>Search Results</h3>
-            <div id="raw"></div>
-            <div id="result"></div>
+            <div id="resultsAndSuggestionsDiv">
+            </div>
+        </div>
             <table class="table-bordered">
                 <tbody>
 
@@ -382,6 +398,362 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    //variables needed for search
+    // let documents;
+    let data;
+    let totalCount;
+    let cursor;
+    let batchSize;
+    let queryTime;
+    let suggestions;
+
+    //facet variables
+    let selectedLanguageFacets = getFacetList('language');
+    let selectedSubjectFacets = getFacetList('subject');
+    let selectedSourceSetNamesFacets = getFacetList('source_set_names');
+    let selectedYearStartFacet = getIfSet('year_start');
+    let selectedYearEndFacet = getIfSet('year_end');
+    let languageFacets;
+    let subjectFacets;
+    let sourceSetNamesFacets;
+
+
+    //functions for handling solr queries
+    function getSuggestions(response){
+        let output = [];
+        if (response.hasOwnProperty("spellcheck")){
+            const suggestionsBlock = response.spellcheck.suggestions;
+            for (let i = 0; i < suggestionsBlock.length; i += 2){
+                if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
+                    output.push(suggestionsBlock[i+1]);
+                }
+            }
+        }
+    }
+
+    //function for creating link to show document
+    function getLinkForDoc(id){
+        return `show.html?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
+    }
+
+    //function to create link for another search
+    function getLinkForAnotherSearch(query){
+        return `search.html?id=${query}`;
+    }
+
+    //function to create link for tag search
+    function getLinkForTagSearch(tag){
+        return `search.html?q=subject:"${tag}"`;
+    }
+
+    //Returns a get value if it exists
+    function getIfSet(key){
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.has(key) && urlParams.get(key) !== null){
+            return urlParams.getAll(key)[0] === "" ? null : urlParams.getAll(key);
+        } else {
+            return null;
+        }
+    }
+    function getCheckedBoxes(checkboxName) {
+        var form = document.getElementById('searchParamForm');
+        var checkboxes = form.querySelectorAll('input[type="checkbox"]');
+        let checkboxesChecked = []
+        // loop over them all
+        for (let i=0; i<checkboxes.length; i++) {
+            // And stick the checked ones onto an array...
+            if (checkboxes[i].checked) {
+                checkboxesChecked.push(checkboxes[i].value);
+            }
+        }
+        // Return the array if it is non-empty, or null
+        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+    }
+
+    function getFacetList(facetName){
+        const facet = getIfSet(facetName);
+        if (facet !== null) {
+            return (Array.isArray(facet)) ? facet : [facet];
+        }
+        return null;
+    }
+
+    //build the facet query
+    function buildFacetString(facetName, mustWrapQuotes = false) {
+        let facets = getFacetList(facetName);
+        if (facets !== null) {
+            if (mustWrapQuotes){
+                facets = facets.map(function (facet){
+                    return '"' + facet + '"';
+                })
+            }
+            const facetString = facets.join(" OR ");
+            if (facetName === "language"){
+                return `+${facetName}:(${facetString})`;
+            } else{
+                return ` AND ${facetName}:(${facetString})`;
+            }
+        } else {
+            return '';
+        }
+    }
+
+    //build facet date query
+    function buildDateFacetString(){
+        let yearStartFacet = getIfSet("year_start");
+        let yearEndFacet = getIfSet("year_end");
+        const today = new Date();
+        //check if either the start year or end year exists
+        if(yearStartFacet !== null || yearEndFacet !== null){
+            if (yearStartFacet !== null){
+                //check whether start date is before today and after 1970
+                yearStartFacet = Math.min(Math.max(Number(yearStartFacet), 1970), today.getFullYear());
+            } else{
+                //if start date does not exist, set it to 1070
+                yearStartFacet = 1970
+            }
+
+            if (yearEndFacet !== null){
+                //check whether end date is less than today and after 1970
+                yearEndFacet = Math.max(Math.min(Number(yearEndFacet), today.getFullYear()), 1970);
+            } else {
+                yearEndFacet = today.getFullYear();
+            }
+
+        }
+        if (yearStartFacet !== null && yearEndFacet !== null){
+            return ` AND date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z]`;
+        } else{
+            return '';
+        }
+    }
+
+    //build link to different page
+    function buildPageLink(startPage){
+        return `search.html${window.location.search}&start=${startPage}`;
+    }
+
+    //check whether facet is selected
+    function isFacetSelected(facet, facetList){
+        return (facetList !== null && facetList.includes(facet));
+    }
+
+    //function to build the main_query
+    function buildMainQueryString(){
+        const queryString = window.location.search;
+        const getParams = new URLSearchParams(queryString);
+        const q = getParams.get('q');
+        const start = (getParams.has("start") ? Math.max(Number(getParams.get("start")), 0) : 0 );
+        const language = buildFacetString("language");
+        const subject = buildFacetString("subject");
+        const sourceSetNames = buildFacetString("source_set_names");
+        const date = buildDateFacetString();
+        // const facetQuery = `${buildFacetString("language")}${buildFacetString("subject")}${buildFacetString("source_set_names", true)}${buildDateFacetString()}`
+        const facetQuery = '' + language + subject + sourceSetNames + date;
+        // if ( typeof facetQuery === 'undefined'){
+            // return `q=${q}&start=${start}`;
+        // } else {
+            return `q=${encodeURI(q)}&start=${encodeURI(start)}&fq=${encodeURI(facetQuery)}`;
+        // }
+
+    }
+
+    //function to send main_query on page load
+    $.get({
+        url: "SolrServlet",
+        data: {
+            queryType: "main_query",
+            queryString: buildMainQueryString(),
+        },
+        dataType: "json",
+        success: function (data){
+            documents = data.response.docs;
+            totalCount = data.response.numFound;
+            cursor = data.response.start;
+            batchSize = documents.length;
+            queryTime = data.responseHeader.QTime / 1000;
+
+            suggestions = getSuggestions(data);
+
+            //facets
+            sourceSetNamesFacets = data.facet_counts.facet_fields.source_set_names;
+            languageFacets = data.facet_counts.facet_fields.language;
+            subjectFacets = data.facet_counts.facet_fields.subject;
+            console.log(data);
+            loadScript();
+
+        },
+        error: function(data) {
+            console.log('error getting query');
+            console.log(data);
+            // alert('woops!'); //or whatever
+        }
+
+    })
+
+    //load the html tags after the json query has loaded
+    function loadScript(){
+        const queryString = window.location.search;
+        const getParams = new URLSearchParams(queryString);
+        const q = getParams.get('q');
+        document.getElementById("refineQuery").value = q;
+
+        //populate the source dropdown
+        const select = document.getElementById("source_set_names");
+        for (let i = 0; i < sourceSetNamesFacets.length; i+= 2){
+            let opt = document.createElement("option");
+            opt.textContent = `${sourceSetNamesFacets[i]} [${sourceSetNamesFacets[i+1]}]`;
+            opt.value = sourceSetNamesFacets[i];
+            if (selectedSourceSetNamesFacets !== null && selectedSourceSetNamesFacets.includes(sourceSetNamesFacets[i])){
+                opt.selected = true;
+            }
+            select.appendChild(opt);
+        }
+
+        if (selectedYearStartFacet !== null){
+            document.getElementById("year_start").value = selectedYearStartFacet;
+        }
+        if (selectedYearEndFacet !== null){
+            document.getElementById("year_end").value = selectedYearEndFacet;
+        }
+
+        //add the language checkboxes
+        let nonZeroFacets = 0;
+        const languageListDiv = document.getElementById("languageList");
+        for (let i = 0; i < languageFacets.length; i+=2){
+            if (languageFacets[i] !== 'tw'){
+                if (languageFacets[i+1] === 0){
+                    continue;
+                } else{
+                    nonZeroFacets++;
+                }
+                if (languageFacets[i] === 'zh'){
+                    languageFacets[i] = 'Zh-Tw';
+                }
+                const listItem = document.createElement("li");
+                const formCheckDiv = document.createElement("div");
+                const checkboxLabel = document.createElement("label");
+                const checkboxInput = document.createElement("input");
+                listItem.className = "list-group-item";
+                formCheckDiv.className = "form-check";
+                checkboxInput.type = "checkbox";
+                checkboxInput.className = "form-check-input";
+                checkboxInput.name = "language";
+                checkboxInput.id = `$languageCheckbox${languageFacets[i]}`;
+                checkboxInput.value = languageFacets[i];
+                checkboxLabel.className = "form-check-label";
+                checkboxLabel.for = `$languageCheckbox${languageFacets[i]}`;
+                let languageString = languageFacets[i];
+                languageString = languageString.charAt(0).toUpperCase() + languageString.slice(1);
+                checkboxLabel.textContent = ` ${languageString}`;
+
+                if (isFacetSelected(languageFacets[i], selectedLanguageFacets)){
+                    checkboxInput.checked = true;
+                }
+
+                listItem.appendChild(checkboxInput);
+                listItem.appendChild(checkboxLabel);
+                languageListDiv.appendChild(listItem);
+
+            }
+
+        }
+        if (nonZeroFacets === 0){
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.textContent = "No language data";
+            languageListDiv.appendChild(listItem);
+        }
+
+        //add the subject checkboxes
+        nonZeroFacets = 0;
+        const subjectListDiv = document.getElementById("subjectsList");
+        for (let i = 0; i < subjectFacets.length; i+=2){
+            if (subjectFacets[i+1] === 0){
+                continue;
+            } else{
+                nonZeroFacets++;
+            }
+            const listItem = document.createElement("li");
+            const formCheckDiv = document.createElement("div");
+            const checkboxLabel = document.createElement("label");
+            const checkboxInput = document.createElement("input");
+            listItem.className = "list-group-item";
+            formCheckDiv.className = "form-check";
+            checkboxInput.type = "checkbox";
+            checkboxInput.className = "form-check-input";
+            checkboxInput.name = "subject";
+            checkboxInput.id = `subjectCheckbox${subjectFacets[i]}`;
+            checkboxInput.value = subjectFacets[i];
+            checkboxLabel.className = "form-check-label";
+            checkboxLabel.for = `subjectCheckbox${subjectFacets[i]}`;
+            let subjectString = subjectFacets[i];
+            subjectString = subjectString.charAt(0).toUpperCase() + subjectString.slice(1);
+            checkboxLabel.textContent = ` ${subjectString}`;
+
+            if (isFacetSelected(subjectFacets[i], selectedSubjectFacets)){
+                checkboxInput.checked = true;
+            }
+
+            listItem.appendChild(checkboxInput);
+            listItem.appendChild(checkboxLabel);
+            subjectListDiv.appendChild(listItem);
+            // subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
+
+            // subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
+        }
+        //check if there are any subject tags
+        if (nonZeroFacets === 0){
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.textContent = "No subject data";
+            subjectListDiv.appendChild(listItem);
+        }
+
+        //add number results and spelling suggestions
+        const resultsAndSuggestionsDiv = document.getElementById("resultsAndSuggestionsDiv");
+        const smallText = document.createElement("small");
+        if (batchSize > 0){
+            smallText.textContent = `Showing ${cursor + 1} to ${cursor + batchSize} of ${totalCount} (${queryTime} seconds)`;
+        } else{
+            smallText.textContent = `Showing ${cursor} to ${cursor} of ${totalCount} (${queryTime} seconds)`;
+        }
+        resultsAndSuggestionsDiv.appendChild(smallText);
+
+        if (suggestions.length > 0){
+            const p = document.createElement("p");
+            let suggestions = "Spelling suggestions:";
+            for (let i = 0; i < suggestions.length; i++) {
+                const emElement = document.createElement("em");
+                const aElement = document.createElement("a");
+                aElement.href = getLinkForAnotherSearch(suggestions[i]);
+                aElement.textContent = suggestions[i];
+                emElement.appendChild(aElement);
+                p.append(suggestions);
+                p.appendChild(emElement);
+            }
+        }
+    }
+
+
+
+    //show log in buttons in navbar is not logged in
+    if(Number(sessionStorage.getItem("logged_in")) === 1) {
+        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
+        console.log("this should fire");
+        document.getElementById("loggedInNavBar").classList.toggle("hideP");
+        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
+    }
+
+
+
+
+
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
