@@ -289,14 +289,6 @@
                         to
                         <input type="number" class="year-facet" name="year_end" id="year_end" value="" placeholder="End year">
                     </li>
-                    <script type="text/javascript">
-                        // if (selectedYearStartFacet !== null){
-                        //     document.getElementById("year_start").value = selectedYearStartFacet;
-                        // }
-                        // if (selectedYearEndFacet !== null){
-                        //     document.getElementById("year_end").value = selectedYearEndFacet;
-                        // }
-                    </script>
                     <!-- End date range facet -->
 
                     <!-- Language facets -->
@@ -307,28 +299,6 @@
 
                     </div>
 
-                    <script type="text/javascript">
-                        // let nonZeroFacets = 0;
-                        // const languageListDiv = document.getElementById("languageList");
-                        // for (let i = 0; i < languageFacets.length; i+=2){
-                        //     if (languageFacets[i+1] === 0){
-                        //         continue;
-                        //     } else{
-                        //         nonZeroFacets++;
-                        //     }
-                        //     if (languageFacets[i] === 'zh'){
-                        //         languageFacets[i] = 'Zh-Tw';
-                        //     }
-                        //     languageListDiv.innerHTML +=  `<li class="list-group-item"> <div className="checkbox"> <label className="plain"> <input type="checkbox" name="language[]" value='${languageFacets[i]}'`;
-                        //     if (isFacetSelected(languageFacets[i], selectedLanguageFacets)){
-                        //         languageListDiv.innerHTML += "checked";
-                        //     }
-                        //     languageListDiv.innerHTML += `</label> <span className="badge document-count pull-right ">${languageFacets[i+1]}</span> </div> </li>`;
-                        // }
-                        // if (nonZeroFacets === 0){
-                        //     languageListDiv.innerHTML = '<li className="list-group-item"><em>No language data</em></li>';
-                        // }
-                    </script>
                     <!-- End language facets -->
 
                     <!-- Subject facets -->
@@ -343,26 +313,6 @@
                     <li class="list-group-item" style="height: 52px; padding-right: 10px; padding-top: 10px;">
                         <input type="submit" class="btn btn-primary btn-sm pull-right" value="Refine Search">
                     </li>
-                    <script type="text/javascript">
-                        // nonZeroFacets = 0;
-                        // const subjectListDiv = document.getElementById("subjectsList");
-                        // for (let i = 0; i < subjectFacets.length; i+=2){
-                        //     if (subjectFacets[i+1] === 0){
-                        //         continue;
-                        //     } else{
-                        //         nonZeroFacets++;
-                        //     }
-                        //     subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
-                        //     if (isFacetSelected(subjectFacets[i], selectedSubjectFacets)){
-                        //         subjectListDiv.innerHTML += "checked";
-                        //     }
-                        //     subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
-                        // }
-                        // //check if there are any subject tags
-                        // if (nonZeroFacets === 0){
-                        //     subjectFacets.innerHTML = '<li className="list-group-item"><em>No subject tags</em></li>';
-                        // }
-                    </script>
                 </ul>
             </form>
             <ul class="list-group">
@@ -383,24 +333,81 @@
         </div>
         <div class="col-lg-9">
             <h3>Search Results</h3>
-            <div id="resultsAndSuggestionsDiv">
+            <div class="card-body">
+                <div class="row search-body">
+                    <div class="col-lg-12">
+                        <div class="search-result">
+                            <div id="resultsAndSuggestionsDiv" class="result-header">
+
+                            </div>
+                            <div class="result-body">
+                                <div class="table-responsive">
+                                    <table class="table widget-26">
+                                        <tbody id="searchResultsTableBody">
+                                            <tr>
+                                                <td>
+                                                    <div class="widget-26-job-category bg-soft-info">
+                                                        <i class="indicator bg-info"></i>
+                                                        <span>Infra Supervision</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="widget-26-job-starred">
+                                                        <a href="#">
+                                                            <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="24"
+                                                                    height="24"
+                                                                    viewBox="0 0 24 24"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    stroke-width="2"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    class="feather feather-star starred"
+                                                            >
+                                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                                            </svg>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <nav class="d-flex justify-content-center">
+                    <ul class="pagination pagination-base pagination-boxed pagination-square mb-0">
+                        <li class="page-item">
+                            <a class="page-link no-border" href="#">
+                                <span aria-hidden="true">«</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link no-border" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link no-border" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link no-border" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link no-border" href="#">4</a></li>
+                        <li class="page-item">
+                            <a class="page-link no-border" href="#">
+                                <span aria-hidden="true">»</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-        </div>
-            <table class="table-bordered">
-                <tbody>
-
-                </tbody>
-
-
-
-            </table>
-
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
     //variables needed for search
-    // let documents;
+    let docs;
     let data;
     let totalCount;
     let cursor;
@@ -420,16 +427,20 @@
 
 
     //functions for handling solr queries
-    function getSuggestions(response){
-        let output = [];
-        if (response.hasOwnProperty("spellcheck")){
-            const suggestionsBlock = response.spellcheck.suggestions;
-            for (let i = 0; i < suggestionsBlock.length; i += 2){
-                if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
-                    output.push(suggestionsBlock[i+1]);
-                }
+    function getSuggestions(data){
+        let suggestions;
+        if (data.hasOwnProperty("spellcheck")){
+            const suggestionsBlock = data.spellcheck.suggestions;
+            if (suggestionsBlock.length > 0 ){
+                suggestions = suggestionsBlock[1].suggestion;
             }
+            // for (let i = 0; i < suggestionsBlock.length; i += 2){
+            //     if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
+            //         output.push(suggestionsBlock[i+1]);
+            //     }
+            // }
         }
+        return suggestions;
     }
 
     //function for creating link to show document
@@ -439,7 +450,7 @@
 
     //function to create link for another search
     function getLinkForAnotherSearch(query){
-        return `search.html?id=${query}`;
+        return `search.html?q=${query}`;
     }
 
     //function to create link for tag search
@@ -569,10 +580,10 @@
         },
         dataType: "json",
         success: function (data){
-            documents = data.response.docs;
+            docs = data.response.docs;
             totalCount = data.response.numFound;
             cursor = data.response.start;
-            batchSize = documents.length;
+            batchSize = docs.length;
             queryTime = data.responseHeader.QTime / 1000;
 
             suggestions = getSuggestions(data);
@@ -712,29 +723,187 @@
             subjectListDiv.appendChild(listItem);
         }
 
-        //add number results and spelling suggestions
+        // //add number results and spelling suggestions
         const resultsAndSuggestionsDiv = document.getElementById("resultsAndSuggestionsDiv");
+        const resultsDiv = document.createElement("div");
+        resultsDiv.className = "row";
+        const resultsColDiv = document.createElement("div");
+        resultsColDiv.className = "col-lg-6";
+        const recordsDiv = document.createElement("div");
+        recordsDiv.className = "records";
         const smallText = document.createElement("small");
         if (batchSize > 0){
-            smallText.textContent = `Showing ${cursor + 1} to ${cursor + batchSize} of ${totalCount} (${queryTime} seconds)`;
+            smallText.textContent = `Showing: ${cursor + 1}-${cursor + batchSize} of ${totalCount} results (${queryTime} seconds)`;
         } else{
-            smallText.textContent = `Showing ${cursor} to ${cursor} of ${totalCount} (${queryTime} seconds)`;
+            smallText.textContent = `Showing ${cursor}-${cursor} of ${totalCount} results (${queryTime} seconds)`;
         }
-        resultsAndSuggestionsDiv.appendChild(smallText);
+        recordsDiv.appendChild(smallText);
+        resultsColDiv.appendChild(recordsDiv);
+        resultsDiv.appendChild(resultsColDiv);
+        resultsAndSuggestionsDiv.appendChild(resultsDiv);
 
-        if (suggestions.length > 0){
-            const p = document.createElement("p");
-            let suggestions = "Spelling suggestions:";
-            for (let i = 0; i < suggestions.length; i++) {
-                const emElement = document.createElement("em");
-                const aElement = document.createElement("a");
-                aElement.href = getLinkForAnotherSearch(suggestions[i]);
-                aElement.textContent = suggestions[i];
-                emElement.appendChild(aElement);
-                p.append(suggestions);
-                p.appendChild(emElement);
+        if (typeof suggestions !== "undefined"){
+            if (suggestions.length > 0){
+                const resultsAndSuggestionsDiv = document.getElementById("resultsAndSuggestionsDiv");
+                const resultsDiv = document.createElement("div");
+                resultsDiv.className = "row";
+                const resultsColDiv = document.createElement("div");
+                resultsColDiv.className = "col-lg-6";
+                const recordsDiv = document.createElement("div");
+                recordsDiv.className = "records";
+                let suggestionString = "Spelling suggestions: ";
+                recordsDiv.append(suggestionString);
+                for (let i = 0; i < suggestions.length; i++) {
+                    const emElement = document.createElement("em");
+                    const aElement = document.createElement("a");
+                    aElement.href = getLinkForAnotherSearch(suggestions[i]);
+                    aElement.textContent = `"${suggestions[i]}"`;
+
+                    emElement.appendChild(aElement);
+                    if (i !== (suggestions.length - 1)){
+                        emElement.append( ", ");
+                    }
+
+                    recordsDiv.appendChild(emElement);
+                }
+                resultsColDiv.appendChild(recordsDiv);
+                resultsDiv.appendChild(resultsColDiv);
+                resultsAndSuggestionsDiv.appendChild(resultsDiv);
             }
         }
+
+
+        // populate the search results
+        const searchResultsTableBody = document.getElementById("searchResultsTableBody");
+        let loopIndex = cursor + 1;
+        for (let i = 0; i < docs.length; i++){
+            //create a row for the table
+            const resultRow = document.createElement("tr");
+
+            //index column
+            const indexCol = document.createElement("td");
+            const indexDiv = document.createElement("div");
+            indexDiv.className = "widget-26-job-emp-img";
+            const indexA = document.createElement("a");
+            indexA.textContent = loopIndex;
+            indexDiv.appendChild(indexA);
+            indexCol.appendChild(indexDiv);
+            //add to the row
+            resultRow.appendChild(indexCol);
+
+            //title column
+            const titleCol = document.createElement("td");
+            const titleDiv = document.createElement("div");
+            titleDiv.className = "widget-26-job-title";
+            const titleTag = document.createElement("a");
+            titleTag.href = getLinkForDoc(docs[i].id);
+            titleTag.textContent = docs[i].title;
+
+            const dateTag = document.createElement("p");
+            dateTag.className = "m-0";
+            const dateSpanTag = document.createElement("span");
+            dateSpanTag.className = "text-muted time"
+            dateSpanTag.textContent = ((docs.hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
+            dateTag.appendChild(dateSpanTag);
+
+            const descriptionTag = document.createElement("p");
+            descriptionTag.className = "m-0";
+            const descriptionSpanTag = document.createElement("span");
+            descriptionSpanTag.className = "text-muted time"
+            if (docs.hasOwnProperty("description")){
+                descriptionSpanTag.textContent = docs[i].description;
+            } else {
+                descriptionSpanTag.textContent = "No description available";
+            }
+            descriptionTag.appendChild(descriptionSpanTag);
+
+            titleCol.appendChild(titleTag);
+            titleCol.appendChild(dateTag);
+            titleCol.appendChild(descriptionTag);
+
+            resultRow.appendChild(titleCol);
+
+            //author column
+            const authorCol = document.createElement("td");
+            const authorDiv = document.createElement("div");
+            authorDiv.className = "widget-26-job-info";
+            const authorTag = document.createElement("p");
+            authorTag.className = "type m-0";
+            authorTag.textContent = ((docs.hasOwnProperty("creator")) ? docs[i].creator.join(', ') : '' );
+            authorDiv.appendChild(authorTag);
+
+            authorCol.appendChild(authorDiv);
+
+            resultRow.appendChild(authorCol);
+
+            //links column
+            const linksCol = document.createElement("td");
+            const linksDiv = document.createElement("div");
+            linksDiv.className = "widget-26-job-salary";
+            if (docs[i].hasOwnProperty("has_links") && docs[i].has_links === true) {
+                const spanLinks = document.createElement("span");
+                spanLinks.className = "glyphicon glyphicon-link";
+                const iText = document.createElement("i");
+                iText.textContent = "(has links)";
+                linksDiv.appendChild(spanLinks);
+                linksDiv.appendChild(iText);
+            }
+            if (docs[i].hasOwnProperty("has_pdf") && docs[i].has_pdf === true) {
+                const spanLinks = document.createElement("span");
+                spanLinks.className = "glyphicon glyphicon-file";
+                const iText = document.createElement("i");
+                iText.textContent = "(PDF)";
+                linksDiv.appendChild(spanLinks);
+                linksDiv.appendChild(iText);
+            }
+
+            linksCol.appendChild(linksDiv);
+
+            resultRow.appendChild(linksCol);
+
+            //tags column
+            const tagsCol = document.createElement("td");
+            const tagsDiv = document.createElement("div");
+            tagsDiv.className = "widget-26-job-category bg-soft-info";
+            const indicator = document.createElement("i");
+            indicator.className = "indicator bg-info";
+            const textSpan = document.createElement("span");
+        }
+
+
+
+            indexColumn.textContent = loopIndex;
+
+            //create a second column for the row
+            const dataColumn = document.createElement("td");
+
+            //add content to the column
+
+            //create and add the result heading to the data column
+            const heading = document.createElement("h4");
+            const aTag = document.createElement("a");
+            aTag.href = getLinkForDoc(document[i].id);
+            aTag.textContent = document[i].title;
+            heading.appendChild(aTag);
+            dataColumn.appendChild(heading);
+
+            //create and add creator to the data column
+            const creatorSpan = document.createElement("span");
+            const creatorEm = document.createElement("em");
+            creatorEm.textContent = ((docs.hasOwnProperty("creator")) ? docs[i].creator.join(', ') : '' );
+            creatorSpan.appendChild(creatorEm);
+            dataColumn.appendChild(creatorSpan);
+
+            //create and add date to the data column
+            const dateSpan = document.createElement("span");
+            const dateEm = document.createElement("em");
+            dateEm.textContent = ((docs.hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
+
+
+
+        // }
+
+
     }
 
 
@@ -754,6 +923,322 @@
 
 
 </script>
+<style>
+    /*body{margin-top:20px;*/
+    /*    background:#eee;*/
+    /*}*/
+
+    /*.btn {*/
+    /*    margin-bottom: 5px;*/
+    /*}*/
+
+    .grid {
+        position: relative;
+        width: 100%;
+        background: #fff;
+        color: #666666;
+        border-radius: 2px;
+        margin-bottom: 25px;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .grid .grid-body {
+        padding: 15px 20px 15px 20px;
+        font-size: 0.9em;
+        line-height: 1.9em;
+    }
+
+    .search table tr td.rate {
+        color: #f39c12;
+        line-height: 50px;
+    }
+
+    .search table tr:hover {
+        cursor: pointer;
+    }
+
+    .search table tr td.image {
+        width: 50px;
+    }
+
+    .search table tr td img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .search table tr td.rate {
+        color: #f39c12;
+        line-height: 50px;
+    }
+
+    .search table tr td.price {
+        font-size: 1.5em;
+        line-height: 50px;
+    }
+
+    .search #price1,
+    .search #price2 {
+        display: inline;
+        font-weight: 600;
+    }
+    /*body{*/
+    /*    background:#dcdcdc;*/
+    /*    margin-top:20px;}*/
+
+    .widget-26 {
+        color: #3c4142;
+        font-weight: 400;
+    }
+
+    .widget-26 tr:first-child td {
+        border: 0;
+    }
+
+    .widget-26 .widget-26-job-emp-img img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+    }
+
+    .widget-26 .widget-26-job-title {
+        min-width: 200px;
+    }
+
+    .widget-26 .widget-26-job-title a {
+        font-weight: 400;
+        font-size: 1.3rem;
+        color: #3c4142;
+        line-height: 1.5;
+        text-decoration: none !important;
+    }
+
+    .widget-26 .widget-26-job-title a:hover {
+        color: #68CBD7;
+        text-decoration: none;
+    }
+
+    .widget-26 .widget-26-job-title .employer-name {
+        margin: 0;
+        line-height: 1.5;
+        font-weight: 400;
+        color: #3c4142;
+        font-size: 1rem;
+        color: #3c4142;
+    }
+
+    .widget-26 .widget-26-job-title .employer-name:hover {
+        color: #68CBD7;
+        text-decoration: none;
+    }
+
+    .widget-26 .widget-26-job-title .time {
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .widget-26 .widget-26-job-info {
+        min-width: 100px;
+        font-weight: 400;
+    }
+
+    .widget-26 .widget-26-job-info p {
+        line-height: 1.5;
+        color: #3c4142;
+        font-size: 12px;
+    }
+
+    .widget-26 .widget-26-job-info .location {
+        color: #3c4142;
+    }
+
+    .widget-26 .widget-26-job-salary {
+        min-width: 70px;
+        font-weight: 400;
+        color: #3c4142;
+        font-size: 12px;
+    }
+
+    .widget-26 .widget-26-job-category {
+        padding: .5rem;
+        display: inline-flex;
+        white-space: nowrap;
+        border-radius: 15px;
+    }
+
+    .widget-26 .widget-26-job-category .indicator {
+        width: 13px;
+        height: 13px;
+        margin-right: .5rem;
+        float: left;
+        border-radius: 50%;
+    }
+
+    .widget-26 .widget-26-job-category span {
+        font-size: 0.8125rem;
+        color: #3c4142;
+        font-weight: 600;
+    }
+
+    .widget-26 .widget-26-job-starred svg {
+        width: 20px;
+        height: 20px;
+        color: #fd8b2c;
+    }
+
+    .widget-26 .widget-26-job-starred svg.starred {
+        fill: #fd8b2c;
+    }
+    .bg-soft-base {
+        background-color: #e1f5f7;
+    }
+    .bg-soft-warning {
+        background-color: #fff4e1;
+    }
+    .bg-soft-success {
+        background-color: #d1f6f2;
+    }
+    .bg-soft-danger {
+        background-color: #fedce0;
+    }
+    .bg-soft-info {
+        background-color: #d7efff;
+    }
+
+
+    .search-form {
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 1rem;
+    }
+
+    .search-form input {
+        height: 100%;
+        background: transparent;
+        border: 0;
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        height: 100%;
+        font-size: 1rem;
+    }
+
+    .search-form select {
+        background: transparent;
+        border: 0;
+        padding: 1rem;
+        height: 100%;
+        font-size: 1rem;
+    }
+
+    .search-form select:focus {
+        border: 0;
+    }
+
+    .search-form button {
+        height: 100%;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .search-form button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .search-body {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-body .search-filters .filter-list {
+        margin-bottom: 1.3rem;
+    }
+
+    .search-body .search-filters .filter-list .title {
+        color: #3c4142;
+        margin-bottom: 1rem;
+    }
+
+    .search-body .search-filters .filter-list .filter-text {
+        color: #727686;
+    }
+
+    .search-body .search-result .result-header {
+        margin-bottom: 2rem;
+    }
+
+    .search-body .search-result .result-header .records {
+        color: #3c4142;
+    }
+
+    .search-body .search-result .result-header .result-actions {
+        text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .search-body .search-result .result-header .result-actions .result-sorting {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-body .search-result .result-header .result-actions .result-sorting span {
+        flex-shrink: 0;
+        font-size: 0.8125rem;
+    }
+
+    .search-body .search-result .result-header .result-actions .result-sorting select {
+        color: #68CBD7;
+    }
+
+    .search-body .search-result .result-header .result-actions .result-sorting select option {
+        color: #3c4142;
+    }
+
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .search-body .search-filters {
+            display: flex;
+        }
+        .search-body .search-filters .filter-list {
+            margin-right: 1rem;
+        }
+    }
+
+    .card-margin {
+        margin-bottom: 1.875rem;
+    }
+
+    @media (min-width: 992px){
+        .col-lg-2 {
+            flex: 0 0 16.66667%;
+            max-width: 16.66667%;
+        }
+    }
+
+    .card-margin {
+        margin-bottom: 1.875rem;
+    }
+    .card {
+        border: 0;
+        box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+        -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+        -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+        -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+    }
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #ffffff;
+        background-clip: border-box;
+        border: 1px solid #e6e4e9;
+        border-radius: 8px;
+    }
+
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
