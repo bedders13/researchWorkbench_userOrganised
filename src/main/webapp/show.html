@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ResearchWorkbench</title>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light static-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.jsp">Research Workbench</a>
+        <div id="signUpAndLogInBtn">
+            <a class="btn btn-primary" href="sign_up.jsp">Create profile </a>
+            <a class="btn btn-primary" href="create_profile.jsp">Log in  </a>
+        </div>
+        <div id="loggedInNavBar" class="hideP">
+            <p id="loggedInMessage"></p>
+
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Menu
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="index.jsp">Home</a></li>
+                    <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
+                    <li><a class="dropdown-item" href="">Read Later</a></li>
+                    <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="container-lg">
+
+</div>
+<script type="text/javascript">
+    //show log in buttons in navbar is not logged in
+    if(Number(sessionStorage.getItem("logged_in")) === 1) {
+        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
+        console.log("this should fire");
+        document.getElementById("loggedInNavBar").classList.toggle("hideP");
+        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
+    }
+</script>
+
+</body>
+</html>

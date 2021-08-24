@@ -239,17 +239,18 @@
             <div class="page-header">
                 <img src="assets/img/ndltd.gif" />
             </div>
-            <form id="searchParamForm" method="get" autocomplete="off">
+            <form id="searchParamForm" action="search.html" method="get" autocomplete="off">
                 <ul class="list-group">
-                    <li class="list-group-item">
-                        Refine Query
-                    </li>
-                    <li class="list-group-item query">
-                        <input id="refineQuery" type="text" name="q" value="" placeholder="Type something to start searching...">
-                    </li>
-                    <li class="list-group-item" style="height: 52px; padding-right: 10px; padding-top: 10px;">
-                        <input type="submit" class="btn btn-primary btn-sm pull-right" value="Apply">
-                    </li>
+<!--                    <li class="list-group-item">-->
+<!--                        Refine Query-->
+<!--                    </li>-->
+<!--                    <li class="list-group-item query">-->
+<!--&lt;!&ndash;                        <input id="refineQuery" type="text" name="q" value="" placeholder="Type something to start searching...">&ndash;&gt;-->
+<!--                    </li>-->
+<!--                    <li class="list-group-item" style="height: 52px; padding-right: 10px; padding-top: 10px;">-->
+<!--                        <input type="submit" class="btn btn-primary btn-sm pull-right" value="Apply">-->
+<!--                    </li>-->
+
                     <script type="text/javascript">
                         // const queryString = window.location.search;
                         // const getParams = new URLSearchParams(queryString);
@@ -262,6 +263,7 @@
                         Source
                     </li>
                     <li class="list-group-item institution-dropdown">
+                        <input id="hiddenQ" type="hidden" name="query" value="">
                         <select id="source_set_names" name="source_set_names" class="form-control">
                             <option value="" disabled selected>Filter by source</option>
                         </select>
@@ -333,6 +335,15 @@
         </div>
         <div class="col-lg-9">
             <h3>Search Results</h3>
+            <form method="get">
+                <div class="input-group">
+                    <input id="refineQuery" type="text" name="q" class="form-control" value="">
+                    <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+              </span>
+                </div>
+            </form>
+
             <div class="card-body">
                 <div class="row search-body">
                     <div class="col-lg-12">
@@ -345,32 +356,7 @@
                                     <table class="table widget-26">
                                         <tbody id="searchResultsTableBody">
                                             <tr>
-                                                <td>
-                                                    <div class="widget-26-job-category bg-soft-info">
-                                                        <i class="indicator bg-info"></i>
-                                                        <span>Infra Supervision</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="widget-26-job-starred">
-                                                        <a href="#">
-                                                            <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width="24"
-                                                                    height="24"
-                                                                    viewBox="0 0 24 24"
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    stroke-width="2"
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    class="feather feather-star starred"
-                                                            >
-                                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                                            </svg>
-                                                        </a>
-                                                    </div>
-                                                </td>
+
                                             </tr>
 
                                         </tbody>
@@ -384,7 +370,7 @@
                     <ul class="pagination pagination-base pagination-boxed pagination-square mb-0">
                         <li class="page-item">
                             <a class="page-link no-border" href="#">
-                                <span aria-hidden="true">«</span>
+                                <span aria-hidden="true">&laquo</span>
                                 <span class="sr-only">Previous</span>
                             </a>
                         </li>
@@ -394,8 +380,9 @@
                         <li class="page-item"><a class="page-link no-border" href="#">4</a></li>
                         <li class="page-item">
                             <a class="page-link no-border" href="#">
-                                <span aria-hidden="true">»</span>
+
                                 <span class="sr-only">Next</span>
+                                <span aria-hidden="true">&raquo</span>
                             </a>
                         </li>
                     </ul>
@@ -468,20 +455,6 @@
             return null;
         }
     }
-    function getCheckedBoxes(checkboxName) {
-        var form = document.getElementById('searchParamForm');
-        var checkboxes = form.querySelectorAll('input[type="checkbox"]');
-        let checkboxesChecked = []
-        // loop over them all
-        for (let i=0; i<checkboxes.length; i++) {
-            // And stick the checked ones onto an array...
-            if (checkboxes[i].checked) {
-                checkboxesChecked.push(checkboxes[i].value);
-            }
-        }
-        // Return the array if it is non-empty, or null
-        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-    }
 
     function getFacetList(facetName){
         const facet = getIfSet(facetName);
@@ -492,7 +465,7 @@
     }
 
     //build the facet query
-    function buildFacetString(facetName, mustWrapQuotes = false) {
+    function buildFacetString(facetName, mustWrapQuotes = false, firstFq = false) {
         let facets = getFacetList(facetName);
         if (facets !== null) {
             if (mustWrapQuotes){
@@ -501,18 +474,14 @@
                 })
             }
             const facetString = facets.join(" OR ");
-            if (facetName === "language"){
-                return `+${facetName}:(${facetString})`;
-            } else{
-                return ` AND ${facetName}:(${facetString})`;
-            }
+            return (facetName === "language" || firstFq === true) ? ` +${facetName}:(${facetString})` : ` AND ${facetName}:(${facetString})`
         } else {
             return '';
         }
     }
 
     //build facet date query
-    function buildDateFacetString(){
+    function buildDateFacetString(firstFq = false){
         let yearStartFacet = getIfSet("year_start");
         let yearEndFacet = getIfSet("year_end");
         const today = new Date();
@@ -535,7 +504,7 @@
 
         }
         if (yearStartFacet !== null && yearEndFacet !== null){
-            return ` AND date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z]`;
+            return firstFq ? ` +date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z]` : ` AND date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z]`;
         } else{
             return '';
         }
@@ -555,12 +524,31 @@
     function buildMainQueryString(){
         const queryString = window.location.search;
         const getParams = new URLSearchParams(queryString);
-        const q = getParams.get('q');
+        console.log(getParams.toString());
+        let q;
+
+        q = ((getParams.has('q')) ? getParams.get('q') : getParams.get('query'));
+
         const start = (getParams.has("start") ? Math.max(Number(getParams.get("start")), 0) : 0 );
         const language = buildFacetString("language");
-        const subject = buildFacetString("subject");
-        const sourceSetNames = buildFacetString("source_set_names");
-        const date = buildDateFacetString();
+        let subject;
+        if (language === ''){
+            subject = buildFacetString("subject", false, true);
+        } else {
+            subject = buildFacetString("subject");
+        }
+        let sourceSetNames;
+        if (language === '' && subject === ''){
+            sourceSetNames = buildFacetString("source_set_names", true, true);
+        } else {
+            sourceSetNames = buildFacetString("source_set_names", true);
+        }
+        let date;
+        if (language === '' && subject === '' && sourceSetNames === ''){
+            date = buildDateFacetString(true);
+        } else {
+            date = buildDateFacetString();
+        }
         // const facetQuery = `${buildFacetString("language")}${buildFacetString("subject")}${buildFacetString("source_set_names", true)}${buildDateFacetString()}`
         const facetQuery = '' + language + subject + sourceSetNames + date;
         // if ( typeof facetQuery === 'undefined'){
@@ -803,14 +791,14 @@
             dateTag.className = "m-0";
             const dateSpanTag = document.createElement("span");
             dateSpanTag.className = "text-muted time"
-            dateSpanTag.textContent = ((docs.hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
+            dateSpanTag.textContent = ((docs[i].hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
             dateTag.appendChild(dateSpanTag);
 
             const descriptionTag = document.createElement("p");
             descriptionTag.className = "m-0";
             const descriptionSpanTag = document.createElement("span");
             descriptionSpanTag.className = "text-muted time"
-            if (docs.hasOwnProperty("description")){
+            if (docs[i].hasOwnProperty("description")){
                 descriptionSpanTag.textContent = docs[i].description;
             } else {
                 descriptionSpanTag.textContent = "No description available";
@@ -829,7 +817,7 @@
             authorDiv.className = "widget-26-job-info";
             const authorTag = document.createElement("p");
             authorTag.className = "type m-0";
-            authorTag.textContent = ((docs.hasOwnProperty("creator")) ? docs[i].creator.join(', ') : '' );
+            authorTag.textContent = ((docs[i].hasOwnProperty("creator")) ? docs[i].creator.join(', ') : '' );
             authorDiv.appendChild(authorTag);
 
             authorCol.appendChild(authorDiv);
@@ -863,46 +851,103 @@
 
             //tags column
             const tagsCol = document.createElement("td");
-            const tagsDiv = document.createElement("div");
-            tagsDiv.className = "widget-26-job-category bg-soft-info";
-            const indicator = document.createElement("i");
-            indicator.className = "indicator bg-info";
-            const textSpan = document.createElement("span");
+            if (docs[i].hasOwnProperty("subject")){
+
+                for (let j = 0; j < docs[i].subject.length; j++){
+                    if (docs[i].subject[j].length > 40) {
+                        continue;
+
+                    } else{
+                        const tagsDiv = document.createElement("div");
+                        tagsDiv.className = "widget-26-job-category bg-soft-info";
+                        const indicator = document.createElement("i");
+                        indicator.className = "indicator bg-info";
+                        const aTag = document.createElement("a");
+                        aTag.href = getLinkForTagSearch(docs[i].subject[j]);
+                        const textSpan = document.createElement("span");
+                        textSpan.textContent = docs[i].subject[j];
+                        aTag.appendChild(textSpan);
+
+                        tagsDiv.appendChild(indicator);
+                        tagsDiv.appendChild(aTag);
+
+                        tagsCol.appendChild(tagsDiv);
+
+                    }
+                }
+
+            }
+            resultRow.appendChild(tagsCol);
+
+            //bookmark star column
+            const bookmarkCol = document.createElement("td");
+            const bookmarkDiv = document.createElement("div");
+            bookmarkDiv.className = "widget-26-job-starred";
+            const aTag = document.createElement("a");
+            aTag.href = "#";
+            aTag.id = `${docs[i].id}`;
+            aTag.onclick = function() {bookmarkStarClicked(docs[i].id)};
+            const svgStarTag = document.createElement("svg");
+            svgStarTag.id = `star-${docs[i].id}`
+            svgStarTag.xmlns = "http://www.w3.org/2000/svg";
+            svgStarTag.width = "24";
+            svgStarTag.height = "24";
+            svgStarTag.viewBox = "0 0 24 24";
+            svgStarTag.fill = "none";
+            svgStarTag.stroke = "currentColor";
+            svgStarTag.stroke.width = "2";
+            svgStarTag.stroke.linecap = "round";
+            svgStarTag.stroke.lineJoin = "round";
+            svgStarTag.className = "feather feather-star";
+            const polygon = document.createElement("polygon");
+            polygon.points = "12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2";
+
+            svgStarTag.appendChild(polygon);
+            aTag.appendChild(svgStarTag);
+            bookmarkDiv.appendChild(aTag);
+
+            bookmarkCol.appendChild(bookmarkDiv);
+
+            resultRow.appendChild(bookmarkCol);
+
+            //append row to the table body
+            searchResultsTableBody.appendChild(resultRow);
+
+            loopIndex++;
         }
 
-
-
-            indexColumn.textContent = loopIndex;
-
-            //create a second column for the row
-            const dataColumn = document.createElement("td");
-
-            //add content to the column
-
-            //create and add the result heading to the data column
-            const heading = document.createElement("h4");
-            const aTag = document.createElement("a");
-            aTag.href = getLinkForDoc(document[i].id);
-            aTag.textContent = document[i].title;
-            heading.appendChild(aTag);
-            dataColumn.appendChild(heading);
-
-            //create and add creator to the data column
-            const creatorSpan = document.createElement("span");
-            const creatorEm = document.createElement("em");
-            creatorEm.textContent = ((docs.hasOwnProperty("creator")) ? docs[i].creator.join(', ') : '' );
-            creatorSpan.appendChild(creatorEm);
-            dataColumn.appendChild(creatorSpan);
-
-            //create and add date to the data column
-            const dateSpan = document.createElement("span");
-            const dateEm = document.createElement("em");
-            dateEm.textContent = ((docs.hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
-
-
-
+        // set the hidden input value to q
+        // const queryString = window.location.search;
+        // const getParams = new URLSearchParams(queryString);
+        // let q;
+        // if (getParams.has('q')){
+        //     q = getParams.get('q');
+        // } else {
+        //     q = getParams.get('query');
         // }
+        if ((new URLSearchParams(window.location.search)).has('q')){
 
+            const qString = (new URLSearchParams(window.location.search)).get('q');
+            console.log(qString);
+            // console.log(decodeURI(qString));
+            document.getElementById("hiddenQ").value = (new URLSearchParams(window.location.search)).get('q');
+            document.getElementById("refineQuery").value = (new URLSearchParams(window.location.search)).get('q');
+
+            console.log(document.getElementById("refineQuery").value);
+        }
+        if ((new URLSearchParams(window.location.search)).has("query")){
+            console.log(escapeHtml((new URLSearchParams(window.location.search)).get("query")));
+            console.log((new URLSearchParams(window.location.search)).get("query"));
+            document.getElementById("hiddenQ").value = (new URLSearchParams(window.location.search)).get("query");
+            document.getElementById("refineQuery").value = (new URLSearchParams(window.location.search)).get("query");
+        }
+
+        //pagination
+        const numSidePages = 4;
+        const hasPreviousPage = (cursor >= batchSize);
+        const previousPage = (cursor-batchSize);
+        const hasNextPage = (totalCount-batchSize);
+        const nextPage = (cursor+batchSize);
 
     }
 
@@ -914,6 +959,16 @@
         console.log("this should fire");
         document.getElementById("loggedInNavBar").classList.toggle("hideP");
         document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
+    }
+
+    function bookmarkStarClicked(docId){
+        const star = document.getElementById(`star-${docId}`);
+        if (star.className === "feather feather-star starred" ){
+            star.className = "feather feather-star";
+        } else {
+            star.className = "feather feather-star starred";
+        }
+
     }
 
 
@@ -1044,7 +1099,7 @@
     .widget-26 .widget-26-job-info p {
         line-height: 1.5;
         color: #3c4142;
-        font-size: 12px;
+        font-size: 0.8125rem;
     }
 
     .widget-26 .widget-26-job-info .location {
@@ -1076,7 +1131,15 @@
     .widget-26 .widget-26-job-category span {
         font-size: 0.8125rem;
         color: #3c4142;
-        font-weight: 600;
+        font-weight: 400;
+    }
+
+    .widget-26 .widget-26-job-category a {
+        text-decoration: none !important;
+    }
+    .widget-26 .widget-26-job-category span:hover {
+        color: #68CBD7;
+        text-decoration: none;
     }
 
     .widget-26 .widget-26-job-starred svg {

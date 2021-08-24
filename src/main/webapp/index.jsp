@@ -91,7 +91,7 @@
 <%--                                <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:required">Email Address is required.</div>--%>
 <%--                                <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:email">Email Address Email is not valid.</div>--%>
                             </div>
-                            <div class="col-auto"><button class="btn btn-primary btn-lg" id="submitSearchButton" type="submit">Submit</button></div>
+                            <div class="col-auto"><button class="btn btn-primary btn-lg" id="submitSearchButton" type="submit">Search</button></div>
                         </div>
                         <!-- Submit success message-->
                         <!---->
