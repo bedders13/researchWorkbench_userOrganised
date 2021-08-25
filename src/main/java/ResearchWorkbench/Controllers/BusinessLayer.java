@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class BusinessLayer {
     ResearchWorkbench.Data.DataLayer dataLayer;
     String connectionString = "jdbc:mysql://localhost/user_organised";
-//    String connectionString = "jdbc:mysql://localhost/user_organised";
+//    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
     String databaseUser = "hugh";
     String databasePassword = "AZURE-mysql99";
 
@@ -93,5 +93,10 @@ public class BusinessLayer {
 
     public boolean deleteBookmark(int bookmarkId){
         return dataLayer.deleteBookmark(bookmarkId);
+    }
+
+    //general methods
+    public boolean isObjectChecked(String objectId){
+        return dataLayer.isObjectBookmarked(objectId);
     }
 }

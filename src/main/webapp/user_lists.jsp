@@ -16,29 +16,12 @@
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Bootstrap icons-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script type="text/javascript" src="js/scripts.js"></script>
-    <script type="text/javascript">
-        function getUserLists(){
-            const ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.onreadystatechange = function (){
-                if (ajaxRequest.readyState == 4) {
-                    if (ajaxRequest.status == 200){
-                        document.getElementById("userListTable").innerHTML = ajaxRequest.responseText;
-                    } else{
-                        console.log("Status error: " + ajaxRequest.status);
-                    }
-                }else {
-                    console.log("Ignored ready state: " + ajaxRequest.readyState);
-                }
-            }
-            ajaxRequest.open("GET", "UserListServlet");
-            ajaxRequest.send();
-        }
-
-
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/userLists.js"></script>
 
     <!-- Google fonts-->
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
@@ -51,24 +34,25 @@
 <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
         <a class="navbar-brand" href="index.jsp">Research Workbench</a>
-        <div id="loggedInNavBar" >
-            <% String userName = (String)(session.getAttribute("user_name"));%>
-            <p>Welcome, <%= userName %>!</p>
+        <div id="signUpAndLogInBtn">
+
+        </div>
+        <div id="loggedInNavBar" class="hideP">
+            <p id="loggedInMessage"></p>
+
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     Menu
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="index.jsp">Home</a></li>
-                    <li><a class="dropdown-item" href="#">User Lists</a></li>
-                    <li><a class="dropdown-item" href="#">Read Later</a></li>
-                    <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
+                    <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
+                    <li><a class="dropdown-item" href="">Read Later</a></li>
+                    <li><a class="dropdown-item" onclick="logOut()">Log out</a></li>
                 </ul>
             </div>
         </div>
     </div>
-    <input type="hidden" id="hiddenLoggedIn" value="<%= (Integer)(session.getAttribute("logged_in")) %>">
-    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("user_id")) %>">
 </nav>
 
 <!-- Masthead-->
@@ -122,7 +106,6 @@
                     <h5 class="modal-title" id="newUserListModalListLabel;">Create a new user list</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="UserListServlet" method="post">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="userListName" class="form-label">List Name</label>
@@ -135,10 +118,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button id="closeModalBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" onclick="createUserList(userListName.value, userListIsPrivate.checked)">Create</button>
                     </div>
-                </form>
             </div>
         </div>
     </div>
@@ -160,26 +142,6 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    const listContentsModal = document.getElementById('listContentsModal')
-    listContentsModal.addEventListener('show.mdb.modal', (event) => {
-        console.log("list content modal fired");
-        // Button that triggered the modal
-        const button = event.relatedTarget
-        // Extract info from data-mdb-* attributes
-        const userList = button.getAttribute('data-mdb-name');
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        const modalTitle = listContentsModal.querySelector('.modal-title');
-        // const modalBodyInput = listContentsModal.querySelector('.modal-body input')
 
-        modalTitle.textContent = `${userList} Items`;
-        // modalBodyInput.value = recipient
-    })
-
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

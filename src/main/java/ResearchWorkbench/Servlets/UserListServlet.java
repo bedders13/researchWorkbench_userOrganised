@@ -16,8 +16,8 @@ public class UserListServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        int userId = (Integer)session.getAttribute("user_id");
+        String userIdStr = request.getParameter("userId");
+        int userId = Integer.parseInt(userIdStr);
         BusinessLayer library = new BusinessLayer();
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         userLists = library.getUserLists(userId);
@@ -52,18 +52,14 @@ public class UserListServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String listName = request.getParameter("userListName");
-        String checked = request.getParameter("userListIsPrivate");
+        String listName = request.getParameter("listName");
+        String checked = request.getParameter("isPrivate");
+        int userId = Integer.parseInt(request.getParameter("userId"));
         boolean isPrivate = true;
         if (checked == null){
             isPrivate = false;
-        } else if (checked.equals("on")){
-            isPrivate = true;
         }
 
-//        boolean isPrivate = Boolean.parseBoolean(request.getParameter("userListIsPrivate"));
-        HttpSession session = request.getSession();
-        int userId = (Integer)session.getAttribute("user_id");
 
         //create the UserList object
         UserList userList = new UserList(listName, isPrivate, userId);

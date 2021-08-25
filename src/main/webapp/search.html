@@ -1,18 +1,21 @@
 <html lang="en">
 <head>
-    <title>Research Workbench Search</title>
+    <meta charset="utf-8" />
+    <title>Research Workbench - Search</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script type="text/javascript" src="js/scripts.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Google fonts-->
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     <link href="js/bootstrap.bundle.js" rel="script"/>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/search.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <script type="text/javascript">
     // //variables needed for search
@@ -129,7 +132,7 @@
     // }
     //
     // //build link to different page
-    // function buildPageLink(startPage){
+    // function getLinkForPage(startPage){
     //     return `search.html${window.location.search}&start=${startPage}`;
     // }
     //
@@ -200,8 +203,8 @@
     <div class="container">
         <a class="navbar-brand" href="index.jsp">Research Workbench</a>
         <div id="signUpAndLogInBtn">
-            <a class="btn btn-primary" href="sign_up.jsp">Create profile </a>
-            <a class="btn btn-primary" href="create_profile.jsp">Log in  </a>
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createProfileModal" data-mdb-name="">Create profile </a>
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signInModal" data-mdb-name="">Log in  </a>
         </div>
         <div id="loggedInNavBar" class="hideP">
             <p id="loggedInMessage"></p>
@@ -214,24 +217,12 @@
                     <li><a class="dropdown-item" href="index.jsp">Home</a></li>
                     <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
                     <li><a class="dropdown-item" href="">Read Later</a></li>
-                    <li><a class="dropdown-item" href="LogOutServlet">Log out</a></li>
+                    <li><a class="dropdown-item" onclick="logOut()">Log out</a></li>
                 </ul>
             </div>
         </div>
     </div>
-<!--    <input type="hidden" id="hiddenLoggedIn" value="<%= (Integer)(session.getAttribute("logged_in")) %>">-->
-<!--    <input type="hidden" id="hiddenUserId" value="<%= (Integer)(session.getAttribute("userId")) %>">-->
 </nav>
-<script type="text/javascript">
-    // //show log in buttons in navbar is not logged in
-    // if(Number(sessionStorage.getItem("logged_in")) === 1) {
-    //     document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
-    //     console.log("this should fire");
-    //     document.getElementById("loggedInNavBar").classList.toggle("hideP");
-    //     document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
-    // }
-</script>
-
 
 <div class="container-lg">
     <div class="row">
@@ -241,16 +232,6 @@
             </div>
             <form id="searchParamForm" action="search.html" method="get" autocomplete="off">
                 <ul class="list-group">
-<!--                    <li class="list-group-item">-->
-<!--                        Refine Query-->
-<!--                    </li>-->
-<!--                    <li class="list-group-item query">-->
-<!--&lt;!&ndash;                        <input id="refineQuery" type="text" name="q" value="" placeholder="Type something to start searching...">&ndash;&gt;-->
-<!--                    </li>-->
-<!--                    <li class="list-group-item" style="height: 52px; padding-right: 10px; padding-top: 10px;">-->
-<!--                        <input type="submit" class="btn btn-primary btn-sm pull-right" value="Apply">-->
-<!--                    </li>-->
-
                     <script type="text/javascript">
                         // const queryString = window.location.search;
                         // const getParams = new URLSearchParams(queryString);
@@ -339,26 +320,20 @@
                 <div class="input-group">
                     <input id="refineQuery" type="text" name="q" class="form-control" value="">
                     <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
               </span>
                 </div>
             </form>
-
             <div class="card-body">
                 <div class="row search-body">
                     <div class="col-lg-12">
                         <div class="search-result">
                             <div id="resultsAndSuggestionsDiv" class="result-header">
-
                             </div>
                             <div class="result-body">
                                 <div class="table-responsive">
                                     <table class="table widget-26">
                                         <tbody id="searchResultsTableBody">
-                                            <tr>
-
-                                            </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -367,942 +342,57 @@
                     </div>
                 </div>
                 <nav class="d-flex justify-content-center">
-                    <ul class="pagination pagination-base pagination-boxed pagination-square mb-0">
-                        <li class="page-item">
-                            <a class="page-link no-border" href="#">
-                                <span aria-hidden="true">&laquo</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link no-border" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link no-border" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link no-border" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link no-border" href="#">4</a></li>
-                        <li class="page-item">
-                            <a class="page-link no-border" href="#">
-
-                                <span class="sr-only">Next</span>
-                                <span aria-hidden="true">&raquo</span>
-                            </a>
-                        </li>
+                    <ul id="paginationList" class="pagination pagination-base pagination-boxed pagination-square mb-0">
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    //variables needed for search
-    let docs;
-    let data;
-    let totalCount;
-    let cursor;
-    let batchSize;
-    let queryTime;
-    let suggestions;
-
-    //facet variables
-    let selectedLanguageFacets = getFacetList('language');
-    let selectedSubjectFacets = getFacetList('subject');
-    let selectedSourceSetNamesFacets = getFacetList('source_set_names');
-    let selectedYearStartFacet = getIfSet('year_start');
-    let selectedYearEndFacet = getIfSet('year_end');
-    let languageFacets;
-    let subjectFacets;
-    let sourceSetNamesFacets;
-
-
-    //functions for handling solr queries
-    function getSuggestions(data){
-        let suggestions;
-        if (data.hasOwnProperty("spellcheck")){
-            const suggestionsBlock = data.spellcheck.suggestions;
-            if (suggestionsBlock.length > 0 ){
-                suggestions = suggestionsBlock[1].suggestion;
-            }
-            // for (let i = 0; i < suggestionsBlock.length; i += 2){
-            //     if(suggestionsBlock[i] === "collation" && typeof suggestionsBlock[i+1] === "string"){
-            //         output.push(suggestionsBlock[i+1]);
-            //     }
-            // }
-        }
-        return suggestions;
-    }
-
-    //function for creating link to show document
-    function getLinkForDoc(id){
-        return `show.html?id=${id}&back=${window.location.host}/${window.location.pathname}${window.location.search}`;
-    }
-
-    //function to create link for another search
-    function getLinkForAnotherSearch(query){
-        return `search.html?q=${query}`;
-    }
-
-    //function to create link for tag search
-    function getLinkForTagSearch(tag){
-        return `search.html?q=subject:"${tag}"`;
-    }
-
-    //Returns a get value if it exists
-    function getIfSet(key){
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        if (urlParams.has(key) && urlParams.get(key) !== null){
-            return urlParams.getAll(key)[0] === "" ? null : urlParams.getAll(key);
-        } else {
-            return null;
-        }
-    }
-
-    function getFacetList(facetName){
-        const facet = getIfSet(facetName);
-        if (facet !== null) {
-            return (Array.isArray(facet)) ? facet : [facet];
-        }
-        return null;
-    }
-
-    //build the facet query
-    function buildFacetString(facetName, mustWrapQuotes = false, firstFq = false) {
-        let facets = getFacetList(facetName);
-        if (facets !== null) {
-            if (mustWrapQuotes){
-                facets = facets.map(function (facet){
-                    return '"' + facet + '"';
-                })
-            }
-            const facetString = facets.join(" OR ");
-            return (facetName === "language" || firstFq === true) ? ` +${facetName}:(${facetString})` : ` AND ${facetName}:(${facetString})`
-        } else {
-            return '';
-        }
-    }
-
-    //build facet date query
-    function buildDateFacetString(firstFq = false){
-        let yearStartFacet = getIfSet("year_start");
-        let yearEndFacet = getIfSet("year_end");
-        const today = new Date();
-        //check if either the start year or end year exists
-        if(yearStartFacet !== null || yearEndFacet !== null){
-            if (yearStartFacet !== null){
-                //check whether start date is before today and after 1970
-                yearStartFacet = Math.min(Math.max(Number(yearStartFacet), 1970), today.getFullYear());
-            } else{
-                //if start date does not exist, set it to 1070
-                yearStartFacet = 1970
-            }
-
-            if (yearEndFacet !== null){
-                //check whether end date is less than today and after 1970
-                yearEndFacet = Math.max(Math.min(Number(yearEndFacet), today.getFullYear()), 1970);
-            } else {
-                yearEndFacet = today.getFullYear();
-            }
-
-        }
-        if (yearStartFacet !== null && yearEndFacet !== null){
-            return firstFq ? ` +date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z]` : ` AND date:[${yearStartFacet}-01-01T00:00:00Z TO ${yearEndFacet}-12-31T23:59:59Z]`;
-        } else{
-            return '';
-        }
-    }
-
-    //build link to different page
-    function buildPageLink(startPage){
-        return `search.html${window.location.search}&start=${startPage}`;
-    }
-
-    //check whether facet is selected
-    function isFacetSelected(facet, facetList){
-        return (facetList !== null && facetList.includes(facet));
-    }
-
-    //function to build the main_query
-    function buildMainQueryString(){
-        const queryString = window.location.search;
-        const getParams = new URLSearchParams(queryString);
-        console.log(getParams.toString());
-        let q;
-
-        q = ((getParams.has('q')) ? getParams.get('q') : getParams.get('query'));
-
-        const start = (getParams.has("start") ? Math.max(Number(getParams.get("start")), 0) : 0 );
-        const language = buildFacetString("language");
-        let subject;
-        if (language === ''){
-            subject = buildFacetString("subject", false, true);
-        } else {
-            subject = buildFacetString("subject");
-        }
-        let sourceSetNames;
-        if (language === '' && subject === ''){
-            sourceSetNames = buildFacetString("source_set_names", true, true);
-        } else {
-            sourceSetNames = buildFacetString("source_set_names", true);
-        }
-        let date;
-        if (language === '' && subject === '' && sourceSetNames === ''){
-            date = buildDateFacetString(true);
-        } else {
-            date = buildDateFacetString();
-        }
-        // const facetQuery = `${buildFacetString("language")}${buildFacetString("subject")}${buildFacetString("source_set_names", true)}${buildDateFacetString()}`
-        const facetQuery = '' + language + subject + sourceSetNames + date;
-        // if ( typeof facetQuery === 'undefined'){
-            // return `q=${q}&start=${start}`;
-        // } else {
-            return `q=${encodeURI(q)}&start=${encodeURI(start)}&fq=${encodeURI(facetQuery)}`;
-        // }
-
-    }
-
-    //function to send main_query on page load
-    $.get({
-        url: "SolrServlet",
-        data: {
-            queryType: "main_query",
-            queryString: buildMainQueryString(),
-        },
-        dataType: "json",
-        success: function (data){
-            docs = data.response.docs;
-            totalCount = data.response.numFound;
-            cursor = data.response.start;
-            batchSize = docs.length;
-            queryTime = data.responseHeader.QTime / 1000;
-
-            suggestions = getSuggestions(data);
-
-            //facets
-            sourceSetNamesFacets = data.facet_counts.facet_fields.source_set_names;
-            languageFacets = data.facet_counts.facet_fields.language;
-            subjectFacets = data.facet_counts.facet_fields.subject;
-            console.log(data);
-            loadScript();
-
-        },
-        error: function(data) {
-            console.log('error getting query');
-            console.log(data);
-            // alert('woops!'); //or whatever
-        }
-
-    })
-
-    //load the html tags after the json query has loaded
-    function loadScript(){
-        const queryString = window.location.search;
-        const getParams = new URLSearchParams(queryString);
-        const q = getParams.get('q');
-        document.getElementById("refineQuery").value = q;
-
-        //populate the source dropdown
-        const select = document.getElementById("source_set_names");
-        for (let i = 0; i < sourceSetNamesFacets.length; i+= 2){
-            let opt = document.createElement("option");
-            opt.textContent = `${sourceSetNamesFacets[i]} [${sourceSetNamesFacets[i+1]}]`;
-            opt.value = sourceSetNamesFacets[i];
-            if (selectedSourceSetNamesFacets !== null && selectedSourceSetNamesFacets.includes(sourceSetNamesFacets[i])){
-                opt.selected = true;
-            }
-            select.appendChild(opt);
-        }
-
-        if (selectedYearStartFacet !== null){
-            document.getElementById("year_start").value = selectedYearStartFacet;
-        }
-        if (selectedYearEndFacet !== null){
-            document.getElementById("year_end").value = selectedYearEndFacet;
-        }
-
-        //add the language checkboxes
-        let nonZeroFacets = 0;
-        const languageListDiv = document.getElementById("languageList");
-        for (let i = 0; i < languageFacets.length; i+=2){
-            if (languageFacets[i] !== 'tw'){
-                if (languageFacets[i+1] === 0){
-                    continue;
-                } else{
-                    nonZeroFacets++;
-                }
-                if (languageFacets[i] === 'zh'){
-                    languageFacets[i] = 'Zh-Tw';
-                }
-                const listItem = document.createElement("li");
-                const formCheckDiv = document.createElement("div");
-                const checkboxLabel = document.createElement("label");
-                const checkboxInput = document.createElement("input");
-                listItem.className = "list-group-item";
-                formCheckDiv.className = "form-check";
-                checkboxInput.type = "checkbox";
-                checkboxInput.className = "form-check-input";
-                checkboxInput.name = "language";
-                checkboxInput.id = `$languageCheckbox${languageFacets[i]}`;
-                checkboxInput.value = languageFacets[i];
-                checkboxLabel.className = "form-check-label";
-                checkboxLabel.for = `$languageCheckbox${languageFacets[i]}`;
-                let languageString = languageFacets[i];
-                languageString = languageString.charAt(0).toUpperCase() + languageString.slice(1);
-                checkboxLabel.textContent = ` ${languageString}`;
-
-                if (isFacetSelected(languageFacets[i], selectedLanguageFacets)){
-                    checkboxInput.checked = true;
-                }
-
-                listItem.appendChild(checkboxInput);
-                listItem.appendChild(checkboxLabel);
-                languageListDiv.appendChild(listItem);
-
-            }
-
-        }
-        if (nonZeroFacets === 0){
-            const listItem = document.createElement("li");
-            listItem.className = "list-group-item";
-            listItem.textContent = "No language data";
-            languageListDiv.appendChild(listItem);
-        }
-
-        //add the subject checkboxes
-        nonZeroFacets = 0;
-        const subjectListDiv = document.getElementById("subjectsList");
-        for (let i = 0; i < subjectFacets.length; i+=2){
-            if (subjectFacets[i+1] === 0){
-                continue;
-            } else{
-                nonZeroFacets++;
-            }
-            const listItem = document.createElement("li");
-            const formCheckDiv = document.createElement("div");
-            const checkboxLabel = document.createElement("label");
-            const checkboxInput = document.createElement("input");
-            listItem.className = "list-group-item";
-            formCheckDiv.className = "form-check";
-            checkboxInput.type = "checkbox";
-            checkboxInput.className = "form-check-input";
-            checkboxInput.name = "subject";
-            checkboxInput.id = `subjectCheckbox${subjectFacets[i]}`;
-            checkboxInput.value = subjectFacets[i];
-            checkboxLabel.className = "form-check-label";
-            checkboxLabel.for = `subjectCheckbox${subjectFacets[i]}`;
-            let subjectString = subjectFacets[i];
-            subjectString = subjectString.charAt(0).toUpperCase() + subjectString.slice(1);
-            checkboxLabel.textContent = ` ${subjectString}`;
-
-            if (isFacetSelected(subjectFacets[i], selectedSubjectFacets)){
-                checkboxInput.checked = true;
-            }
-
-            listItem.appendChild(checkboxInput);
-            listItem.appendChild(checkboxLabel);
-            subjectListDiv.appendChild(listItem);
-            // subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
-
-            // subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
-        }
-        //check if there are any subject tags
-        if (nonZeroFacets === 0){
-            const listItem = document.createElement("li");
-            listItem.className = "list-group-item";
-            listItem.textContent = "No subject data";
-            subjectListDiv.appendChild(listItem);
-        }
-
-        // //add number results and spelling suggestions
-        const resultsAndSuggestionsDiv = document.getElementById("resultsAndSuggestionsDiv");
-        const resultsDiv = document.createElement("div");
-        resultsDiv.className = "row";
-        const resultsColDiv = document.createElement("div");
-        resultsColDiv.className = "col-lg-6";
-        const recordsDiv = document.createElement("div");
-        recordsDiv.className = "records";
-        const smallText = document.createElement("small");
-        if (batchSize > 0){
-            smallText.textContent = `Showing: ${cursor + 1}-${cursor + batchSize} of ${totalCount} results (${queryTime} seconds)`;
-        } else{
-            smallText.textContent = `Showing ${cursor}-${cursor} of ${totalCount} results (${queryTime} seconds)`;
-        }
-        recordsDiv.appendChild(smallText);
-        resultsColDiv.appendChild(recordsDiv);
-        resultsDiv.appendChild(resultsColDiv);
-        resultsAndSuggestionsDiv.appendChild(resultsDiv);
-
-        if (typeof suggestions !== "undefined"){
-            if (suggestions.length > 0){
-                const resultsAndSuggestionsDiv = document.getElementById("resultsAndSuggestionsDiv");
-                const resultsDiv = document.createElement("div");
-                resultsDiv.className = "row";
-                const resultsColDiv = document.createElement("div");
-                resultsColDiv.className = "col-lg-6";
-                const recordsDiv = document.createElement("div");
-                recordsDiv.className = "records";
-                let suggestionString = "Spelling suggestions: ";
-                recordsDiv.append(suggestionString);
-                for (let i = 0; i < suggestions.length; i++) {
-                    const emElement = document.createElement("em");
-                    const aElement = document.createElement("a");
-                    aElement.href = getLinkForAnotherSearch(suggestions[i]);
-                    aElement.textContent = `"${suggestions[i]}"`;
-
-                    emElement.appendChild(aElement);
-                    if (i !== (suggestions.length - 1)){
-                        emElement.append( ", ");
-                    }
-
-                    recordsDiv.appendChild(emElement);
-                }
-                resultsColDiv.appendChild(recordsDiv);
-                resultsDiv.appendChild(resultsColDiv);
-                resultsAndSuggestionsDiv.appendChild(resultsDiv);
-            }
-        }
-
-
-        // populate the search results
-        const searchResultsTableBody = document.getElementById("searchResultsTableBody");
-        let loopIndex = cursor + 1;
-        for (let i = 0; i < docs.length; i++){
-            //create a row for the table
-            const resultRow = document.createElement("tr");
-
-            //index column
-            const indexCol = document.createElement("td");
-            const indexDiv = document.createElement("div");
-            indexDiv.className = "widget-26-job-emp-img";
-            const indexA = document.createElement("a");
-            indexA.textContent = loopIndex;
-            indexDiv.appendChild(indexA);
-            indexCol.appendChild(indexDiv);
-            //add to the row
-            resultRow.appendChild(indexCol);
-
-            //title column
-            const titleCol = document.createElement("td");
-            const titleDiv = document.createElement("div");
-            titleDiv.className = "widget-26-job-title";
-            const titleTag = document.createElement("a");
-            titleTag.href = getLinkForDoc(docs[i].id);
-            titleTag.textContent = docs[i].title;
-
-            const dateTag = document.createElement("p");
-            dateTag.className = "m-0";
-            const dateSpanTag = document.createElement("span");
-            dateSpanTag.className = "text-muted time"
-            dateSpanTag.textContent = ((docs[i].hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
-            dateTag.appendChild(dateSpanTag);
-
-            const descriptionTag = document.createElement("p");
-            descriptionTag.className = "m-0";
-            const descriptionSpanTag = document.createElement("span");
-            descriptionSpanTag.className = "text-muted time"
-            if (docs[i].hasOwnProperty("description")){
-                descriptionSpanTag.textContent = docs[i].description;
-            } else {
-                descriptionSpanTag.textContent = "No description available";
-            }
-            descriptionTag.appendChild(descriptionSpanTag);
-
-            titleCol.appendChild(titleTag);
-            titleCol.appendChild(dateTag);
-            titleCol.appendChild(descriptionTag);
-
-            resultRow.appendChild(titleCol);
-
-            //author column
-            const authorCol = document.createElement("td");
-            const authorDiv = document.createElement("div");
-            authorDiv.className = "widget-26-job-info";
-            const authorTag = document.createElement("p");
-            authorTag.className = "type m-0";
-            authorTag.textContent = ((docs[i].hasOwnProperty("creator")) ? docs[i].creator.join(', ') : '' );
-            authorDiv.appendChild(authorTag);
-
-            authorCol.appendChild(authorDiv);
-
-            resultRow.appendChild(authorCol);
-
-            //links column
-            const linksCol = document.createElement("td");
-            const linksDiv = document.createElement("div");
-            linksDiv.className = "widget-26-job-salary";
-            if (docs[i].hasOwnProperty("has_links") && docs[i].has_links === true) {
-                const spanLinks = document.createElement("span");
-                spanLinks.className = "glyphicon glyphicon-link";
-                const iText = document.createElement("i");
-                iText.textContent = "(has links)";
-                linksDiv.appendChild(spanLinks);
-                linksDiv.appendChild(iText);
-            }
-            if (docs[i].hasOwnProperty("has_pdf") && docs[i].has_pdf === true) {
-                const spanLinks = document.createElement("span");
-                spanLinks.className = "glyphicon glyphicon-file";
-                const iText = document.createElement("i");
-                iText.textContent = "(PDF)";
-                linksDiv.appendChild(spanLinks);
-                linksDiv.appendChild(iText);
-            }
-
-            linksCol.appendChild(linksDiv);
-
-            resultRow.appendChild(linksCol);
-
-            //tags column
-            const tagsCol = document.createElement("td");
-            if (docs[i].hasOwnProperty("subject")){
-
-                for (let j = 0; j < docs[i].subject.length; j++){
-                    if (docs[i].subject[j].length > 40) {
-                        continue;
-
-                    } else{
-                        const tagsDiv = document.createElement("div");
-                        tagsDiv.className = "widget-26-job-category bg-soft-info";
-                        const indicator = document.createElement("i");
-                        indicator.className = "indicator bg-info";
-                        const aTag = document.createElement("a");
-                        aTag.href = getLinkForTagSearch(docs[i].subject[j]);
-                        const textSpan = document.createElement("span");
-                        textSpan.textContent = docs[i].subject[j];
-                        aTag.appendChild(textSpan);
-
-                        tagsDiv.appendChild(indicator);
-                        tagsDiv.appendChild(aTag);
-
-                        tagsCol.appendChild(tagsDiv);
-
-                    }
-                }
-
-            }
-            resultRow.appendChild(tagsCol);
-
-            //bookmark star column
-            const bookmarkCol = document.createElement("td");
-            const bookmarkDiv = document.createElement("div");
-            bookmarkDiv.className = "widget-26-job-starred";
-            const aTag = document.createElement("a");
-            aTag.href = "#";
-            aTag.id = `${docs[i].id}`;
-            aTag.onclick = function() {bookmarkStarClicked(docs[i].id)};
-            const svgStarTag = document.createElement("svg");
-            svgStarTag.id = `star-${docs[i].id}`
-            svgStarTag.xmlns = "http://www.w3.org/2000/svg";
-            svgStarTag.width = "24";
-            svgStarTag.height = "24";
-            svgStarTag.viewBox = "0 0 24 24";
-            svgStarTag.fill = "none";
-            svgStarTag.stroke = "currentColor";
-            svgStarTag.stroke.width = "2";
-            svgStarTag.stroke.linecap = "round";
-            svgStarTag.stroke.lineJoin = "round";
-            svgStarTag.className = "feather feather-star";
-            const polygon = document.createElement("polygon");
-            polygon.points = "12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2";
-
-            svgStarTag.appendChild(polygon);
-            aTag.appendChild(svgStarTag);
-            bookmarkDiv.appendChild(aTag);
-
-            bookmarkCol.appendChild(bookmarkDiv);
-
-            resultRow.appendChild(bookmarkCol);
-
-            //append row to the table body
-            searchResultsTableBody.appendChild(resultRow);
-
-            loopIndex++;
-        }
-
-        // set the hidden input value to q
-        // const queryString = window.location.search;
-        // const getParams = new URLSearchParams(queryString);
-        // let q;
-        // if (getParams.has('q')){
-        //     q = getParams.get('q');
-        // } else {
-        //     q = getParams.get('query');
-        // }
-        if ((new URLSearchParams(window.location.search)).has('q')){
-
-            const qString = (new URLSearchParams(window.location.search)).get('q');
-            console.log(qString);
-            // console.log(decodeURI(qString));
-            document.getElementById("hiddenQ").value = (new URLSearchParams(window.location.search)).get('q');
-            document.getElementById("refineQuery").value = (new URLSearchParams(window.location.search)).get('q');
-
-            console.log(document.getElementById("refineQuery").value);
-        }
-        if ((new URLSearchParams(window.location.search)).has("query")){
-            console.log(escapeHtml((new URLSearchParams(window.location.search)).get("query")));
-            console.log((new URLSearchParams(window.location.search)).get("query"));
-            document.getElementById("hiddenQ").value = (new URLSearchParams(window.location.search)).get("query");
-            document.getElementById("refineQuery").value = (new URLSearchParams(window.location.search)).get("query");
-        }
-
-        //pagination
-        const numSidePages = 4;
-        const hasPreviousPage = (cursor >= batchSize);
-        const previousPage = (cursor-batchSize);
-        const hasNextPage = (totalCount-batchSize);
-        const nextPage = (cursor+batchSize);
-
-    }
-
-
-
-    //show log in buttons in navbar is not logged in
-    if(Number(sessionStorage.getItem("logged_in")) === 1) {
-        document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
-        console.log("this should fire");
-        document.getElementById("loggedInNavBar").classList.toggle("hideP");
-        document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
-    }
-
-    function bookmarkStarClicked(docId){
-        const star = document.getElementById(`star-${docId}`);
-        if (star.className === "feather feather-star starred" ){
-            star.className = "feather feather-star";
-        } else {
-            star.className = "feather feather-star starred";
-        }
-
-    }
-
-
-
-
-
-
-
-</script>
-<style>
-    /*body{margin-top:20px;*/
-    /*    background:#eee;*/
-    /*}*/
-
-    /*.btn {*/
-    /*    margin-bottom: 5px;*/
-    /*}*/
-
-    .grid {
-        position: relative;
-        width: 100%;
-        background: #fff;
-        color: #666666;
-        border-radius: 2px;
-        margin-bottom: 25px;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .grid .grid-body {
-        padding: 15px 20px 15px 20px;
-        font-size: 0.9em;
-        line-height: 1.9em;
-    }
-
-    .search table tr td.rate {
-        color: #f39c12;
-        line-height: 50px;
-    }
-
-    .search table tr:hover {
-        cursor: pointer;
-    }
-
-    .search table tr td.image {
-        width: 50px;
-    }
-
-    .search table tr td img {
-        width: 50px;
-        height: 50px;
-    }
-
-    .search table tr td.rate {
-        color: #f39c12;
-        line-height: 50px;
-    }
-
-    .search table tr td.price {
-        font-size: 1.5em;
-        line-height: 50px;
-    }
-
-    .search #price1,
-    .search #price2 {
-        display: inline;
-        font-weight: 600;
-    }
-    /*body{*/
-    /*    background:#dcdcdc;*/
-    /*    margin-top:20px;}*/
-
-    .widget-26 {
-        color: #3c4142;
-        font-weight: 400;
-    }
-
-    .widget-26 tr:first-child td {
-        border: 0;
-    }
-
-    .widget-26 .widget-26-job-emp-img img {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-    }
-
-    .widget-26 .widget-26-job-title {
-        min-width: 200px;
-    }
-
-    .widget-26 .widget-26-job-title a {
-        font-weight: 400;
-        font-size: 1.3rem;
-        color: #3c4142;
-        line-height: 1.5;
-        text-decoration: none !important;
-    }
-
-    .widget-26 .widget-26-job-title a:hover {
-        color: #68CBD7;
-        text-decoration: none;
-    }
-
-    .widget-26 .widget-26-job-title .employer-name {
-        margin: 0;
-        line-height: 1.5;
-        font-weight: 400;
-        color: #3c4142;
-        font-size: 1rem;
-        color: #3c4142;
-    }
-
-    .widget-26 .widget-26-job-title .employer-name:hover {
-        color: #68CBD7;
-        text-decoration: none;
-    }
-
-    .widget-26 .widget-26-job-title .time {
-        font-size: 12px;
-        font-weight: 400;
-    }
-
-    .widget-26 .widget-26-job-info {
-        min-width: 100px;
-        font-weight: 400;
-    }
-
-    .widget-26 .widget-26-job-info p {
-        line-height: 1.5;
-        color: #3c4142;
-        font-size: 0.8125rem;
-    }
-
-    .widget-26 .widget-26-job-info .location {
-        color: #3c4142;
-    }
-
-    .widget-26 .widget-26-job-salary {
-        min-width: 70px;
-        font-weight: 400;
-        color: #3c4142;
-        font-size: 12px;
-    }
-
-    .widget-26 .widget-26-job-category {
-        padding: .5rem;
-        display: inline-flex;
-        white-space: nowrap;
-        border-radius: 15px;
-    }
-
-    .widget-26 .widget-26-job-category .indicator {
-        width: 13px;
-        height: 13px;
-        margin-right: .5rem;
-        float: left;
-        border-radius: 50%;
-    }
-
-    .widget-26 .widget-26-job-category span {
-        font-size: 0.8125rem;
-        color: #3c4142;
-        font-weight: 400;
-    }
-
-    .widget-26 .widget-26-job-category a {
-        text-decoration: none !important;
-    }
-    .widget-26 .widget-26-job-category span:hover {
-        color: #68CBD7;
-        text-decoration: none;
-    }
-
-    .widget-26 .widget-26-job-starred svg {
-        width: 20px;
-        height: 20px;
-        color: #fd8b2c;
-    }
-
-    .widget-26 .widget-26-job-starred svg.starred {
-        fill: #fd8b2c;
-    }
-    .bg-soft-base {
-        background-color: #e1f5f7;
-    }
-    .bg-soft-warning {
-        background-color: #fff4e1;
-    }
-    .bg-soft-success {
-        background-color: #d1f6f2;
-    }
-    .bg-soft-danger {
-        background-color: #fedce0;
-    }
-    .bg-soft-info {
-        background-color: #d7efff;
-    }
-
-
-    .search-form {
-        width: 80%;
-        margin: 0 auto;
-        margin-top: 1rem;
-    }
-
-    .search-form input {
-        height: 100%;
-        background: transparent;
-        border: 0;
-        display: block;
-        width: 100%;
-        padding: 1rem;
-        height: 100%;
-        font-size: 1rem;
-    }
-
-    .search-form select {
-        background: transparent;
-        border: 0;
-        padding: 1rem;
-        height: 100%;
-        font-size: 1rem;
-    }
-
-    .search-form select:focus {
-        border: 0;
-    }
-
-    .search-form button {
-        height: 100%;
-        width: 100%;
-        font-size: 1rem;
-    }
-
-    .search-form button svg {
-        width: 24px;
-        height: 24px;
-    }
-
-    .search-body {
-        margin-bottom: 1.5rem;
-    }
-
-    .search-body .search-filters .filter-list {
-        margin-bottom: 1.3rem;
-    }
-
-    .search-body .search-filters .filter-list .title {
-        color: #3c4142;
-        margin-bottom: 1rem;
-    }
-
-    .search-body .search-filters .filter-list .filter-text {
-        color: #727686;
-    }
-
-    .search-body .search-result .result-header {
-        margin-bottom: 2rem;
-    }
-
-    .search-body .search-result .result-header .records {
-        color: #3c4142;
-    }
-
-    .search-body .search-result .result-header .result-actions {
-        text-align: right;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .search-body .search-result .result-header .result-actions .result-sorting {
-        display: flex;
-        align-items: center;
-    }
-
-    .search-body .search-result .result-header .result-actions .result-sorting span {
-        flex-shrink: 0;
-        font-size: 0.8125rem;
-    }
-
-    .search-body .search-result .result-header .result-actions .result-sorting select {
-        color: #68CBD7;
-    }
-
-    .search-body .search-result .result-header .result-actions .result-sorting select option {
-        color: #3c4142;
-    }
-
-    @media (min-width: 768px) and (max-width: 991.98px) {
-        .search-body .search-filters {
-            display: flex;
-        }
-        .search-body .search-filters .filter-list {
-            margin-right: 1rem;
-        }
-    }
-
-    .card-margin {
-        margin-bottom: 1.875rem;
-    }
-
-    @media (min-width: 992px){
-        .col-lg-2 {
-            flex: 0 0 16.66667%;
-            max-width: 16.66667%;
-        }
-    }
-
-    .card-margin {
-        margin-bottom: 1.875rem;
-    }
-    .card {
-        border: 0;
-        box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-    }
-    .card {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #ffffff;
-        background-clip: border-box;
-        border: 1px solid #e6e4e9;
-        border-radius: 8px;
-    }
-
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signInModalLabel;">Log In</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="logInEmailAddress" class="form-label">Email Address</label>
+                    <input type="text" class="form-control" id="logInEmailAddress" name="logInEmailAddress" >
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button  class="btn btn-primary" onclick="logIn(logInEmailAddress.value)">Log in</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createProfileModal" tabindex="-1" aria-labelledby="createProfileModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createProfileModal;">Create a User Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="createUserName" class="form-label">User Name</label>
+                    <input type="text" class="form-control" id="createUserName" name="createUserName" >
+                    <label for="createEmailAddress" class="form-label">Email Address</label>
+                    <input type="text" class="form-control" id="createEmailAddress" name="createEmailAddress" >
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button  class="btn btn-primary" onclick="createProfile(createUserName.value, createEmailAddress.value)">Log in</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

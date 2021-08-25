@@ -93,7 +93,7 @@ public class DataLayer {
             pStatement.setInt(3, userList.getUserId());
             //execute the query
             boolean result = pStatement.execute();
-            if (result == true){
+            if (result){
                 //get the userListId
                  resultSet = pStatement.getGeneratedKeys();
                 if (resultSet.next()){
@@ -157,13 +157,14 @@ public class DataLayer {
             pStatement.setInt(2, bookmark.getUserId());
             //execute the query
             boolean result = pStatement.execute();
-            if (result == true){
+            if (result){
                 //get the userListId
                 resultSet = pStatement.getGeneratedKeys();
                 if (resultSet.next()){
                     bookmarkId = resultSet.getInt(1);
                 }
             }
+
         } catch(SQLException e){
             System.out.println("Error inserting Bookmark: " + e.getMessage());
         } finally {
@@ -182,8 +183,6 @@ public class DataLayer {
         User user = new User();
 
         try{
-
-
 //            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
             PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM User WHERE user_email = ?;");
             //execute the query
@@ -482,4 +481,24 @@ public class DataLayer {
         }
         return result;
     }
+
+    //general methods
+    public boolean isObjectBookmarked(String objectId){
+
+        try{
+            //create the sql statement
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * from Bookmark WHERE objectId = ?;");
+            //execute the query
+            pStatement.setString(1, objectId);
+            ResultSet resultSet = pStatement.executeQuery();
+
+            return resultSet.next();
+
+        } catch (SQLException e){
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return false;
+    }
+
+
 }
