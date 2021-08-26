@@ -1,20 +1,4 @@
 function getUserLists(){
-    // const ajaxRequest = new XMLHttpRequest();
-    // ajaxRequest.onreadystatechange = function (){
-    //     if (ajaxRequest.readyState == 4) {
-    //         if (ajaxRequest.status == 200){
-    //             document.getElementById("userListTable").innerHTML = ajaxRequest.responseText;
-    //         } else{
-    //             console.log("Status error: " + ajaxRequest.status);
-    //         }
-    //     }else {
-    //         console.log("Ignored ready state: " + ajaxRequest.readyState);
-    //     }
-    // }
-    // ajaxRequest.open("GET", "UserListServlet");
-    // ajaxRequest.setRequestHeader("userId", sessionStorage.getItem("user_id"));
-    // ajaxRequest.send();
-    console.log(`user_id: ${sessionStorage.getItem("user_id")}`)
     $.get({
         url: "UserListServlet",
         data: {

@@ -247,7 +247,7 @@ function loadScript(){
             listItem.className = "list-group-item";
             formCheckDiv.className = "form-check";
             checkboxInput.type = "checkbox";
-            checkboxInput.className = "form-check-input";
+            checkboxInput.className = "form-check-input me-1";
             checkboxInput.name = "language";
             checkboxInput.id = `$languageCheckbox${languageFacets[i]}`;
             checkboxInput.value = languageFacets[i];
@@ -291,7 +291,7 @@ function loadScript(){
         listItem.className = "list-group-item";
         formCheckDiv.className = "form-check";
         checkboxInput.type = "checkbox";
-        checkboxInput.className = "form-check-input";
+        checkboxInput.className = "form-check-input me-1";
         checkboxInput.name = "subject";
         checkboxInput.id = `subjectCheckbox${subjectFacets[i]}`;
         checkboxInput.value = subjectFacets[i];

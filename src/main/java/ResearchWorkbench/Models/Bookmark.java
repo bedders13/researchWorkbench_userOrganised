@@ -5,21 +5,30 @@ import java.awt.print.Book;
 public class Bookmark {
     int bookmarkId;
     String objectId;
+    String objectTitle;
+    String objectAuthor;
+    String objectDate;
     int userId;
 
     public Bookmark(){
         bookmarkId = 0;
         objectId = "null";
+        objectTitle = "null";
+        objectAuthor = "null";
+        objectDate = "null";
         userId = 0;
     }
 
-    public Bookmark(String objectId, int userId){
-        this(0, objectId, userId);
+    public Bookmark(String objectId, String objectTitle, String objectAuthor, String objectDate, int userId){
+        this(0, objectId, objectTitle, objectAuthor, objectDate, userId);
     }
 
-    public Bookmark(int bookmarkId, String objectId, int userId){
+    public Bookmark(int bookmarkId, String objectId, String objectTitle, String objectAuthor, String objectDate, int userId){
         this.bookmarkId = bookmarkId;
         this.objectId = objectId;
+        this.objectTitle = objectTitle;
+        this.objectAuthor = objectAuthor;
+        this.objectDate = objectDate;
         this.userId = userId;
     }
 
@@ -29,6 +38,18 @@ public class Bookmark {
 
     public String getObjectId() {
         return objectId;
+    }
+
+    public String getObjectTitle() {
+        return objectTitle;
+    }
+
+    public String getObjectAuthor() {
+        return objectAuthor;
+    }
+
+    public String getObjectDate() {
+        return objectDate;
     }
 
     public int getUserId() {
@@ -41,6 +62,18 @@ public class Bookmark {
 
     public void setObjectId(String objectId) {
         this.objectId = objectId;
+    }
+
+    public void setObjectTitle(String objectTitle) {
+        this.objectTitle = objectTitle;
+    }
+
+    public void setObjectAuthor(String objectAuthor) {
+        this.objectAuthor = objectAuthor;
+    }
+
+    public void setObjectDate(String objectDate) {
+        this.objectDate = objectDate;
     }
 
     public void setUserId(int userId) {

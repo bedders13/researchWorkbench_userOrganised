@@ -1,16 +1,22 @@
-function readLaterBtnClicked(id){
+function readLaterBtnClicked(id, title, creator, date){
     $.post({
         url: "SaveEtdServlet",
         data: {
             method: "bookmark",
             id: id,
+            title: title,
+            creator: creator,
+            date: date,
             userId: sessionStorage.getItem("user_id")
         },
         dataType: "json",
         success: function (data){
             console.log('bookmarked');
             console.log(data);
-            document.getElementById(`btn-${id}`).className = "btn btn-primary btn-sm float-right disabled";
+            if (data.bookmarked){
+                document.getElementById('bookmarkBtn').className = "btn btn-primary btn-sm float-right disabled";
+            }
+
         }
     })
 }
@@ -26,8 +32,8 @@ function isEtdAddedToReadLater(id){
         success: function (data){
             console.log('bookmarked');
             console.log(data);
-            if (data.response){
-                document.getElementById(`bookmarkBtn`).className = "btn btn-primary btn-sm float-right disabled";
+            if (data.bookmarked){
+                document.getElementById('bookmarkBtn').className = "btn btn-primary btn-sm float-right disabled";
             }
 
         }
@@ -53,6 +59,7 @@ const additionalFieldsMap = {
 }
 let backUrl = null;
 let doc;
+let readLater = false;
 
 $.get({
     url: "SolrServlet",
@@ -85,6 +92,9 @@ function buildMainQueryString(){
     if (getParams.has("back")){
         backUrl = getParams.get("back");
     }
+    if (getParams.has("read_later")){
+        readLater = true;
+    }
     return `id=${encodeURI(id)}`;
 
 }
@@ -99,10 +109,10 @@ function loadScript(){
 
     const showDocDiv = document.getElementById("showDocDiv");
 
-    //buttons
+    //read later buttons
     const buttonColDiv = document.getElementById("buttonColDiv");
     const bookmarkButton = document.getElementById("bookmarkBtn");
-    bookmarkButton.onclick = function () {readLaterBtnClicked(doc.id)}
+    bookmarkButton.onclick = function () {readLaterBtnClicked(doc.id, doc.title, ((doc.hasOwnProperty("creator")) ? doc.creator.join(', ') : 'null' ), doc.date_printable)}
 
     const addToListBtn = document.getElementById("addToListBtn");
 
@@ -127,6 +137,21 @@ function loadScript(){
 
         buttonColDiv.appendChild(aTag);
         showDocDiv.appendChild(buttonColDiv);
+    } else {
+        if (readLater){
+            const aTag = document.createElement("a");
+            aTag.href = "read_later.html";
+            aTag.className = "btn btn-primary btn-sm";
+            aTag.style = "margin-top: 15px; margin-bottom: 15px;";
+            const backSymbol = document.createElement("i");
+            backSymbol.className = "bi bi-chevron-left";
+            aTag.appendChild(backSymbol);
+            aTag.append("Read Later");
+
+
+            buttonColDiv.appendChild(aTag);
+            showDocDiv.appendChild(buttonColDiv);
+        }
     }
 
     //doc title
@@ -170,6 +195,7 @@ function loadScript(){
         const linksHeaderDiv = document.createElement("div");
         linksHeaderDiv.className = "page-header";
         const linksHeading = document.createElement("h5");
+        linksHeading.style = "margin-top: 15px";
         linksHeading.append("Links & Downloads");
         linksHeaderDiv.appendChild(linksHeading);
 
@@ -194,6 +220,7 @@ function loadScript(){
         const tagsHeaderDiv = document.createElement("div");
         tagsHeaderDiv.className = "page-header";
         const tagsHeading = document.createElement("h5");
+        tagsHeading.style = "margin-top: 15px";
         tagsHeading.append("Tags");
         tagsHeaderDiv.appendChild(tagsHeading);
         tagsColDiv.appendChild(tagsHeaderDiv);
@@ -227,6 +254,7 @@ function loadScript(){
     const additionalFieldsDiv = document.createElement("div");
     additionalFieldsDiv.className = "page-header";
     const additionalFieldsHeading = document.createElement("h5");
+    additionalFieldsHeading.style = "margin-top: 15px";
     additionalFieldsHeading.append("Additional Fields");
     additionalFieldsDiv.appendChild(additionalFieldsHeading);
 

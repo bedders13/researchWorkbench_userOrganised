@@ -40,7 +40,7 @@
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="index.jsp">Home</a></li>
                     <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
-                    <li><a class="dropdown-item" href="">Read Later</a></li>
+                    <li><a class="dropdown-item" href="read_later.html">Read Later</a></li>
                     <li><a class="dropdown-item" onclick="logOut()">Log out</a></li>
                 </ul>
             </div>

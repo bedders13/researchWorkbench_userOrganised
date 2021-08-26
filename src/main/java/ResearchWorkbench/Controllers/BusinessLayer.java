@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class BusinessLayer {
     ResearchWorkbench.Data.DataLayer dataLayer;
-    String connectionString = "jdbc:mysql://localhost/user_organised";
-//    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
+//    String connectionString = "jdbc:mysql://localhost/user_organised";
+    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
     String databaseUser = "hugh";
     String databasePassword = "AZURE-mysql99";
 
@@ -61,6 +61,10 @@ public class BusinessLayer {
         return dataLayer.getListItems(userListId);
     }
 
+    public Bookmark getBookmark(String objectId, int userId){
+        return dataLayer.getBookmark(objectId, userId);
+    }
+
     public ArrayList<UserList> getUserListsContainingListItem(int listItemId) {
         return dataLayer.getUserListsContainingListItem(listItemId);
     }
@@ -91,12 +95,14 @@ public class BusinessLayer {
         return dataLayer.deleteListItem(listItemId);
     }
 
-    public boolean deleteBookmark(int bookmarkId){
-        return dataLayer.deleteBookmark(bookmarkId);
+    public boolean deleteBookmark(String objectId){
+        return dataLayer.deleteBookmark(objectId);
     }
 
     //general methods
-    public boolean isObjectChecked(String objectId){
-        return dataLayer.isObjectBookmarked(objectId);
+    public boolean isObjectBookmarked(String objectId, int userId){
+        Bookmark bookmark = dataLayer.getBookmark(objectId, userId);
+        return (bookmark.getBookmarkId() != 0);
     }
+
 }

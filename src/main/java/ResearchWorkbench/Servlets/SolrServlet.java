@@ -31,7 +31,7 @@ public class SolrServlet extends HttpServlet {
         JSONObject jsonResults = readJsonFromUrl(solrUrl + queryUrl);
 //        String jsonResultsString = jsonResults.toString();
         response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         PrintWriter responseWriter = response.getWriter();
         responseWriter.print(jsonResults.toString());
@@ -72,7 +72,7 @@ public class SolrServlet extends HttpServlet {
 //        url = URLEncoder.encode(url, "UTF-8");
         InputStream is = new URL(url).openStream();
         try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, "utf-8"));
             String jsonText = readAll(rd);
 //            JSONObject json = new JSONObject(jsonText);
             return  new JSONObject(jsonText);

@@ -47,7 +47,7 @@
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="index.jsp">Home</a></li>
                     <li><a class="dropdown-item" href="user_lists.jsp">User Lists</a></li>
-                    <li><a class="dropdown-item" href="">Read Later</a></li>
+                    <li><a class="dropdown-item" href="read_later.html">Read Later</a></li>
                     <li><a class="dropdown-item" onclick="logOut()">Log out</a></li>
                 </ul>
             </div>
@@ -56,10 +56,10 @@
 </nav>
 
 <!-- Masthead-->
-<h1>User Lists</h1>
+<h1 style="margin-top: 16px; margin-left: 15px">User Lists</h1>
 <!-- Button trigger modal -->
 <div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createNewUserListModal">
+    <button type="button" class="btn btn-primary btn-sm" style="margin-left: 16px" data-bs-toggle="modal" data-bs-target="#createNewUserListModal">
         Create new list
     </button>
 </div>

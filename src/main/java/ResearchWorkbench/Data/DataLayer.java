@@ -60,17 +60,9 @@ public class DataLayer {
             pStatement.setString(2, user.getUserEmail());
             //execute the query
             boolean result = pStatement.execute();
-//            resultSet = pStatement.getGeneratedKeys();
-//            resultSet.next();
-//            userId = resultSet.getInt(1);
+
+            //get the new userId
             userId = getUser(user.getUserEmail()).getUserId();
-//            if (resultSet.next()){
-//                userId = resultSet.getInt(1);
-//            }
-//            if (result == true){
-//                //get the userListId
-//
-//            }
         } catch(SQLException e){
             System.out.println("Error inserting UserList: " + e.getMessage());
         }
@@ -150,20 +142,18 @@ public class DataLayer {
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO Bookmark (object_id, user_id);" +
-                    "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO Bookmark (object_id, object_title, " +
+                    "object_author, object_date, user_id) VALUES(?, ?, ?, ?, ?);");
             //set parameters for the statement
             pStatement.setString(1, bookmark.getObjectId());
-            pStatement.setInt(2, bookmark.getUserId());
+            pStatement.setString(2, bookmark.getObjectTitle());
+            pStatement.setString(3, bookmark.getObjectAuthor());
+            pStatement.setString(4, bookmark.getObjectDate());
+            pStatement.setInt(5, bookmark.getUserId());
             //execute the query
             boolean result = pStatement.execute();
-            if (result){
-                //get the userListId
-                resultSet = pStatement.getGeneratedKeys();
-                if (resultSet.next()){
-                    bookmarkId = resultSet.getInt(1);
-                }
-            }
+
+            bookmarkId = getBookmark(bookmark.getObjectId(), bookmark.getUserId()).getBookmarkId();
 
         } catch(SQLException e){
             System.out.println("Error inserting Bookmark: " + e.getMessage());
@@ -349,6 +339,9 @@ public class DataLayer {
                 Bookmark bookmark = new Bookmark();
                 bookmark.setBookmarkId(resultSet.getInt("bookmark_id"));
                 bookmark.setObjectId(resultSet.getString("object_id"));
+                bookmark.setObjectTitle(resultSet.getString("object_title"));
+                bookmark.setObjectAuthor(resultSet.getString("object_author"));
+                bookmark.setObjectDate(resultSet.getString("object_date"));
                 bookmark.setUserId(resultSet.getInt("user_id"));
                 //add the user list to the list of user lists
                 bookmarks.add(bookmark);
@@ -358,6 +351,35 @@ public class DataLayer {
             System.out.println("Sql Error occurred: " + e.getMessage());
         }
         return bookmarks;
+    }
+
+    public Bookmark getBookmark(String objectId, int userId){
+        Bookmark bookmark = new Bookmark();
+
+        try{
+//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM Bookmark WHERE object_id = ? AND " +
+                    "user_id = ?;");
+            //execute the query
+            pStatement.setString(1, objectId);
+            pStatement.setInt(2, userId);
+            ResultSet resultSet = pStatement.executeQuery();
+            boolean hasNext = resultSet.next();
+            if (!hasNext){
+                return bookmark;
+            }
+            //set the bookmark variables if it exists
+            bookmark.setBookmarkId(resultSet.getInt("bookmark_id"));
+            bookmark.setObjectId(resultSet.getString("object_id"));
+            bookmark.setObjectTitle(resultSet.getString("object_title"));
+            bookmark.setObjectAuthor(resultSet.getString("object_author"));
+            bookmark.setObjectDate(resultSet.getString("object_date"));
+            bookmark.setUserId(resultSet.getInt("user_id"));
+
+        } catch (SQLException e){
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return bookmark;
     }
     //update methods
     public int updateUserList(UserList userList) {
@@ -469,11 +491,11 @@ public class DataLayer {
         return result;
     }
 
-    public boolean deleteBookmark(int bookmarkId){
+    public boolean deleteBookmark(String objectId){
         boolean result = false;
         try{
-            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM Bookmark WHERE bookmark_id = ?;");
-            pStatement.setInt(1, bookmarkId);
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM Bookmark WHERE object_id = ?;");
+            pStatement.setString(1, objectId);
             //execute the query
             result = pStatement.execute();
         } catch (SQLException e) {
@@ -482,23 +504,6 @@ public class DataLayer {
         return result;
     }
 
-    //general methods
-    public boolean isObjectBookmarked(String objectId){
-
-        try{
-            //create the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * from Bookmark WHERE objectId = ?;");
-            //execute the query
-            pStatement.setString(1, objectId);
-            ResultSet resultSet = pStatement.executeQuery();
-
-            return resultSet.next();
-
-        } catch (SQLException e){
-            System.out.println("Sql Error occurred: " + e.getMessage());
-        }
-        return false;
-    }
 
 
 }

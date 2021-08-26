@@ -2,6 +2,7 @@ package ResearchWorkbench.Servlets;
 
 import ResearchWorkbench.Controllers.BusinessLayer;
 import ResearchWorkbench.Models.Bookmark;
+import org.json.JSONObject;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -20,28 +21,34 @@ public class SaveEtdServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String method = request.getParameter("method");
         String objectId = request.getParameter("id");
-        String userIdStr = request.getParameter("userId");
-        int userId = Integer.parseInt(userIdStr);
-        //        HttpSession session = request.getSession();
-//        int userId = (Integer)session.getAttribute("user_id");
+        int userId = Integer.parseInt(request.getParameter("userId"));
 
         BusinessLayer layer = new BusinessLayer();
 
         response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
 
         PrintWriter responseWriter = response.getWriter();
-
+        JSONObject jsonObject = new JSONObject();
 
         if (method.equals("check")){
-            boolean bookmarked = layer.isObjectChecked(objectId);
-            responseWriter.print("{ response: " + bookmarked + " }");
+            boolean bookmarked = layer.isObjectBookmarked(objectId, userId);
+            jsonObject.put("bookmarked", bookmarked);
+            responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }
         if (method.equals("bookmark")){
-            Bookmark bookmark = new Bookmark(objectId, userId);
+            String title = request.getParameter("title");
+            String author = request.getParameter("creator");
+            String date = request.getParameter("date");
+            Bookmark bookmark = new Bookmark(objectId, title, author, date, userId);
             int result = layer.createBookmark(bookmark);
-            responseWriter.print("{ response: " + true + " }");
+            if (result != -1){
+                jsonObject.put("bookmarked", true);
+            } else {
+                jsonObject.put("bookmarked", false);
+            }
+
+            responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }
     }

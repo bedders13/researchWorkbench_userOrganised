@@ -21,12 +21,20 @@ function logOut(){
     sessionStorage.removeItem("logged_in");
     sessionStorage.removeItem("user_id");
     sessionStorage.removeItem("user_name");
-    $.post({
-        url: "LogOutServlet",
-        success: function (data){
-            location.reload();
-        }
-    })
+    location.reload();
+    // $.post({
+    //     url: "LogOutServlet",
+    //     success: function (data){
+    //         const path = window.location.pathname;
+    //         const page = path.split('/').pop();
+    //         console.log(`page: ${page}`)
+    //         if (page === "user_list.jsp" || page === "read_later.html" ){
+    //             location.href = "index.jsp";
+    //         } else {
+    //             location.reload();
+    //         }
+    //     }
+    // })
 }
 
 function logIn(emailAddress){
