@@ -16,7 +16,6 @@ function readLaterBtnClicked(id, title, creator, date){
             if (data.bookmarked){
                 document.getElementById('bookmarkBtn').className = "btn btn-primary btn-sm float-right disabled";
             }
-
         }
     })
 }
@@ -24,7 +23,7 @@ function isEtdAddedToReadLater(id){
     $.post({
         url: "SaveEtdServlet",
         data: {
-            method: "check",
+            method: "checkBookmark",
             id: id,
             userId: sessionStorage.getItem("user_id")
         },
@@ -38,6 +37,47 @@ function isEtdAddedToReadLater(id){
 
         }
     })
+}
+
+
+function addEtdToList(userListId){
+    // const objectId =         document.getElementById("currentDocId").value
+    // document.getElementById("currentDocTitle").value
+    // document.getElementById("currentDocAuthor").value
+    // document.getElementById("currentDocDate").value
+    $.post({
+        url: "SaveEtdServlet",
+        data: {
+            method: "list",
+            id: docId,
+            title: docTitle,
+            creator: docAuthor,
+            date: docDate,
+            userListId: userListId,
+            userId: sessionStorage.getItem("user_id")
+        },
+        dataType: "json",
+        success: function (data){
+            console.log('bookmarked');
+            console.log(data);
+            if (data.added){
+                document.getElementById('addToListBtn').className = "btn btn-primary btn-sm float-right disabled";
+                $("#closeAddToListModal").click();
+            }
+        }
+    })
+}
+
+function getAddToListNames(){
+    addToListModalBody
+    $.get({
+        url: "SaveEtdServlet",
+        data: {
+            userId: sessionStorage.getItem("user_id")
+        }
+    }).done(function (response) {
+        $("#addToListModalBody").html(response);
+    });
 }
 
 //functions needed to load document
@@ -57,9 +97,15 @@ const additionalFieldsMap = {
     rights:'Rights',
     relation:'Relation'
 }
-let backUrl = null;
+let backUrlExists = false;
 let doc;
 let readLater = false;
+let userList = false;
+
+let docId;
+let docTitle;
+let docAuthor;
+let docDate;
 
 $.get({
     url: "SolrServlet",
@@ -71,6 +117,15 @@ $.get({
     success: function (data){
         doc = data.doc;
         console.log(data);
+        // document.getElementById("currentDocId").value = data.doc.id;
+        // document.getElementById("currentDocTitle").value = data.doc.title;
+        // document.getElementById("currentDocAuthor").value = data.doc.author;
+        // document.getElementById("currentDocDate").value = data.doc.date;
+        docId = data.doc.id;
+        docTitle = data.doc.title;
+        docAuthor = ((doc.hasOwnProperty("creator")) ? doc.creator.join(', ') : 'null' );
+        docDate = data.doc.date_printable
+        ;
         loadScript();
 
     },
@@ -90,11 +145,15 @@ function buildMainQueryString(){
 
     //set the back url if it exists
     if (getParams.has("back")){
-        backUrl = getParams.get("back");
+        backUrlExists = true;
     }
     if (getParams.has("read_later")){
         readLater = true;
     }
+    if (getParams.has("user_list")){
+        userList = true;
+    }
+
     return `id=${encodeURI(id)}`;
 
 }
@@ -124,9 +183,13 @@ function loadScript(){
     }
 
     //load back to search button
-    if (backUrl !== null){
+    if (backUrlExists){
+        const fullUrl = window.location.search;
+        const fullUrlList = fullUrl.split('&');
+        fullUrlList.shift();
+        const backUrl = fullUrlList.join('&');
         const aTag = document.createElement("a");
-        aTag.href = backUrl;
+        aTag.href = backUrl.slice(5);
         aTag.className = "btn btn-primary btn-sm";
         aTag.style = "margin-top: 15px; margin-bottom: 15px;";
         const backSymbol = document.createElement("i");
@@ -137,8 +200,7 @@ function loadScript(){
 
         buttonColDiv.appendChild(aTag);
         showDocDiv.appendChild(buttonColDiv);
-    } else {
-        if (readLater){
+    } else if (readLater){
             const aTag = document.createElement("a");
             aTag.href = "read_later.html";
             aTag.className = "btn btn-primary btn-sm";
@@ -151,8 +213,21 @@ function loadScript(){
 
             buttonColDiv.appendChild(aTag);
             showDocDiv.appendChild(buttonColDiv);
-        }
+    } else if(userList) {
+        const aTag = document.createElement("a");
+        aTag.href = "user_list.html";
+        aTag.className = "btn btn-primary btn-sm";
+        aTag.style = "margin-top: 15px; margin-bottom: 15px;";
+        const backSymbol = document.createElement("i");
+        backSymbol.className = "bi bi-chevron-left";
+        aTag.appendChild(backSymbol);
+        aTag.append("User Lists");
+
+
+        buttonColDiv.appendChild(aTag);
+        showDocDiv.appendChild(buttonColDiv);
     }
+
 
     //doc title
     const titleColDiv = document.getElementById("titleColDiv");

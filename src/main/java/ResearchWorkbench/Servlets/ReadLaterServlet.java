@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@WebServlet(name = "ShowBookmarkServlet", value = "/ShowBookmarkServlet")
-public class ShowBookmarkServlet extends HttpServlet {
+@WebServlet(name = "ReadLaterServlet", value = "/ReadLaterServlet")
+public class ReadLaterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //get the parameters
@@ -38,7 +38,7 @@ public class ShowBookmarkServlet extends HttpServlet {
                 out.println("<span class=\"pull-right\">");
 //                out.println("<button class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() +"')\">");
 //                out.println("<i class=\"bi bi-x-lg\"></i>");
-                out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() + "'); event.stopPropagation();\">");
+                out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() + "',"+ userId + ");     event.preventDefault(); event.stopPropagation();\">");
                 out.println("<span class=\"bi bi-x-lg\" aria-hidden=\"true\"></span>");
                 out.println("</span></span></div>");
                 out.println("<p class=\"mb-1\">" + bookmarks.get(i).getObjectAuthor() + "</p>");
@@ -47,12 +47,23 @@ public class ShowBookmarkServlet extends HttpServlet {
 
             }
         }
+        out.close();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String objectId = request.getParameter("id");
+        String method = request.getParameter("method");
+        String objectId = request.getParameter("objectId");
         BusinessLayer layer = new BusinessLayer();
-        boolean deleted = layer.deleteBookmark(objectId);
+
+        if (method.equals("bookmark")){
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean deleted = layer.deleteBookmark(objectId, userId);
+        }
+
+        if (method.equals("list")){
+            int userListId = Integer.parseInt(request.getParameter("userListId"));
+            boolean deleted = layer.deleteListItem(objectId, userListId);
+        }
     }
 }

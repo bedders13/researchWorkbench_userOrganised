@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class BusinessLayer {
     ResearchWorkbench.Data.DataLayer dataLayer;
-//    String connectionString = "jdbc:mysql://localhost/user_organised";
-    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
+    String connectionString = "jdbc:mysql://localhost/user_organised";
+//    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
     String databaseUser = "hugh";
     String databasePassword = "AZURE-mysql99";
 
@@ -53,8 +53,8 @@ public class BusinessLayer {
         return dataLayer.getUserLists(userId);
     }
 
-    public ListItem getListItem(int listItemId) {
-        return dataLayer.getListItem(listItemId);
+    public ListItem getListItem(String objectId, int userListId ) {
+        return dataLayer.getListItem(objectId, userListId);
     }
 
     public ArrayList<ListItem> getListItems(int userListId) {
@@ -78,25 +78,25 @@ public class BusinessLayer {
         return dataLayer.updateUserList(userList);
     }
 
-    public int updateListItem(ListItem listItem) {
-        return dataLayer.updateListItem(listItem);
-    }
+//    public int updateListItem(ListItem listItem) {
+//        return dataLayer.updateListItem(listItem);
+//    }
 
     //delete methods
     public boolean deleteUser(int userId){
         return dataLayer.deleteUser(userId);
     }
 
-    public boolean deleteUserList(int userListId) {
-        return dataLayer.deleteUserList(userListId);
+    public boolean deleteUserList(int userListId, int userId) {
+        return dataLayer.deleteUserList(userListId, userId);
     }
 
-    public boolean deleteListItem(int listItemId){
-        return dataLayer.deleteListItem(listItemId);
+    public boolean deleteListItem(String objectId, int user_list_id){
+        return dataLayer.deleteListItem(objectId, user_list_id);
     }
 
-    public boolean deleteBookmark(String objectId){
-        return dataLayer.deleteBookmark(objectId);
+    public boolean deleteBookmark(String objectId, int userId){
+        return dataLayer.deleteBookmark(objectId, userId);
     }
 
     //general methods

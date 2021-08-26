@@ -110,22 +110,21 @@ public class DataLayer {
         ResultSet resultSet = null;
         try {
             //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (list_object_id, user_list_id);" +
-                    "VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (object_id, object_title, " +
+                    "object_author, object_date, user_list_id) VALUES(?, ?, ?, ?, ?);");
             //set parameters for the statement
-            pStatement.setString(1, listItem.getListObject());
-            pStatement.setInt(2, listItem.getUserListId());
+            pStatement.setString(1, listItem.getListObjectId());
+            pStatement.setString(2, listItem.getObjectTitle());
+            pStatement.setString(3, listItem.getObjectAuthor());
+            pStatement.setString(4, listItem.getObjectDate());
+            pStatement.setInt(5, listItem.getUserListId());
             //execute the query
             boolean result = pStatement.execute();
-            if (result == true){
-                //get the userListId
-                resultSet = pStatement.getGeneratedKeys();
-                if (resultSet.next()){
-                    listItemId = resultSet.getInt(1);
-                }
-            }
+
+            listItemId = getListItem(listItem.getListObjectId(), listItem.getUserListId()).getListItemId();
+
         } catch(SQLException e){
-            System.out.println("Error inserting ListItem: " + e.getMessage());
+            System.out.println("Error inserting Bookmark: " + e.getMessage());
         } finally {
             try{
                 if(resultSet != null){resultSet.close();}
@@ -247,20 +246,27 @@ public class DataLayer {
         return userLists;
     }
 
-    public ListItem getListItem(int listItemId){
+    public ListItem getListItem(String objectId, int userListId){
         ListItem listItem = new ListItem();
 
         try{
-            //create the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM ListItem WHERE list_item_id = ?;");
+//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM ListItem WHERE object_id = ? AND " +
+                    "user_list_id = ?;");
             //execute the query
-            pStatement.setInt(1, listItemId);
+            pStatement.setString(1, objectId);
+            pStatement.setInt(2, userListId);
             ResultSet resultSet = pStatement.executeQuery();
-            resultSet.next();
-
-            //set the ListItem variables
+            boolean hasNext = resultSet.next();
+            if (!hasNext){
+                return listItem;
+            }
+            //set the bookmark variables if it exists
             listItem.setListItemId(resultSet.getInt("list_item_id"));
-            listItem.setListObject(resultSet.getString("list_object"));
+            listItem.setListObjectId(resultSet.getString("object_id"));
+            listItem.setObjectTitle(resultSet.getString("object_title"));
+            listItem.setObjectAuthor(resultSet.getString("object_author"));
+            listItem.setObjectDate(resultSet.getString("object_date"));
             listItem.setUserListId(resultSet.getInt("user_list_id"));
 
         } catch (SQLException e){
@@ -283,7 +289,10 @@ public class DataLayer {
             while(resultSet.next()){
                 ListItem listItem = new ListItem();
                 listItem.setListItemId(resultSet.getInt("list_item_id"));
-                listItem.setListObject(resultSet.getString("list_object"));
+                listItem.setListObjectId(resultSet.getString("object_id"));
+                listItem.setObjectTitle(resultSet.getString("object_title"));
+                listItem.setObjectAuthor(resultSet.getString("object_author"));
+                listItem.setObjectDate(resultSet.getString("object_date"));
                 listItem.setUserListId(resultSet.getInt("user_list_id"));
                 //add the user list to the list of user lists
                 listItems.add(listItem);
@@ -418,38 +427,38 @@ public class DataLayer {
         return userListId;
     }
 
-    public int updateListItem(ListItem listItem) {
-        int listItemId = -1;
-        ResultSet resultSet = null;
-        try {
-            //prepare the sql statement
-            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE ListItem " +
-                    "SET list_object = ?, user_list_id = ? WHERE list_item_id = ?;", Statement.RETURN_GENERATED_KEYS);
-            //set parameters for the statement
-            pStatement.setString(1, listItem.getListObject());
-            pStatement.setInt(2, listItem.getUserListId());
-            pStatement.setInt(3, listItem.getListItemId());
-            //execute the query
-            boolean result = pStatement.execute();
-            if (result == true){
-                //get the userListId
-                resultSet = pStatement.getGeneratedKeys();
-                if (resultSet.next()){
-                    listItemId = resultSet.getInt(1);
-                }
-            }
-        } catch(SQLException e){
-            System.out.println("Error inserting ListItem: " + e.getMessage());
-        } finally {
-            try{
-                if(resultSet != null){resultSet.close();}
-            } catch (SQLException e){
-                System.out.println("Couldn't close connection: " + e.getMessage());
-            }
-
-        }
-        return listItemId;
-    }
+//    public int updateListItem(ListItem listItem) {
+//        int listItemId = -1;
+//        ResultSet resultSet = null;
+//        try {
+//            //prepare the sql statement
+//            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE ListItem " +
+//                    "SET object_id = ?, user_list_id = ? WHERE list_item_id = ?;", Statement.RETURN_GENERATED_KEYS);
+//            //set parameters for the statement
+//            pStatement.setString(1, listItem.get());
+//            pStatement.setInt(2, listItem.getUserListId());
+//            pStatement.setInt(3, listItem.getListItemId());
+//            //execute the query
+//            boolean result = pStatement.execute();
+//            if (result == true){
+//                //get the userListId
+//                resultSet = pStatement.getGeneratedKeys();
+//                if (resultSet.next()){
+//                    listItemId = resultSet.getInt(1);
+//                }
+//            }
+//        } catch(SQLException e){
+//            System.out.println("Error inserting ListItem: " + e.getMessage());
+//        } finally {
+//            try{
+//                if(resultSet != null){resultSet.close();}
+//            } catch (SQLException e){
+//                System.out.println("Couldn't close connection: " + e.getMessage());
+//            }
+//
+//        }
+//        return listItemId;
+//    }
 
     //delete methods
     public boolean deleteUser(int userId){
@@ -465,11 +474,13 @@ public class DataLayer {
         return result;
     }
 
-    public boolean deleteUserList(int userListId){
+    public boolean deleteUserList(int userListId, int userId){
         boolean result = false;
         try{
-            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM UserList WHERE user_list_id = ?;");
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM UserList WHERE user_list_id = ? " +
+                    "AND user_id = ?;");
             pStatement.setInt(1, userListId);
+            pStatement.setInt(2, userId);
             //execute the query
             result = pStatement.execute();
         } catch (SQLException e) {
@@ -478,24 +489,28 @@ public class DataLayer {
         return result;
     }
 
-    public boolean deleteListItem(int listItemId){
+    public boolean deleteListItem(String objectId, int userListId){
         boolean result = false;
         try{
-            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM ListITem WHERE list_item_id = ?;");
-            pStatement.setInt(1, listItemId);
-            //execute the query
-            result = pStatement.execute();
-        } catch (SQLException e) {
-            System.out.println("Sql Error occurred: " + e);
-        }
-        return result;
-    }
-
-    public boolean deleteBookmark(String objectId){
-        boolean result = false;
-        try{
-            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM Bookmark WHERE object_id = ?;");
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM ListItem WHERE object_id = ? " +
+                    "AND user_list_id = ?;");
             pStatement.setString(1, objectId);
+            pStatement.setInt(2, userListId);
+            //execute the query
+            result = pStatement.execute();
+        } catch (SQLException e) {
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return result;
+    }
+
+    public boolean deleteBookmark(String objectId, int userId){
+        boolean result = false;
+        try{
+            PreparedStatement pStatement = databaseConnection.prepareStatement("DELETE FROM Bookmark WHERE object_id = ? " +
+                    "AND user_id = ?;");
+            pStatement.setString(1, objectId);
+            pStatement.setInt(2, userId);
             //execute the query
             result = pStatement.execute();
         } catch (SQLException e) {

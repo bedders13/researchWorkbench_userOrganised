@@ -1,6 +1,6 @@
 function getBookmarks(){
     $.get({
-        url: "ShowBookmarkServlet",
+        url: "ReadLaterServlet",
         data: {
             userId: sessionStorage.getItem("user_id")
         }
@@ -9,15 +9,19 @@ function getBookmarks(){
     });
 }
 
-function deleteBookmark(id){
+
+
+function deleteBookmark(objectId, userId){
     console.log("clicked delete");
     $.post({
-        url: "ShowBookmarkServlet",
+        url: "ReadLaterServlet",
         data: {
-            id: id,
+            method: "bookmark",
+            objectId: objectId,
+            userId: userId
         },
         success: function (data){
-            console.log(`deleted bookmark with id: ${id}`);
+            console.log(`deleted bookmark with id: ${objectId} and userId: ${userId}`);
             getBookmarks();
         }
     })
