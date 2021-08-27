@@ -21,7 +21,17 @@ function logOut(){
     sessionStorage.removeItem("logged_in");
     sessionStorage.removeItem("user_id");
     sessionStorage.removeItem("user_name");
-    location.reload();
+    const path = window.location.pathname;
+    const page = path.split('/').pop();
+    // console.log(`page: ${page}`)
+    // if (page === "user_list.html" || page === "read_later.html" ){
+    //     location.href = "index.jsp";
+    // } else {
+    //     location.reload();
+    // }
+    // location.reload();
+    location.href = "index.jsp";
+
     // $.post({
     //     url: "LogOutServlet",
     //     success: function (data){

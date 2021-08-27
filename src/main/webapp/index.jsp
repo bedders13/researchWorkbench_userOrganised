@@ -106,7 +106,6 @@
                 <h5 class="modal-title" id="signInModalLabel;">Log In</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-<%--            <form action="UserListServlet" method="post">--%>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="logInEmailAddress" class="form-label">Email Address</label>
@@ -118,7 +117,6 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button  class="btn btn-primary" onclick="logIn(logInEmailAddress.value)">Log in</button>
                 </div>
-<%--            </form>--%>
         </div>
     </div>
 </div>
@@ -130,7 +128,6 @@
                 <h5 class="modal-title" id="createProfileModal;">Create a User Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <%--            <form action="UserListServlet" method="post">--%>
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="createUserName" class="form-label">User Name</label>
@@ -141,9 +138,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button  class="btn btn-primary" onclick="createProfile(createUserName.value, createEmailAddress.value)">Log in</button>
+                <button  class="btn btn-primary" onclick="createProfile(createUserName.value, createEmailAddress.value)">Create</button>
             </div>
-            <%--            </form>--%>
         </div>
     </div>
 </div>

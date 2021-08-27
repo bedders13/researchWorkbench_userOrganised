@@ -192,6 +192,30 @@ public class DataLayer {
         return user;
     }
 
+    public User getUser(int userId){
+        User user = new User();
+
+        try{
+//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
+            PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM User WHERE user_id = ?;");
+            //execute the query
+            pStatement.setInt(1, userId);
+            ResultSet resultSet = pStatement.executeQuery();
+            boolean hasNext = resultSet.next();
+            if (!hasNext){
+                return user;
+            }
+            //set the UserList variables
+            user.setUserId(resultSet.getInt("user_id"));
+            user.setUserEmail(resultSet.getString("user_email"));
+            user.setUserName(resultSet.getString("user_name"));
+
+        } catch (SQLException e){
+            System.out.println("Sql Error occurred: " + e.getMessage());
+        }
+        return user;
+    }
+
     public UserList getUserList(int userListId){
         UserList userList = new UserList();
 
@@ -304,15 +328,17 @@ public class DataLayer {
         return listItems;
     }
 
-    public ArrayList<UserList> getUserListsContainingListItem(int listItemId){
+    public ArrayList<UserList> getUserListsContainingListItem(String objectId, int userId){
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         try{
             //create the sql statement
-            Statement statement = databaseConnection.createStatement();
+            PreparedStatement preparedStatement = databaseConnection.prepareStatement("SELECT * FROM UserList INNER JOIN ListItem ON " +
+                    "UserList.user_list_id = ListItem.user_list_id " +
+                    "WHERE ListItem.object_id = ? AND UserList.is_private = false AND UserList.user_id <> ?;");
             //execute the query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM UserList INNER JOIN ListItem ON " +
-                    "UserList.UserListId = ListItem.UserListId " +
-                    "WHERE ListItem.list_item_id =" + listItemId + "AND UserList.is_private = false;");
+            preparedStatement.setString(1, objectId);
+            preparedStatement.setInt(2, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             //set the UserList variables
             while (resultSet.next()){

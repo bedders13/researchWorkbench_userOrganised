@@ -61,23 +61,74 @@ function addEtdToList(userListId){
             console.log('bookmarked');
             console.log(data);
             if (data.added){
-                document.getElementById('addToListBtn').className = "btn btn-primary btn-sm float-right disabled";
+                // document.getElementById('addToListBtn').className = "btn btn-primary btn-sm float-right disabled";
                 $("#closeAddToListModal").click();
             }
         }
     })
 }
 
-function getAddToListNames(){
-    addToListModalBody
+//for add to list modal
+function getListNames(){
+    const userId = sessionStorage.getItem("user_id");
+    if (userId !== null){
+        $.get({
+            url: "SaveEtdServlet",
+            data: {
+                userId: sessionStorage.getItem("user_id")
+            }
+        }).done(function (response) {
+            $("#addToListModalBody").html(response);
+        });
+    }
+
+}
+
+function getUserListsContainingEtd(){
+    const queryString = window.location.search;
+    const getParams = new URLSearchParams(queryString);
+    const objectId = getParams.get("id");
+    let userId = sessionStorage.getItem("user_id");
+    if (userId === null) {
+        userId = -1;
+    }
     $.get({
-        url: "SaveEtdServlet",
+        url: "UserListServlet",
         data: {
-            userId: sessionStorage.getItem("user_id")
+            method: "showPage",
+            objectId: objectId,
+            userId: userId
         }
     }).done(function (response) {
-        $("#addToListModalBody").html(response);
+        $("#userListCol").html(response);
     });
+}
+
+function createUserList(listName, isPrivate){
+    if (listName === null ) {
+        alert("Please enter a name for your list");
+    } else {
+        $.post({
+            url: "UserListServlet",
+            data: {
+                method: "create",
+                userId: sessionStorage.getItem("user_id"),
+                listName: listName,
+                isPrivate: isPrivate
+            },
+            success: function (data){
+                // $("#createNewUserListModal").modal('dispose');
+                $("#closeModalBtn").click();
+                $('#addToListModal').modal('show');
+                getListNames();
+
+            }
+        })
+    }
+}
+
+function showListItem(id){
+    location.href = `show.html?id=${id}&search=`;
 }
 
 //functions needed to load document
@@ -199,7 +250,6 @@ function loadScript(){
 
 
         buttonColDiv.appendChild(aTag);
-        showDocDiv.appendChild(buttonColDiv);
     } else if (readLater){
             const aTag = document.createElement("a");
             aTag.href = "read_later.html";
@@ -209,10 +259,7 @@ function loadScript(){
             backSymbol.className = "bi bi-chevron-left";
             aTag.appendChild(backSymbol);
             aTag.append("Read Later");
-
-
             buttonColDiv.appendChild(aTag);
-            showDocDiv.appendChild(buttonColDiv);
     } else if(userList) {
         const aTag = document.createElement("a");
         aTag.href = "user_list.html";
@@ -222,10 +269,19 @@ function loadScript(){
         backSymbol.className = "bi bi-chevron-left";
         aTag.appendChild(backSymbol);
         aTag.append("User Lists");
-
-
         buttonColDiv.appendChild(aTag);
-        showDocDiv.appendChild(buttonColDiv);
+    } else {
+        const aTag = document.createElement("a");
+        aTag.onclick=function () {
+            history.back();
+        };
+        aTag.className = "btn btn-primary btn-sm";
+        aTag.style = "margin-top: 15px; margin-bottom: 15px;";
+        const backSymbol = document.createElement("i");
+        backSymbol.className = "bi bi-chevron-left";
+        aTag.appendChild(backSymbol);
+        aTag.append("Back");
+        buttonColDiv.appendChild(aTag);
     }
 
 

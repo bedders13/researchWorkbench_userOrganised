@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class BusinessLayer {
     ResearchWorkbench.Data.DataLayer dataLayer;
-    String connectionString = "jdbc:mysql://localhost/user_organised";
-//    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
+//    String connectionString = "jdbc:mysql://localhost/user_organised";
+    String connectionString = "jdbc:mysql://20.87.26.56/user_organised";
     String databaseUser = "hugh";
     String databasePassword = "AZURE-mysql99";
 
@@ -45,6 +45,10 @@ public class BusinessLayer {
         return dataLayer.getUser(userEmail);
     }
 
+    public User getUser(int userId){
+        return dataLayer.getUser(userId);
+    }
+
     public UserList getUserList(int userListId) {
         return dataLayer.getUserList(userListId);
     }
@@ -65,8 +69,8 @@ public class BusinessLayer {
         return dataLayer.getBookmark(objectId, userId);
     }
 
-    public ArrayList<UserList> getUserListsContainingListItem(int listItemId) {
-        return dataLayer.getUserListsContainingListItem(listItemId);
+    public ArrayList<UserList> getUserListsContainingListItem(String objectId, int userId) {
+        return dataLayer.getUserListsContainingListItem(objectId, userId);
     }
 
     public ArrayList<Bookmark> getBookmarks(int userId){

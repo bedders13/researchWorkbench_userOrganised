@@ -19,7 +19,7 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/show.js"></script>
 </head>
-<body onload="getAddToListNames()">
+<body onload="getListNames(); getUserListsContainingEtd()">
     <nav class="navbar navbar-light bg-light static-top">
         <div class="container">
             <a class="navbar-brand" href="index.jsp">Research Workbench</a>
@@ -45,32 +45,43 @@
         </div>
     </nav>
     <div class="container-lg">
-        <div id="showDocDiv" class="row" style="padding-bottom:20px">
+        <div id="buttonColDiv" class="col-sm-12">
+            <button id="bookmarkBtn" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" >Read Later</button>
+            <button id="addToListBtn" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" data-bs-toggle="modal" data-bs-target="#addToListModal" data-mdb-name="" >
+                Add To List
+            </button>
+        </div>
+        <div class="row">
+            <div class="col-lg-9">
+                <div id="showDocDiv" class="row" style="padding-bottom:20px">
 
-            <div id="buttonColDiv" class="col-sm-12">
-                <button id="bookmarkBtn" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" >Read Later</button>
-                <button id="addToListBtn" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" data-bs-toggle="modal" data-bs-target="#addToListModal" data-mdb-name="" >
-                    Add To List
-                </button>
+                    <div id="titleColDiv" class="col-sm-12">
+
+                    </div>
+                    <div id="descriptionColDiv" class="col-sm-12">
+
+                    </div>
+                    <div id="linksColDiv" class="col-sm-12">
+
+                    </div>
+                    <div id="tagsColDiv" class="col-sm-12">
+
+                    </div>
+                    <div id="additionalColDiv" class="col-sm-12">
+
+                    </div>
+                </div>
             </div>
-            <div id="titleColDiv" class="col-sm-12">
+            <div id="userListCol" class="col-lg-3">
+
 
             </div>
-            <div id="descriptionColDiv" class="col-sm-12">
 
-            </div>
-            <div id="linksColDiv" class="col-sm-12">
-
-            </div>
-            <div id="tagsColDiv" class="col-sm-12">
-
-            </div>
-            <div id="additionalColDiv" class="col-sm-12">
-
-            </div>
         </div>
 
     </div>
+
+<!--  Modals -->
     <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -115,6 +126,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="addToListModal" tabindex="-1" aria-labelledby="addToListModal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -123,11 +135,43 @@
                     <button id="closeAddToListModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
+                    <button id="createNewListBtn" onclick="$('#closeListModalBtn').click();" class="btn btn-primary btn-sm" style="margin-top: 6px; margin-right: 2px;" data-bs-toggle="modal" data-bs-target="#createNewUserListModal" data-mdb-name="" >Create New</button>
+                    <hr class="solid">
                     <div id="addToListModalBody" class="list-group">
 
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button id="closeListModalBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="createNewUserListModal" tabindex="-1" aria-labelledby="newUserListModalListLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newUserListModalListLabel;">Create a new user list</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="userListName" class="form-label">List Name</label>
+                        <input type="text" class="form-control" id="userListName" name="userListName" >
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="userListIsPrivate" id="userListIsPrivate">
+                        <label class="form-check-label" for="userListIsPrivate">Make this list private</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="closeModalBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" onclick="createUserList(userListName.value, userListIsPrivate.checked)">Create</button>
+                </div>
             </div>
         </div>
     </div>

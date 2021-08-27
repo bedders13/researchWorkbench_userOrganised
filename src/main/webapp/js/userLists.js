@@ -2,6 +2,7 @@ function getUserLists(){
     $.get({
         url: "UserListServlet",
         data: {
+            method: "userListPage",
             userId: sessionStorage.getItem("user_id")
         }
     }).done(function (response) {

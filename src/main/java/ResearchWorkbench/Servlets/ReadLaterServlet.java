@@ -28,8 +28,8 @@ public class ReadLaterServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         if (bookmarks.size() == 0){
-            out.println("    <h5 style=\"text-align: center; margin-top: 64px; text-decoration: none\" >Save ETDs to read later</h5>\n" +
-                    "    <p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently have no saved ETDs</p>");
+            out.println("    <h5 style=\"text-align: center; margin-top: 64px; text-decoration: none\" >Save Electronic Thesis and Dissertations to read later.</h5>\n" +
+                    "    <p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently have no saved ETDs.</p>");
         } else {
             for (int i = 0; i < bookmarks.size(); i++){
                 out.println("<a onclick=\"showBookmark('" + bookmarks.get(i).getObjectId() + "')\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");
@@ -38,7 +38,7 @@ public class ReadLaterServlet extends HttpServlet {
                 out.println("<span class=\"pull-right\">");
 //                out.println("<button class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() +"')\">");
 //                out.println("<i class=\"bi bi-x-lg\"></i>");
-                out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() + "',"+ userId + ");     event.preventDefault(); event.stopPropagation();\">");
+                out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() + "',"+ userId + ");event.preventDefault(); event.stopPropagation();\">");
                 out.println("<span class=\"bi bi-x-lg\" aria-hidden=\"true\"></span>");
                 out.println("</span></span></div>");
                 out.println("<p class=\"mb-1\">" + bookmarks.get(i).getObjectAuthor() + "</p>");
