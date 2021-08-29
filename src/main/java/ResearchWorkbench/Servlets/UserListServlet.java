@@ -70,15 +70,17 @@ public class UserListServlet extends HttpServlet {
             if (userLists.size() == 0){
                 out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >No other user lists contain this paper</p>");
             } else {
+
+                out.println("<div class=\"list-group\">");
                 for(UserList userList : userLists){
                     ArrayList<ListItem> listItems = layer.getListItems(userList.getUserListId());
-                    out.println("<ul class=\"list-group\">");
-                    out.println("<a style=\"text-decoration: none\" href=\"view_user_list.html?id=" + userList.getUserListId() + "\">");
-                    out.println("<li class=\"list-group-item list-group-item-action\" mb-1>");
-                    out.println("<div style=\"margin-bottom: 8px\">");
-                    out.println("<b>" + userList.getUserListName() + "</b>");
-                    out.println("<small>by " + layer.getUser(userList.getUserId()).getUserName() + "</small>");
-                    out.println("</div>");
+//                    out.println("<ul class=\"list-group\">");
+//                    out.println("<a style=\"text-decoration: none\" href=\"view_user_list.html?id=" + userList.getUserListId() + "\">");
+//                    out.println("<li class=\"list-group-item list-group-item-action\" mb-1>");
+//                    out.println("<div style=\"margin-bottom: 8px\">");
+//                    out.println("<b>" + userList.getUserListName() + "</b>");
+//                    out.println("<small>by " + layer.getUser(userList.getUserId()).getUserName() + "</small>");
+//                    out.println("</div>");
 //                    out.println("<ol class=\"list-group list-group-numbered\">");
 //                    for (ListItem listItem : listItems ){
 //                        out.println("<li onclick=\"showListItem('" + listItem.getListObjectId() + "'); event.preventDefault(); event.stopPropagation();\" class=\"list-group-item list-group-item-action d-flex justify-content-between align-items-start\">");
@@ -88,7 +90,14 @@ public class UserListServlet extends HttpServlet {
 //                        out.println("</div>");
 //                        out.println("</li>");
 //                    }
-                    out.println("</li></a></ul>");
+//                    out.println("</li></a></ul>");
+                    out.println("<a href=\"view_user_list.html?id=" + userList.getUserListId() + "\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");
+                    out.println("<div class=\"d-flex w-100 justify-content-between\">");
+                    out.println("<h5 class=\"mb-1\">" + userList.getUserListName() + " </h5>");
+                    out.println("</div>");
+                    out.println("<p class=\"mb-1\"> Created by: " + layer.getUser(userList.getUserId()).getUserName() + "</p>");
+                    out.println("<small>" + listItems.size() + " resources</small>");
+                    out.println(" </a>");
                 }
             }
         }

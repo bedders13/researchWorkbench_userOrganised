@@ -401,7 +401,7 @@ function loadScript(){
         dateTag.className = "m-0";
         const dateSpanTag = document.createElement("span");
         dateSpanTag.className = "text-muted time"
-        dateSpanTag.textContent = ((docs[i].hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date' );
+        dateSpanTag.textContent = ((docs[i].hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date');
         dateTag.appendChild(dateSpanTag);
 
         const descriptionTag = document.createElement("p");
