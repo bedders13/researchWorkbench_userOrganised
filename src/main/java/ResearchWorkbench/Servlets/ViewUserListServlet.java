@@ -29,7 +29,7 @@ public class ViewUserListServlet extends HttpServlet {
 
         out.println("<h1 style=\"margin-top: 16px; margin-bottom: 32px; text-align: center;\">" + userList.getUserListName()  +  "</h1>");
 //        out.println("<button id=\"backButton\" class=\"btn btn-primary btn-sm float-right\" style=\"margin-top: 15px; float: left; margin-right: 2px;\" ><i class=\"bi bi-chevron-left\"></i>Back</button>");
-        out.println("<p style=\"text-align: center;\">" + layer.getUser(userList.getUserId()).getUserName() + "</p>");
+        out.println("<p style=\"text-align: center;\">Created by: " + layer.getUser(userList.getUserId()).getUserName() + "</p>");
         out.println("<div class=\"list-group\">");
 
         for (int i = 0; i < listItems.size(); i++){
@@ -37,7 +37,7 @@ public class ViewUserListServlet extends HttpServlet {
             out.println("<div class=\"d-flex w-100 justify-content-between\">");
             out.println("<h5 class=\"mb-1\">" + listItems.get(i).getObjectTitle() + " </h5>");
             out.println("</div>");
-            out.println("<p class=\"mb-1\">Created by: " + listItems.get(i).getObjectAuthor() + "</p>");
+            out.println("<p class=\"mb-1\">" + listItems.get(i).getObjectAuthor() + "</p>");
             out.println("<small>" + listItems.get(i).getObjectDate() + "</small>");
             out.println(" </a>");
         }
