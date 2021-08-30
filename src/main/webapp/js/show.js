@@ -1,23 +1,49 @@
 function readLaterBtnClicked(id, title, creator, date){
-    $.post({
-        url: "SaveEtdServlet",
-        data: {
-            method: "bookmark",
-            id: id,
-            title: title,
-            creator: creator,
-            date: date,
-            userId: sessionStorage.getItem("user_id")
-        },
-        dataType: "json",
-        success: function (data){
-            console.log('bookmarked');
-            console.log(data);
-            if (data.bookmarked){
-                document.getElementById('bookmarkBtn').className = "btn btn-primary btn-sm float-right disabled";
+    const bookmarkBtn = document.getElementById('bookmarkBtn');
+    if (bookmarkBtn.value === "0"){
+        $.post({
+            url: "SaveEtdServlet",
+            data: {
+                method: "bookmark",
+                id: id,
+                title: title,
+                creator: creator,
+                date: date,
+                userId: sessionStorage.getItem("user_id")
+            },
+            dataType: "json",
+            success: function (data){
+                console.log('bookmarked');
+                console.log(data);
+                if (data.bookmarked){
+                    bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
+                    bookmarkBtn.innerHTML = "";
+                    const iTag = document.createElement("i");
+                    iTag.className = "bi bi-check2";
+                    iTag.style = "margin-right: 2px;"
+                    bookmarkBtn.appendChild(iTag);
+                    bookmarkBtn.append("Added");
+                    bookmarkBtn.value = "1";
+                }
             }
-        }
-    })
+        })
+    } else {
+        $.post({
+            url: "ReadLaterServlet",
+            data: {
+                method: "bookmark",
+                objectId: id,
+                userId: sessionStorage.getItem("user_id")
+            },
+            success: function (data){
+                console.log(`deleted bookmark with id: ${id} and userId: ${sessionStorage.getItem("user_id")}`);
+                bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px;";
+                bookmarkBtn.innerText = "Bookmark";
+                bookmarkBtn.value = "0";
+            }
+        })
+    }
+
 }
 function isEtdAddedToReadLater(id){
     $.post({
@@ -32,12 +58,21 @@ function isEtdAddedToReadLater(id){
             console.log('bookmarked');
             console.log(data);
             if (data.bookmarked){
-                document.getElementById('bookmarkBtn').className = "btn btn-primary btn-sm float-right disabled";
+                const bookmarkBtn = document.getElementById('bookmarkBtn');
+                bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
+                bookmarkBtn.innerHTML = "";
+                const iTag = document.createElement("i");
+                iTag.className = "bi bi-check2";
+                iTag.style = "margin-right: 2px;"
+                bookmarkBtn.appendChild(iTag);
+                bookmarkBtn.append("Added");
+                bookmarkBtn.value = "1";
             }
 
         }
     })
 }
+
 
 
 function addEtdToList(userListId){
@@ -175,8 +210,7 @@ $.get({
         docId = data.doc.id;
         docTitle = data.doc.title;
         docAuthor = ((doc.hasOwnProperty("creator")) ? doc.creator.join(', ') : 'null' );
-        docDate = data.doc.date_printable
-        ;
+        docDate = data.doc.date_printable;
         loadScript();
 
     },
@@ -231,6 +265,9 @@ function loadScript(){
         bookmarkButton.className = "btn btn-primary btn-sm float-right";
         addToListBtn.className = "btn btn-primary btn-sm float-right";
         isEtdAddedToReadLater(doc.id);
+        //remove info button
+        document.getElementById("infoButton").classList.toggle("hideP");
+
     }
 
     //load back to search button

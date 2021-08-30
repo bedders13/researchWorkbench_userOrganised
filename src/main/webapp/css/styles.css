@@ -11082,6 +11082,7 @@ td{
   display: inline-flex;
   white-space: nowrap;
   border-radius: 15px;
+  margin:2px;
 }
 
 .widget-26 .widget-26-job-category .indicator {
@@ -11262,4 +11263,14 @@ td{
   background-clip: border-box;
   border: 1px solid #e6e4e9;
   border-radius: 8px;
+}
+
+hr.solid {
+  border-top: 2px solid #999;
+}
+
+
+.description{
+  height: 60px;
+  overflow: auto;
 }

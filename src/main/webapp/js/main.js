@@ -9,6 +9,7 @@ $(document).ready(function() {
     //     sessionStorage.setItem("user_name", document.getElementById("hiddenUserName").value)
     // }
     //show log in buttons in navbar is not logged in
+    $('[data-bs-toggle="tooltip"]').tooltip();
     if(Number(sessionStorage.getItem("logged_in")) === 1) {
         document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
         console.log("this should fire");

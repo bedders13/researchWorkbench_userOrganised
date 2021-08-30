@@ -18,16 +18,16 @@ public class ListItemsServlet extends HttpServlet {
         //get the parameters
         int userListId = Integer.parseInt(request.getParameter("userListId"));
         //create business layer to access db
-        BusinessLayer library = new BusinessLayer();
+        BusinessLayer layer = new BusinessLayer();
         ArrayList<ListItem> listItems = new ArrayList<ListItem>();
-        listItems = library.getListItems(userListId);
+        listItems = layer.getListItems(userListId);
 
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
         out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
-        out.println("<span class=\"fs-5 fw-semibold\" style=\"margin-bottom: 12px\">List Items</span>");
+        out.println("<span class=\"fs-5 fw-semibold\" style=\"margin-bottom: 12px\">" + layer.getUserList(userListId).getUserListName() + "</span>");
         out.println("</a>");
 
         if (listItems.size() == 0){

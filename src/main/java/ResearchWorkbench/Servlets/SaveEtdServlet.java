@@ -26,16 +26,23 @@ public class SaveEtdServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        for (UserList userList : userLists) {
-            out.println("<a onclick=\"addEtdToList(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\">");
-            out.println("<p class=\"mb-1\" style=\"color: black\">" + userList.getUserListName()+ "</p>");
-            if (userList.getIsPrivate()){
-                out.println("<small>Private</small>");
-            } else {
-                out.println("<small>Public</small>");
+//        out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
+//        out.println("<span class=\"fs-5 fw-semibold\">Your Lists</span></a>");
+
+        if (userLists.size() == 0){
+            out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently do not have any lists.</p>");
+        } else {
+            for (UserList userList : userLists) {
+                out.println("<a onclick=\"addEtdToList(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\">");
+                out.println("<p class=\"mb-1\" style=\"color: black\">" + userList.getUserListName()+ "</p>");
+                if (userList.getIsPrivate()){
+                    out.println("<small>Private</small>");
+                } else {
+                    out.println("<small>Public</small>");
+                }
             }
+            out.close();
         }
-        out.close();
     }
 
     @Override
@@ -57,6 +64,7 @@ public class SaveEtdServlet extends HttpServlet {
             responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }
+
         if (method.equals("checkList")){
             boolean bookmarked = layer.isObjectBookmarked(objectId, userId);
             jsonObject.put("bookmarked", bookmarked);
@@ -79,6 +87,7 @@ public class SaveEtdServlet extends HttpServlet {
             responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }
+
         if (method.equals("list")){
             String title = request.getParameter("title");
             String author = request.getParameter("creator");

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>ResearchWorkbench</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Bootstrap icons-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
     <!-- Google fonts-->
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     <link href="js/bootstrap.bundle.js" rel="script"/>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/show.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body onload="getListNames(); getUserListsContainingEtd()">
     <nav class="navbar navbar-light bg-light static-top">
         <div class="container">
@@ -46,10 +46,15 @@
     </nav>
     <div class="container-lg">
         <div id="buttonColDiv" class="col-sm-12">
-            <button id="bookmarkBtn" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" >Read Later</button>
+            <button id="bookmarkBtn" value="0" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" >Bookmark</button>
             <button id="addToListBtn" class="btn btn-primary btn-sm float-right disabled" style="margin-top: 15px; float: right; margin-right: 2px;" data-bs-toggle="modal" data-bs-target="#addToListModal" data-mdb-name="" >
+
                 Add To List
             </button>
+            <div id="infoButton" style="float: right; margin-top: 24px; margin-right: 8px;">
+                <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="left" title="Sign in to use these features!"></i>
+            </div>
+
         </div>
         <div class="row">
             <div class="col-lg-9">
@@ -135,6 +140,7 @@
                     <button id="closeAddToListModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <p>Lists are created by registered Research Workbench users and are a fantastic way to share your ETD picks and research with other users or just to keep for yourself for later reference.</p>
 
                     <button id="createNewListBtn" onclick="$('#closeListModalBtn').click();" class="btn btn-primary btn-sm" style="margin-top: 6px; margin-right: 2px;" data-bs-toggle="modal" data-bs-target="#createNewUserListModal" data-mdb-name="" >Create New</button>
                     <hr class="solid">

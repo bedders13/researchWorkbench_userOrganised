@@ -1,3 +1,4 @@
+
 //variables needed for search
 let docs;
 let data;
@@ -373,15 +374,26 @@ function loadScript(){
 
     // populate the search results
     const searchResultsTableBody = document.getElementById("searchResultsTableBody");
+
+
+
+
     let loopIndex = cursor + 1;
     for (let i = 0; i < docs.length; i++){
         //create a row for the table
+        // const rowTable = document.createElement("table");
+        // rowTable.className = "table table-borderless";
+        // const rowTableBody = document.createElement("tbody");
+        //
+        // const mainRow = document.createElement("tr");
+        // mainRow.className = "border-bottom: 10px solid #73af00;";
         const resultRow = document.createElement("tr");
 
         //index column
         const indexCol = document.createElement("td");
         const indexDiv = document.createElement("div");
         indexDiv.className = "widget-26-job-emp-img";
+        indexDiv.style = "margin-above: 4px;";
         const indexA = document.createElement("a");
         indexA.textContent = loopIndex;
         indexDiv.appendChild(indexA);
@@ -393,19 +405,25 @@ function loadScript(){
         const titleCol = document.createElement("td");
         const titleDiv = document.createElement("div");
         titleDiv.className = "widget-26-job-title";
+
         const titleTag = document.createElement("a");
         titleTag.href = getLinkForDoc(docs[i].id);
         titleTag.textContent = docs[i].title;
 
+        //date
         const dateTag = document.createElement("p");
-        dateTag.className = "m-0";
+        // dateTag.className = "m-0";
+        dateTag.style.marginTop = "4px";
         const dateSpanTag = document.createElement("span");
         dateSpanTag.className = "text-muted time"
         dateSpanTag.textContent = ((docs[i].hasOwnProperty("date_printable")) ? docs[i].date_printable : 'Unknown Date');
         dateTag.appendChild(dateSpanTag);
 
+        // description
+        const descriptionDiv = document.createElement("div");
+        descriptionDiv.className = "description";
         const descriptionTag = document.createElement("p");
-        descriptionTag.className = "m-0";
+
         const descriptionSpanTag = document.createElement("span");
         descriptionSpanTag.className = "text-muted time"
         if (docs[i].hasOwnProperty("description")){
@@ -413,11 +431,25 @@ function loadScript(){
         } else {
             descriptionSpanTag.textContent = "No description available";
         }
-        descriptionTag.appendChild(descriptionSpanTag);
+        // const aDes = document.createElement("a");
+        // aDes.role="button";
+        // aDes.id = "more";
+        // aDes.setAttribute("data-toggle", "collapse");
+        // aDes.href = "#";
+        // aDes.textContent = "Read more";
+        // aDes.setAttribute("aria-expanded", "false");
+        // aDes.setAttribute("aria-controls", "collapseDes"+ docs[i].id);
 
-        titleCol.appendChild(titleTag);
-        titleCol.appendChild(dateTag);
-        titleCol.appendChild(descriptionTag);
+
+        // descriptionDiv.appendChild(aDes);
+        descriptionTag.appendChild(descriptionSpanTag);
+        descriptionDiv.appendChild(descriptionTag);
+        // descriptionDiv.appendChild(aDes);
+
+        titleDiv.appendChild(titleTag);
+        titleDiv.appendChild(dateTag);
+        titleDiv.appendChild(descriptionDiv);
+        titleCol.appendChild(titleDiv);
 
         resultRow.appendChild(titleCol);
 
@@ -489,7 +521,31 @@ function loadScript(){
         }
         resultRow.appendChild(tagsCol);
 
-        //append row to the table body
+        // const descriptionRow = document.createElement("tr");
+        // const descriptionCol = document.createElement("td");
+        // const blankCol = document.createElement("td");
+        // descriptionRow.appendChild(blankCol);
+        // descriptionCol.colSpan = 4;
+        //
+        // const descriptionTag = document.createElement("p");
+        // descriptionTag.className = "m-0";
+        // const descriptionSpanTag = document.createElement("span");
+        // descriptionSpanTag.className = "text-muted time"
+        // if (docs[i].hasOwnProperty("description")){
+        //     descriptionSpanTag.textContent = docs[i].description;
+        // } else {
+        //     descriptionSpanTag.textContent = "No description available";
+        // }
+        // descriptionTag.appendChild(descriptionSpanTag);
+        // descriptionCol.appendChild(descriptionTag);
+        // descriptionRow.appendChild(descriptionCol);
+        //
+        // rowTableBody.appendChild(resultRow);
+        // rowTableBody.appendChild(descriptionRow);
+        //
+        // rowTable.appendChild(rowTableBody);
+        //
+        // mainRow.appendChild(rowTable);
         searchResultsTableBody.appendChild(resultRow);
 
         loopIndex++;
@@ -532,7 +588,7 @@ function loadScript(){
         spanSymbol.textContent = '\u00AB';
         const spanText = document.createElement("span");
         spanText.className = "sr-only";
-        spanText.textContent = "Previous"
+        spanText.textContent = " Previous"
         aTag.appendChild(spanSymbol);
         aTag.appendChild(spanText);
         previousPageListItem.appendChild(aTag);
@@ -572,7 +628,7 @@ function loadScript(){
         spanSymbol.textContent = '\u00BB';
         const spanText = document.createElement("span");
         spanText.className = "sr-only";
-        spanText.textContent = "Next"
+        spanText.textContent = "Next "
         aTag.appendChild(spanText);
         aTag.appendChild(spanSymbol);
         nextPageListItem.appendChild(aTag);
