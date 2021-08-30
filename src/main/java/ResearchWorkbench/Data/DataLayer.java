@@ -328,16 +328,15 @@ public class DataLayer {
         return listItems;
     }
 
-    public ArrayList<UserList> getUserListsContainingListItem(String objectId, int userId){
+    public ArrayList<UserList> getUserListsContainingListItem(String objectId){
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         try{
             //create the sql statement
             PreparedStatement preparedStatement = databaseConnection.prepareStatement("SELECT * FROM UserList INNER JOIN ListItem ON " +
                     "UserList.user_list_id = ListItem.user_list_id " +
-                    "WHERE ListItem.object_id = ? AND UserList.is_private = false AND UserList.user_id <> ?;");
+                    "WHERE ListItem.object_id = ? AND UserList.is_private = false;");
             //execute the query
             preparedStatement.setString(1, objectId);
-            preparedStatement.setInt(2, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             //set the UserList variables

@@ -62,7 +62,7 @@ public class UserListServlet extends HttpServlet {
 
         if (method.equals("showPage")){
             String objectId = request.getParameter("objectId");
-            userLists = layer.getUserListsContainingListItem(objectId, userId);
+            userLists = layer.getUserListsContainingListItem(objectId);
 
             out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
             out.println("<span class=\"fs-5 fw-semibold\">User Lists</span></a>");

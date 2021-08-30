@@ -69,8 +69,8 @@ public class BusinessLayer {
         return dataLayer.getBookmark(objectId, userId);
     }
 
-    public ArrayList<UserList> getUserListsContainingListItem(String objectId, int userId) {
-        return dataLayer.getUserListsContainingListItem(objectId, userId);
+    public ArrayList<UserList> getUserListsContainingListItem(String objectId) {
+        return dataLayer.getUserListsContainingListItem(objectId);
     }
 
     public ArrayList<Bookmark> getBookmarks(int userId){
