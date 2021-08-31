@@ -38,30 +38,36 @@ public class UserListServlet extends HttpServlet {
             out.println("<span class=\"bi bi-plus-lg\" aria-hidden=\"true\"></span>");
             out.println("</span></span></a>");
 
-            for (UserList userList : userLists) {
-                out.println("<a onclick=\"getListItems(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");
-                out.println("<div class=\"d-flex w-100 justify-content-between\">");
-                out.println("<h5 class=\"mb-1\">" + userList.getUserListName() + " </h5>");
-                out.println("<span class=\"pull-right\">");
+            if (userLists.size() == 0){
+                out.println("<p>You currently have no lists.</p>");
 
-                out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteUserList(" + userList.getUserListId() + "); event.stopPropagation();\">");
-                out.println("<span class=\"bi bi-x-lg\" aria-hidden=\"true\"></span>");
+            } else {
+                for (UserList userList : userLists) {
+                    out.println("<a onclick=\"getListItems(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");
+                    out.println("<div class=\"d-flex w-100 justify-content-between\">");
+                    out.println("<h5 class=\"mb-1\">" + userList.getUserListName() + " </h5>");
+                    out.println("<span class=\"pull-right\">");
 
-                out.println("</span></span>");
+                    out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteUserList(" + userList.getUserListId() + "); event.stopPropagation();\">");
+                    out.println("<span class=\"bi bi-x-lg\" aria-hidden=\"true\"></span>");
 
-                out.println("</div>");
-                out.println("<small>" + layer.getListItems(userList.getUserListId()).size() + " items</small>");
-                out.println("<select style=\"margin-top: 8px;\" onchange=\"updateUserList(" + userList.getUserListId() + ",this.value); event.stopPropagation();\" class=\"form-select\" aria-label=\"Default select example\">");
-                if (userList.getIsPrivate()){
-                    out.println("<option value=\"0\">Public</option>");
-                    out.println("<option value=\"1\" selected>Private</option>");
-                } else {
-                    out.println("<option value=\"0\" selected>Public</option>");
-                    out.println("<option value=\"1\">Private</option>");
+                    out.println("</span></span>");
+
+                    out.println("</div>");
+                    out.println("<small>" + layer.getListItems(userList.getUserListId()).size() + " items</small>");
+                    out.println("<select style=\"margin-top: 8px;\" onchange=\"updateUserList(" + userList.getUserListId() + ",this.value); event.stopPropagation();\" class=\"form-select\" aria-label=\"Default select example\">");
+                    if (userList.getIsPrivate()){
+                        out.println("<option value=\"0\">Public</option>");
+                        out.println("<option value=\"1\" selected>Private</option>");
+                    } else {
+                        out.println("<option value=\"0\" selected>Public</option>");
+                        out.println("<option value=\"1\">Private</option>");
+                    }
+                    out.println("</select>");
+                    out.println(" </a>");
                 }
-                out.println("</select>");
-                out.println(" </a>");
             }
+
         }
 
         if (method.equals("showPage")){
