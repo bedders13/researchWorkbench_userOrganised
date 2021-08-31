@@ -46,8 +46,12 @@ public class UserListServlet extends HttpServlet {
 
                 out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteUserList(" + userList.getUserListId() + "); event.stopPropagation();\">");
                 out.println("<span class=\"bi bi-x-lg\" aria-hidden=\"true\"></span>");
-                out.println("</span></span></div>");
-                out.println("<select onchange=\"updateUserList(" + userList.getUserListId() + ",this.value); event.stopPropagation();\" class=\"form-select\" aria-label=\"Default select example\">");
+
+                out.println("</span></span>");
+
+                out.println("</div>");
+                out.println("<small>" + layer.getListItems(userList.getUserListId()).size() + " resources</small>");
+                out.println("<select style=\"margin-top: 8px;\" onchange=\"updateUserList(" + userList.getUserListId() + ",this.value); event.stopPropagation();\" class=\"form-select\" aria-label=\"Default select example\">");
                 if (userList.getIsPrivate()){
                     out.println("<option value=\"0\">Public</option>");
                     out.println("<option value=\"1\" selected>Private</option>");
