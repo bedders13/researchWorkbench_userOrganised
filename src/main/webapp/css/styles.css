@@ -11130,6 +11130,17 @@ td{
 }
 .bg-soft-info {
   background-color: #d7efff;
+  margin: 4px;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.bg-soft-info2 {
+  background-color: #d7efff;
+  margin: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  max-width: 40%;
 }
 
 
