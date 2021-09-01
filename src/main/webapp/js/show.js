@@ -93,11 +93,17 @@ function addEtdToList(userListId){
         },
         dataType: "json",
         success: function (data){
-            console.log('bookmarked');
+            console.log('added to list function');
             console.log(data);
+
+            if (data.exists){
+                $('#alert-pane').collapse();
+
+            }
             if (data.added){
                 // document.getElementById('addToListBtn').className = "btn btn-primary btn-sm float-right disabled";
                 $("#closeAddToListModal").click();
+                getUserListsContainingEtd();
             }
         }
     })
@@ -398,7 +404,7 @@ function loadScript(){
 
             } else{
                 const tagsDiv = document.createElement("div");
-                tagsDiv.className = "widget-26-job-category bg-soft-info";
+                tagsDiv.className = "widget-26-job-category bg-soft-info2";
                 const indicator = document.createElement("i");
                 indicator.className = "indicator bg-info";
                 const aTag = document.createElement("a");

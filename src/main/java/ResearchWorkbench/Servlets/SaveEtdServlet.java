@@ -29,6 +29,7 @@ public class SaveEtdServlet extends HttpServlet {
 //        out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
 //        out.println("<span class=\"fs-5 fw-semibold\">Your Lists</span></a>");
 
+
         if (userLists.size() == 0){
             out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently do not have any lists.</p>");
         } else {
@@ -95,10 +96,10 @@ public class SaveEtdServlet extends HttpServlet {
             int userListId = Integer.parseInt(request.getParameter("userListId"));
             ListItem listItem = new ListItem(objectId, title, author, date, userListId);
             int result = layer.createListItem(listItem);
-            if (result != -1){
-                jsonObject.put("added", true);
+            if (result == -1) {
+                jsonObject.put("exists", true);
             } else {
-                jsonObject.put("added", false);
+                jsonObject.put("added", true);
             }
 
             responseWriter.print(jsonObject.toString());

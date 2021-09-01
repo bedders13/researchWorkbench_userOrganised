@@ -31,7 +31,7 @@ public class ListItemsServlet extends HttpServlet {
         out.println("</a>");
 
         if (listItems.size() == 0){
-            out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >Add some ETDs to your list.</p>");
+            out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >Add some ETDs to this list.</p>");
 //            "    <h5 style=\"text-align: center; margin-top: 64px; text-decoration: none\" >Save ETDs to different lists</h5>\n" +
         } else {
             for (int i = 0; i < listItems.size(); i++){

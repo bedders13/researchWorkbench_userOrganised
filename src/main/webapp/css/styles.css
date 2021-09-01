@@ -11285,3 +11285,7 @@ hr.solid {
   height: 60px;
   overflow: auto;
 }
+
+.floatcontainer {
+  float: right;
+}

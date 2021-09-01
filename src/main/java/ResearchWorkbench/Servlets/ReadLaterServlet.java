@@ -17,6 +17,7 @@ public class ReadLaterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //get the parameters
+        String method = request.getParameter("method");
         int userId = Integer.parseInt(request.getParameter("userId"));
         //create business layer to access db
         BusinessLayer library = new BusinessLayer();
@@ -26,10 +27,14 @@ public class ReadLaterServlet extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        if(method.equals("list")){
+            out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
+            out.println("<span class=\"fs-5 fw-semibold\" style=\"margin-bottom: 12px\">Read Later</span>");
+            out.println("</a>");
+        }
 
         if (bookmarks.size() == 0){
-            out.println("    <h5 style=\"text-align: center; margin-top: 64px; text-decoration: none\" >Save Electronic Thesis and Dissertations to read later.</h5>\n" +
-                    "    <p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently have no saved ETDs.</p>");
+            out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently have no saved Electronic Theses or Dissertations in your Read Later.</p>");
         } else {
             for (int i = 0; i < bookmarks.size(); i++){
                 out.println("<a onclick=\"showBookmark('" + bookmarks.get(i).getObjectId() + "')\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");

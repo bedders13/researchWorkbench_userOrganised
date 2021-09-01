@@ -16,6 +16,8 @@ $(document).ready(function() {
         document.getElementById("loggedInNavBar").classList.toggle("hideP");
         document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
     }
+
+
 })
 
 function logOut(){

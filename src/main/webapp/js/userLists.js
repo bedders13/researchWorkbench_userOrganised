@@ -1,3 +1,29 @@
+$(document).ready(function() {
+    var deleteUserListModal = document.getElementById('deleteUserListModal');
+    deleteUserListModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        var userListId = Number(button.getAttribute('data-bs-listId'));
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        // var modalTitle = exampleModal.querySelector('.modal-title')
+        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
+        //
+        // modalTitle.textContent = 'New message to ' + recipient
+        // modalBodyInput.value = recipient
+        const deleteUserListBtn = document.getElementById("deleteUserListBtn");
+        deleteUserListBtn.onclick = function () {
+            deleteUserList(userListId);
+        };
+    });
+
+
+})
+
+
 function getUserLists(){
     $.get({
         url: "UserListServlet",
@@ -32,6 +58,23 @@ function createUserList(listName, isPrivate){
     }
 }
 
+// function deleteUserList(userListId){
+//     $.post({
+//         url: "UserListServlet",
+//         data: {
+//             method: "delete",
+//             userListId: userListId,
+//             userId: sessionStorage.getItem("user_id"),
+//         },
+//         success: function (data){
+//             // $("#createNewUserListModal").modal('dispose');
+//             $("#closeModalBtn").click();
+//             getUserLists();
+//
+//         }
+//     })
+// }
+
 function deleteUserList(userListId){
     $.post({
         url: "UserListServlet",
@@ -42,24 +85,7 @@ function deleteUserList(userListId){
         },
         success: function (data){
             // $("#createNewUserListModal").modal('dispose');
-            $("#closeModalBtn").click();
-            getUserLists();
-
-        }
-    })
-}
-
-function deleteUserList(userListId){
-    $.post({
-        url: "UserListServlet",
-        data: {
-            method: "delete",
-            userListId: userListId,
-            userId: sessionStorage.getItem("user_id"),
-        },
-        success: function (data){
-            // $("#createNewUserListModal").modal('dispose');
-            $("#closeModalBtn").click();
+            $("#deleteUserListCloseBtn").click();
             getUserLists();
 
         }
@@ -94,6 +120,32 @@ function getListItems(userListId){
     }).done(function (response) {
         $("#userListItems").html(response);
     });
+}
+function getBookmarks(){
+    $.get({
+        url: "ReadLaterServlet",
+        data: {
+            method: "list",
+            userId: sessionStorage.getItem("user_id")
+        }
+    }).done(function (response) {
+        $("#userListItems").html(response);
+    });
+}
+function deleteBookmark(objectId, userId){
+    console.log("clicked delete");
+    $.post({
+        url: "ReadLaterServlet",
+        data: {
+            method: "bookmark",
+            objectId: objectId,
+            userId: userId
+        },
+        success: function (data){
+            console.log(`deleted bookmark with id: ${objectId} and userId: ${userId}`);
+            getBookmarks();
+        }
+    })
 }
 
 function deleteListItem(objectId, userListId){

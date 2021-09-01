@@ -2,6 +2,7 @@ function getBookmarks(){
     $.get({
         url: "ReadLaterServlet",
         data: {
+            method: "bookmark",
             userId: sessionStorage.getItem("user_id")
         }
     }).done(function (response) {

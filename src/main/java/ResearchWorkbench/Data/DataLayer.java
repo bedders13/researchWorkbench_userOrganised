@@ -109,6 +109,10 @@ public class DataLayer {
         int listItemId = -1;
         ResultSet resultSet = null;
         try {
+            listItemId = getListItem(listItem.getListObjectId(), listItem.getUserListId()).getListItemId();
+            if (listItemId != 0){
+                return -1;
+            }
             //prepare the sql statement
             PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO ListItem (object_id, object_title, " +
                     "object_author, object_date, user_list_id) VALUES(?, ?, ?, ?, ?);");
@@ -281,8 +285,7 @@ public class DataLayer {
             pStatement.setString(1, objectId);
             pStatement.setInt(2, userListId);
             ResultSet resultSet = pStatement.executeQuery();
-            boolean hasNext = resultSet.next();
-            if (!hasNext){
+            if (!resultSet.next()){
                 return listItem;
             }
             //set the bookmark variables if it exists
@@ -332,7 +335,7 @@ public class DataLayer {
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         try{
             //create the sql statement
-            PreparedStatement preparedStatement = databaseConnection.prepareStatement("SELECT * FROM UserList INNER JOIN ListItem ON " +
+            PreparedStatement preparedStatement = databaseConnection.prepareStatement("SELECT DISTINCT * FROM UserList INNER JOIN ListItem ON " +
                     "UserList.user_list_id = ListItem.user_list_id " +
                     "WHERE ListItem.object_id = ? AND UserList.is_private = false;");
             //execute the query

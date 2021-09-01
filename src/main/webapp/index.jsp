@@ -26,6 +26,7 @@
 <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
         <a class="navbar-brand" href="index.jsp">Research Workbench</a>
+
         <div id="signUpAndLogInBtn">
             <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createProfileModal" data-mdb-name="">Create profile </a>
             <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signInModal" data-mdb-name="">Log in  </a>
@@ -39,18 +40,14 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="index.jsp">Search</a></li>
-                    <li><a class="dropdown-item" href="user_list.html">User Lists</a></li>
+                    <li><a class="dropdown-item" href="user_list.html">Reading Lists</a></li>
                     <li><a class="dropdown-item" href="read_later.html">Bookmarks</a></li>
                     <li><a class="dropdown-item" onclick="logOut()">Log out</a></li>
                 </ul>
             </div>
         </div>
     </div>
-
 </nav>
-
-
-
 <!-- Masthead-->
 <header class="masthead">
     <div class="container position-relative">
