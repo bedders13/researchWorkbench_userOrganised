@@ -37,6 +37,7 @@ public class SaveEtdServlet extends HttpServlet {
         //show other user lists
         for (UserList userList : userLists) {
             out.println("<a onclick=\"addEtdToList(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\">");
+
             out.println("<p class=\"mb-1\" style=\"color: black\">" + userList.getUserListName()+ "</p>");
             if (userList.getIsPrivate()){
                 out.println("<small>Private</small>");

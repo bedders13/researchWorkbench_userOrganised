@@ -45,7 +45,6 @@ function readLaterBtnClicked(id, title, creator, date){
             }
         })
     }
-
 }
 
 function addEtdtoReadLater(){

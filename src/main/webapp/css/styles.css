@@ -11286,6 +11286,14 @@ hr.solid {
   overflow: auto;
 }
 
-.floatcontainer {
-  float: right;
+
+.list-button-hide {
+  display: none;
 }
+
+
+
+
+
+
+

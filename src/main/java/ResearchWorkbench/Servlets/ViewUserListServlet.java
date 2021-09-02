@@ -18,6 +18,7 @@ public class ViewUserListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //get the parameters
         int userListId = Integer.parseInt(request.getParameter("userListId"));
+        int currentUserId = Integer.parseInt(request.getParameter("userId"));
         //create business layer to access db
         BusinessLayer layer = new BusinessLayer();
         UserList userList = layer.getUserList(userListId);
@@ -32,11 +33,21 @@ public class ViewUserListServlet extends HttpServlet {
 //        out.println("<button id=\"backButton\" class=\"btn btn-primary btn-sm float-right\" style=\"margin-top: 15px; float: left; margin-right: 2px;\" ><i class=\"bi bi-chevron-left\"></i>Back</button>");
         out.println("<p style=\"text-align: center;\">Created by: " + layer.getUser(userList.getUserId()).getUserName() + "</p>");
         out.println("<div class=\"list-group\">");
-
+        out.println("<input type=\"hidden\" id=\"refresh\" value=\"no\">");
         for (int i = 0; i < listItems.size(); i++){
-            out.println("<a onclick=\"showListItem('" + listItems.get(i).getListObjectId() + "')\" class=\"list-group-item list-group-item-action\" aria-current=\"true\" li>");
+            out.println("<a onmouseover=\"showButtons('" + listItems.get(i).getListItemId() + "')\" onmouseout=\"hideButtons('" + listItems.get(i).getListItemId() +  "')\" onclick=\"showListItem('" + listItems.get(i).getListObjectId() + "')\" class=\"list-group-item list-group-item-action\" aria-current=\"true\" li>");
             out.println("<div class=\"d-flex w-100 justify-content-between\">");
             out.println("<h5 class=\"mb-1\">" + listItems.get(i).getObjectTitle() + " </h5>");
+            out.println("<div class=\"pull-right\">");
+            out.println("<button id=\"list-" + listItems.get(i).getListItemId() + "\" style=\"border: 0; background: none;\" class=\"list-button-hide\" onclick=\"event.stopPropagation();\" data-bs-toggle=\"modal\" data-bs-target=\"#addToListModal\" data-bs-objectId=\"" + listItems.get(i).getListObjectId() + " \"" +
+                    "data-bs-objectTitle=\"" + listItems.get(i).getObjectTitle()  + "\" data-bs-objectCreator=\"" + listItems.get(i).getObjectAuthor() + "\" data-bs-objectDate=\"" + listItems.get(i).getObjectDate() + " \" ><i class=\"bi bi-list\"></i></i></Button>");
+            if (layer.isObjectBookmarked(listItems.get(i).getListObjectId(), currentUserId)){
+                out.println("<button id=\"book-" + listItems.get(i).getListItemId() + "\" style=\"border: 0; background: none;\" value=\"1\" class=\"list-button-hide\" onclick=\"bookmarkBtnClicked(this,'" + listItems.get(i).getListObjectId() + "', '" + listItems.get(i).getObjectTitle() + "', '" + listItems.get(i).getObjectAuthor() + "', '" + listItems.get(i).getObjectDate() + "'); event.stopPropagation();\"><i class=\"bi bi-bookmark-fill\"></i></Button>");
+            } else {
+                out.println("<button id=\"book-" + listItems.get(i).getListItemId() + "\" style=\"border: 0; background: none;\" value=\"0\" class=\"list-button-hide\" onclick=\"bookmarkBtnClicked(this,'" + listItems.get(i).getListObjectId() + "', '" + listItems.get(i).getObjectTitle() + "', '" + listItems.get(i).getObjectAuthor() + "', '" + listItems.get(i).getObjectDate() + "'); event.stopPropagation();\"><i class=\"bi bi-bookmark\"></i></Button>");
+            }
+
+            out.println("</div>");
             out.println("</div>");
             out.println("<p class=\"mb-1\">" + listItems.get(i).getObjectAuthor() + "</p>");
             out.println("<small>" + listItems.get(i).getObjectDate() + "</small>");

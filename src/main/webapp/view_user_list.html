@@ -20,7 +20,7 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/viewUserList.js"></script>
 </head>
-<body onload="getListItems()">
+<body onload="getListItems(); getListNames()">
 <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
         <a class="navbar-brand" href="index.jsp">Research Workbench</a>
@@ -93,6 +93,74 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button  class="btn btn-primary" onclick="createProfile(createUserName.value, createEmailAddress.value)">Create</button>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createNewUserListModal" tabindex="-1" aria-labelledby="newUserListModalListLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newUserListModalListLabel;">Create a new user list</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="userListName" class="form-label">List Name</label>
+                    <input type="text" class="form-control" id="userListName" name="userListName" >
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" name="userListIsPrivate" id="userListIsPrivate">
+                    <label class="form-check-label" for="userListIsPrivate">Make this list private</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeModalBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" onclick="createUserList(userListName.value, userListIsPrivate.checked)">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addToListModal" tabindex="-1" aria-labelledby="addToListModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToListModalLabel;">Choose a list</h5>
+                <button id="closeAddToListModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <a data-bs-toggle="collapse" href="#about-pane" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        More info
+                    </a>
+                </p>
+                <button id="createNewListBtn" onclick="$('#closeListModalBtn').click();" class="btn btn-primary btn-sm" style="margin-top: 2px; margin-right: 2px;margin-bottom: 4px;" data-bs-toggle="modal" data-bs-target="#createNewUserListModal" data-mdb-name="" >Create New</button>
+
+                <div class="collapse" id="about-pane">
+                    <div class="card card-body">
+                        Lists are created by registered Research Workbench users and are a fantastic way to share your ETD picks and research with other users or just to keep for yourself for later reference.
+                    </div>
+                </div>
+                <div class="collapse" id="alert-pane">
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                        <div>
+                            This item is already on that list.
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="solid">
+                <div id="addToListModalBody" class="list-group">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeListModalBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
         </div>
     </div>
 </div>

@@ -6,15 +6,7 @@ $(document).ready(function() {
         var button = event.relatedTarget;
         // Extract info from data-bs-* attributes
         var userListId = Number(button.getAttribute('data-bs-listId'));
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        // var modalTitle = exampleModal.querySelector('.modal-title')
-        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
-        //
-        // modalTitle.textContent = 'New message to ' + recipient
-        // modalBodyInput.value = recipient
+
         const deleteUserListBtn = document.getElementById("deleteUserListBtn");
         deleteUserListBtn.onclick = function () {
             deleteUserList(userListId);
@@ -29,23 +21,22 @@ $(document).ready(function() {
         // Extract info from data-bs-* attributes
         var objectId = button.getAttribute('data-bs-objectId');
         var userListId = Number(button.getAttribute('data-bs-listId'));
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        // var modalTitle = exampleModal.querySelector('.modal-title')
-        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
-        //
-        // modalTitle.textContent = 'New message to ' + recipient
-        // modalBodyInput.value = recipient
+
         const deleteListItemBtn = document.getElementById("deleteListItemBtn");
         deleteListItemBtn.onclick = function () {
             deleteListItem(objectId, userListId);
         };
     });
 
+
 })
 
+function showButtons(id){
+    document.getElementById(id).classList = "pull-right";
+}
+function hideButtons(id){
+    document.getElementById(id).classList = "pull-right list-button-hide";
+}
 
 function getUserLists(){
     $.get({
@@ -81,22 +72,6 @@ function createUserList(listName, isPrivate){
     }
 }
 
-// function deleteUserList(userListId){
-//     $.post({
-//         url: "UserListServlet",
-//         data: {
-//             method: "delete",
-//             userListId: userListId,
-//             userId: sessionStorage.getItem("user_id"),
-//         },
-//         success: function (data){
-//             // $("#createNewUserListModal").modal('dispose');
-//             $("#closeModalBtn").click();
-//             getUserLists();
-//
-//         }
-//     })
-// }
 
 function deleteUserList(userListId){
     $.post({
@@ -155,6 +130,7 @@ function getBookmarks(){
         $("#userListItems").html(response);
     });
 }
+
 function deleteBookmark(objectId, userId){
     console.log("clicked delete");
     $.post({
@@ -192,17 +168,17 @@ function showListItem(id){
     location.href = `show.html?id=${id}&user_list=`;
 }
 
-$(function(){
-    console.log('ready');
-
-    $('.list-group a').click(function(e) {
-        e.preventDefault()
-
-        $that = $(this);
-
-        $('.list-group').find('a').removeClass('active');
-        $that.addClass('active');
-    });
-})
+// $(function(){
+//     console.log('ready');
+//
+//     $('.list-group a').click(function(e) {
+//         e.preventDefault()
+//
+//         $that = $(this);
+//
+//         $('.list-group').find('a').removeClass('active');
+//         $that.addClass('active');
+//     });
+// })
 
 
