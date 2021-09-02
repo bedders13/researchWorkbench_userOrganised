@@ -18,6 +18,6 @@ function showListItem(id){
     location.href = `show.html?id=${id}&search=`;
 }
 
-// $(document).ready(function() {
-//
-// })
+function goBack() {
+    history.back();
+};

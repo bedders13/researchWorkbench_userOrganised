@@ -41,7 +41,7 @@ public class ListItemsServlet extends HttpServlet {
                 out.println("<span class=\"pull-right\">");
 //                out.println("<button class=\"btn btn-xs btn-default\" onclick=\"deleteBookmark('" + bookmarks.get(i).getObjectId() +"')\">");
 //                out.println("<i class=\"bi bi-x-lg\"></i>");
-                out.println("<span class=\"btn btn-xs btn-default\" onclick=\"deleteListItem('" + listItems.get(i).getListObjectId() + "'," + userListId + "); event.stopPropagation();\">");
+                out.println("<span class=\"btn btn-xs btn-default\" data-bs-toggle=\"modal\" data-bs-target=\"#deleteListItemModal\" data-bs-objectId=\"" + listItems.get(i).getListObjectId() + "\" data-bs-listId=\"" + userListId + "\" onclick=\"event.stopPropagation();\">");
                 out.println("<span class=\"bi bi-x-lg\" aria-hidden=\"true\"></span>");
                 out.println("</span></span></div>");
                 out.println("<p class=\"mb-1\">" + listItems.get(i).getObjectAuthor() + "</p>");

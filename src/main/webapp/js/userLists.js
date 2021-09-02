@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    //delete the user list
     var deleteUserListModal = document.getElementById('deleteUserListModal');
     deleteUserListModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
@@ -20,6 +21,28 @@ $(document).ready(function() {
         };
     });
 
+    //delete an item form the list
+    var deleteListItemModal = document.getElementById('deleteListItemModal');
+    deleteListItemModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        var objectId = button.getAttribute('data-bs-objectId');
+        var userListId = Number(button.getAttribute('data-bs-listId'));
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        // var modalTitle = exampleModal.querySelector('.modal-title')
+        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
+        //
+        // modalTitle.textContent = 'New message to ' + recipient
+        // modalBodyInput.value = recipient
+        const deleteListItemBtn = document.getElementById("deleteListItemBtn");
+        deleteListItemBtn.onclick = function () {
+            deleteListItem(objectId, userListId);
+        };
+    });
 
 })
 
@@ -159,6 +182,7 @@ function deleteListItem(objectId, userListId){
         },
         success: function (data){
             console.log(`deleted list item with id: ${objectId}`);
+            $("#deleteListItemCloseBtn").click();
             getListItems(userListId);
         }
     })

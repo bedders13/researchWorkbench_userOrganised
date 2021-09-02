@@ -144,6 +144,10 @@ public class DataLayer {
         int bookmarkId = -1;
         ResultSet resultSet = null;
         try {
+            bookmarkId = getBookmark(bookmark.getObjectId(), bookmark.getUserId()).getBookmarkId();
+            if (bookmarkId != 0){
+                return -1;
+            }
             //prepare the sql statement
             PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO Bookmark (object_id, object_title, " +
                     "object_author, object_date, user_id) VALUES(?, ?, ?, ?, ?);");

@@ -1,5 +1,6 @@
 function readLaterBtnClicked(id, title, creator, date){
     const bookmarkBtn = document.getElementById('bookmarkBtn');
+    //add bookmark
     if (bookmarkBtn.value === "0"){
         $.post({
             url: "SaveEtdServlet",
@@ -27,6 +28,7 @@ function readLaterBtnClicked(id, title, creator, date){
                 }
             }
         })
+        //delete bookmark
     } else {
         $.post({
             url: "ReadLaterServlet",
@@ -45,41 +47,47 @@ function readLaterBtnClicked(id, title, creator, date){
     }
 
 }
-function isEtdAddedToReadLater(id){
-    $.post({
-        url: "SaveEtdServlet",
-        data: {
-            method: "checkBookmark",
-            id: id,
-            userId: sessionStorage.getItem("user_id")
-        },
-        dataType: "json",
-        success: function (data){
-            console.log('bookmarked');
-            console.log(data);
-            if (data.bookmarked){
-                const bookmarkBtn = document.getElementById('bookmarkBtn');
-                bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
-                bookmarkBtn.innerHTML = "";
-                const iTag = document.createElement("i");
-                iTag.className = "bi bi-check2";
-                iTag.style = "margin-right: 2px;"
-                bookmarkBtn.appendChild(iTag);
-                bookmarkBtn.append("Added");
-                bookmarkBtn.value = "1";
-            }
 
-        }
-    })
+function addEtdtoReadLater(){
+    const bookmarkBtn = document.getElementById('bookmarkBtn');
+    //add bookmark
+    if (bookmarkBtn.value === "0"){
+        $.post({
+            url: "SaveEtdServlet",
+            data: {
+                method: "bookmark",
+                id: docId,
+                title: docTitle,
+                creator: docAuthor,
+                date: docDate,
+                userId: sessionStorage.getItem("user_id")
+            },
+            dataType: "json",
+            success: function (data){
+                console.log('bookmarked');
+                console.log(data);
+                // if (data.exists) {
+                //     $('#alert-pane').collapse();
+                // }
+                if (data.bookmarked){
+                    bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
+                    bookmarkBtn.innerHTML = "";
+                    const iTag = document.createElement("i");
+                    iTag.className = "bi bi-check2";
+                    iTag.style = "margin-right: 2px;"
+                    bookmarkBtn.appendChild(iTag);
+                    bookmarkBtn.append("Added");
+                    bookmarkBtn.value = "1";
+                    $("#closeAddToListModal").click();
+                }
+            }
+        })
+    } else {
+        $('#alert-pane').collapse();
+    }
 }
 
-
-
 function addEtdToList(userListId){
-    // const objectId =         document.getElementById("currentDocId").value
-    // document.getElementById("currentDocTitle").value
-    // document.getElementById("currentDocAuthor").value
-    // document.getElementById("currentDocDate").value
     $.post({
         url: "SaveEtdServlet",
         data: {
@@ -105,6 +113,35 @@ function addEtdToList(userListId){
                 $("#closeAddToListModal").click();
                 getUserListsContainingEtd();
             }
+        }
+    })
+}
+
+
+function isEtdAddedToReadLater(id){
+    $.post({
+        url: "SaveEtdServlet",
+        data: {
+            method: "checkBookmark",
+            id: id,
+            userId: sessionStorage.getItem("user_id")
+        },
+        dataType: "json",
+        success: function (data){
+            console.log('bookmarked');
+            console.log(data);
+            if (data.bookmarked){
+                const bookmarkBtn = document.getElementById('bookmarkBtn');
+                bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
+                bookmarkBtn.innerHTML = "";
+                const iTag = document.createElement("i");
+                iTag.className = "bi bi-check2";
+                iTag.style = "margin-right: 2px;"
+                bookmarkBtn.appendChild(iTag);
+                bookmarkBtn.append("Added");
+                bookmarkBtn.value = "1";
+            }
+
         }
     })
 }

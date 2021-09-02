@@ -38,6 +38,7 @@ public class UserListServlet extends HttpServlet {
             out.println("<span class=\"bi bi-plus-lg\" aria-hidden=\"true\"></span>");
             out.println("</span></span></a>");
 
+            //show the bookmark/read later items
             out.println("<a onclick=\"getBookmarks()\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");
             out.println("<div class=\"d-flex w-100 justify-content-between\">");
             out.println("<h5 class=\"mb-1\">Read Later</h5>");

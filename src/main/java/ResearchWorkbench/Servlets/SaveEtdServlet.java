@@ -29,21 +29,22 @@ public class SaveEtdServlet extends HttpServlet {
 //        out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
 //        out.println("<span class=\"fs-5 fw-semibold\">Your Lists</span></a>");
 
+        //show the read later list
+        out.println("<a onclick=\"addEtdtoReadLater()\" class=\"list-group-item list-group-item-action\">");
+        out.println("<p class=\"mb-1\" style=\"color: black\">Read Later</p>");
+        out.println("<small>Private</small>");
 
-        if (userLists.size() == 0){
-            out.println("<p style=\"text-align: center; margin-top: 8px; text-decoration: none\" >You currently do not have any lists.</p>");
-        } else {
-            for (UserList userList : userLists) {
-                out.println("<a onclick=\"addEtdToList(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\">");
-                out.println("<p class=\"mb-1\" style=\"color: black\">" + userList.getUserListName()+ "</p>");
-                if (userList.getIsPrivate()){
-                    out.println("<small>Private</small>");
-                } else {
-                    out.println("<small>Public</small>");
-                }
+        //show other user lists
+        for (UserList userList : userLists) {
+            out.println("<a onclick=\"addEtdToList(" + userList.getUserListId() + ")\" class=\"list-group-item list-group-item-action\">");
+            out.println("<p class=\"mb-1\" style=\"color: black\">" + userList.getUserListName()+ "</p>");
+            if (userList.getIsPrivate()){
+                out.println("<small>Private</small>");
+            } else {
+                out.println("<small>Public</small>");
             }
-            out.close();
         }
+        out.close();
     }
 
     @Override
@@ -79,12 +80,11 @@ public class SaveEtdServlet extends HttpServlet {
             String date = request.getParameter("date");
             Bookmark bookmark = new Bookmark(objectId, title, author, date, userId);
             int result = layer.createBookmark(bookmark);
-            if (result != -1){
-                jsonObject.put("bookmarked", true);
+            if (result == -1){
+                jsonObject.put("exists", true);
             } else {
-                jsonObject.put("bookmarked", false);
+                jsonObject.put("bookmarked", true);
             }
-
             responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }
