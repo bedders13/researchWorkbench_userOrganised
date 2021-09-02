@@ -1,7 +1,8 @@
-let docId;
-let docTitle;
-let docCreator;
-let docDate;
+let docIdForShownModal;
+let docTitleForShownModal;
+let docCreatorForShownModal;
+let docDateForShownModal;
+let listItemIdForShownModal;
 window.addEventListener( "pageshow", function ( event ) {
     var historyTraversal = event.persisted ||
         ( typeof window.performance != "undefined" &&
@@ -13,17 +14,19 @@ window.addEventListener( "pageshow", function ( event ) {
 });
 
 $(document).ready(function() {
+    $('[data-bs-toggle="tooltip"]').tooltip();
     //delete an item form the list
     var addToListModal = document.getElementById('addToListModal');
     addToListModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         var button = event.relatedTarget;
         // Extract info from data-bs-* attributes
-        docId = button.getAttribute('data-bs-objectId');
-        docTitle = button.getAttribute('data-bs-objectTitle');
-        docCreator = button.getAttribute('data-bs-objectCreator');
-        docDate = button.getAttribute('data-bs-objectDate');
-
+        docIdForShownModal = button.getAttribute('data-bs-objectId');
+        docTitleForShownModal = button.getAttribute('data-bs-objectTitle');
+        docCreatorForShownModal = button.getAttribute('data-bs-objectCreator');
+        docDateForShownModal = button.getAttribute('data-bs-objectDate');
+        docDateForShownModal = button.getAttribute('data-bs-objectDate');
+        listItemIdForShownModal = button.getAttribute('data-bs-ListItemId');
         // const deleteBookmarkBtn = document.getElementById("deleteBookmarkBtn");
         // deleteBookmarkBtn.onclick = function () {
         //     deleteBookmark(objectId, userId);
@@ -61,8 +64,8 @@ function getListNames(){
             $("#addToListModalBody").html(response);
         });
     }
-
 }
+
 function bookmarkBtnClicked(button, id, title, creator, date){
     //add bookmark
     if (button.value === "0"){
@@ -109,10 +112,10 @@ function addEtdToList(userListId){
         url: "SaveEtdServlet",
         data: {
             method: "list",
-            id: docId,
-            title: docTitle,
-            creator: docCreator,
-            date: docDate,
+            id: docIdForShownModal,
+            title: docTitleForShownModal,
+            creator: docCreatorForShownModal,
+            date: docDateForShownModal,
             userListId: userListId,
             userId: sessionStorage.getItem("user_id")
         },
@@ -130,6 +133,37 @@ function addEtdToList(userListId){
             }
         }
     })
+}
+
+function addEtdtoReadLater(){
+    const bookmarkBtn = document.getElementById(`book-${listItemIdForShownModal}`);
+    //add to read later list
+    if (bookmarkBtn.value === "0"){
+        $.post({
+            url: "SaveEtdServlet",
+            data: {
+                method: "bookmark",
+                id: docIdForShownModal,
+                title: docTitleForShownModal,
+                creator: docCreatorForShownModal,
+                date: docDateForShownModal,
+                userId: sessionStorage.getItem("user_id")
+            },
+            dataType: "json",
+            success: function (data){
+                console.log('bookmarked');
+                console.log(data);
+
+                if (data.bookmarked){
+                    bookmarkBtn.innerHTML = "<i class=\"bi bi-bookmark-fill\"></i>";
+                    bookmarkBtn.value = "1";
+                    $("#closeAddToListModal").click();
+                }
+            }
+        })
+    } else {
+        $('#alert-pane').collapse();
+    }
 }
 
 function createUserList(listName, isPrivate){

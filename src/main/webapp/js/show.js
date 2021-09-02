@@ -65,9 +65,7 @@ function addEtdtoReadLater(){
             success: function (data){
                 console.log('bookmarked');
                 console.log(data);
-                // if (data.exists) {
-                //     $('#alert-pane').collapse();
-                // }
+
                 if (data.bookmarked){
                     bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
                     bookmarkBtn.innerHTML = "";
@@ -115,7 +113,6 @@ function addEtdToList(userListId){
         }
     })
 }
-
 
 function isEtdAddedToReadLater(id){
     $.post({
