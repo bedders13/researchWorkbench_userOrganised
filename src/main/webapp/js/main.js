@@ -1,15 +1,11 @@
 
 $(document).ready(function() {
-    // if(Number(document.getElementById("hiddenLoggedIn").value) === 1) {
-    //     document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
-    //     console.log("this should fire");
-    //     document.getElementById("loggedInNavBar").classList.toggle("hideP");
-    //     sessionStorage.setItem("logged_in", 1+"");
-    //     sessionStorage.setItem("user_id", document.getElementById("hiddenUserId").value)
-    //     sessionStorage.setItem("user_name", document.getElementById("hiddenUserName").value)
-    // }
+
     //show log in buttons in navbar is not logged in
-    $('[data-bs-toggle="tooltip"]').tooltip();
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
     if(Number(sessionStorage.getItem("logged_in")) === 1) {
         document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
         console.log("this should fire");
@@ -24,30 +20,8 @@ function logOut(){
     sessionStorage.removeItem("logged_in");
     sessionStorage.removeItem("user_id");
     sessionStorage.removeItem("user_name");
-    const path = window.location.pathname;
-    const page = path.split('/').pop();
-    // console.log(`page: ${page}`)
-    // if (page === "user_list.html" || page === "read_later.html" ){
-    //     location.href = "index.jsp";
-    // } else {
-    //     location.reload();
-    // }
-    // location.reload();
     location.href = "index.jsp";
 
-    // $.post({
-    //     url: "LogOutServlet",
-    //     success: function (data){
-    //         const path = window.location.pathname;
-    //         const page = path.split('/').pop();
-    //         console.log(`page: ${page}`)
-    //         if (page === "user_list.jsp" || page === "read_later.html" ){
-    //             location.href = "index.jsp";
-    //         } else {
-    //             location.reload();
-    //         }
-    //     }
-    // })
 }
 
 function logIn(emailAddress){
@@ -64,10 +38,15 @@ function logIn(emailAddress){
             dataType: "json",
             success: function (data){
                 console.log(data);
-                sessionStorage.setItem("logged_in", data.loggedIn);
-                sessionStorage.setItem("user_id", data.userId);
-                sessionStorage.setItem("user_name", data.userName);
-                location.reload();
+                if (data.exists){
+                    sessionStorage.setItem("logged_in", data.loggedIn);
+                    sessionStorage.setItem("user_id", data.userId);
+                    sessionStorage.setItem("user_name", data.userName);
+                    location.reload();
+                } else {
+                    $('#log-in-alert-pane').collapse();
+                }
+
             }
         })
     }

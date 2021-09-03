@@ -11291,7 +11291,15 @@ hr.solid {
   display: none;
 }
 
+#wrapper {
+  float: right;
+  text-align: center;
+}
 
+.btn-icon {
+  width: 32px !important;
+  height: 32px !important;
+}
 
 
 

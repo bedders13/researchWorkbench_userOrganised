@@ -52,6 +52,10 @@ public class DataLayer {
     public int createUser(User user){
         int userId = -1;
         try {
+            userId = getUser(user.getUserEmail()).getUserId();
+            if (userId != 0){
+                return -1;
+            }
             //prepare the sql statement
             PreparedStatement pStatement = databaseConnection.prepareStatement("INSERT INTO User " +
                     "(user_name, user_email) VALUES(?, ?);");

@@ -25,10 +25,10 @@ $(document).ready(function() {
 })
 
 function showButtons(id){
-    document.getElementById(id).classList = "pull-right";
+    document.getElementById(id).classList = "";
 }
 function hideButtons(id){
-    document.getElementById(id).classList = "pull-right list-button-hide";
+    document.getElementById(id).classList = "list-button-hide";
 }
 
 function getBookmarks(){

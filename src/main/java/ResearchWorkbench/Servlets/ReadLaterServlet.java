@@ -38,12 +38,25 @@ public class ReadLaterServlet extends HttpServlet {
         } else {
             for (int i = 0; i < bookmarks.size(); i++){
                 out.println("<a onmouseover=\"showButtons('del-" + bookmarks.get(i).getBookmarkId() +  "')\" onmouseout=\"hideButtons('del-" + bookmarks.get(i).getBookmarkId() +  "')\" onclick=\"showBookmark('" + bookmarks.get(i).getObjectId() + "')\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">");
+
+                out.println("<div class=\"row\">");
+
+                out.println("<div class=\"col-lg-10\">");
                 out.println("<div class=\"d-flex w-100 justify-content-between\">");
                 out.println("<h5 class=\"mb-1\">" + bookmarks.get(i).getObjectTitle() + " </h5>");
-                out.println("<button id=\"del-" + bookmarks.get(i).getBookmarkId() + "\" style=\"border: 0; background: none;\" class=\"list-button-hide\" data-bs-toggle=\"modal\" data-bs-target=\"#deleteBookmarkModal\" data-bs-objectId=\"" + bookmarks.get(i).getObjectId() + "\" data-bs-userId=\"" + userId + "\" onclick=\"event.stopPropagation();\"><i class=\"bi bi-x-lg\"></i></Button>");
                 out.println("</div>");
                 out.println("<p class=\"mb-1\">" + bookmarks.get(i).getObjectAuthor() + "</p>");
                 out.println("<small>" + bookmarks.get(i).getObjectDate() + "</small>");
+                out.println("</div>");
+
+                out.println("<div class=\"col-lg-2 align-self-center\">");
+                out.println("<div id=\"wrapper\">");
+                out.println("<button id=\"del-" + bookmarks.get(i).getBookmarkId() + "\" style=\"border: 0; background: none;\" class=\"list-button-hide\" data-bs-toggle=\"modal\" data-bs-target=\"#deleteBookmarkModal\" data-bs-objectId=\"" + bookmarks.get(i).getObjectId() + "\" data-bs-userId=\"" + userId + "\" onclick=\"event.stopPropagation();\"><i class=\"bi bi-x-lg\"></i></Button>");
+                out.println("</div>");
+                out.println("</div>");
+
+                out.println("</div>");
+
                 out.println(" </a>");
 
             }

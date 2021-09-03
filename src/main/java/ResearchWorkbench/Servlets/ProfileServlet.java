@@ -25,14 +25,36 @@ public class ProfileServlet extends HttpServlet {
 
         String email = request.getParameter("emailAddress");
         User user = library.getUser(email);
-        if (request.getParameter("method").equals("create")){
+
+        JSONObject jsonObject = new JSONObject();
+
+        //log user in
+        if (request.getParameter("method").equals("logIn")){
+            if (user.getUserId() == 0){
+                jsonObject.put("exists", false);
+            } else {
+                jsonObject.put("exists", true);
+                jsonObject.put("loggedIn", 1);
+                jsonObject.put("userId", user.getUserId());
+                jsonObject.put("userName", user.getUserName());
+
+            }
+        }
+
+        //create user profile
+        if (request.getParameter("method").equals("create")) {
             String userName = request.getParameter("userName");
             user.setUserEmail(email);
             user.setUserName(userName);
             int userId = library.createUser(user);
             user.setUserId(userId);
+
+            jsonObject.put("loggedIn", 1);
+            jsonObject.put("userId", user.getUserId());
+            jsonObject.put("userName", user.getUserName());
         }
-        JSONObject jsonObject = new JSONObject();
+
+
         jsonObject.put("loggedIn", 1);
         jsonObject.put("userId", user.getUserId());
         jsonObject.put("userName", user.getUserName());

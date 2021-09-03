@@ -35,15 +35,26 @@ $(document).ready(function() {
 
 })
 
+function showTooltips(element){
+    var tooltip = bootstrap.Tooltip.getOrCreateInstance(element);
+    tooltip.show();
+}
+
+function hideTooltips(element){
+    var tooltip = bootstrap.Tooltip.getOrCreateInstance(element);
+    tooltip.hide();
+}
 function getListItems(){
     const urlString = window.location.search;
     const urlParms = new URLSearchParams(urlString);
     const userListId = Number(urlParms.get("id"));
+    //check if there is a logged in user
+    const userId = (Number(sessionStorage.getItem("logged_in")) === 1) ? sessionStorage.getItem("user_id") : -1;
     $.get({
         url: "ViewUserListServlet",
         data: {
             userListId: userListId,
-            userId: sessionStorage.getItem("user_id")
+            userId: userId
         }
     }).done(function (response) {
         $("#userListDiv").html(response);
@@ -190,8 +201,8 @@ function createUserList(listName, isPrivate){
 }
 
 function showButtons(id){
-    document.getElementById(`book-${id}`).classList = "";
-    document.getElementById(`list-${id}`).classList = "";
+    document.getElementById(`book-${id}`).classList = "btn-lg";
+    document.getElementById(`list-${id}`).classList = "btn-lg";
 }
 function hideButtons(id){
     document.getElementById(`book-${id}`).classList = "list-button-hide";
