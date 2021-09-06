@@ -165,6 +165,7 @@ function deleteBookmark(objectId, userId){
         },
         success: function (data){
             console.log(`deleted bookmark with id: ${objectId} and userId: ${userId}`);
+            $("#deleteBookmarkCloseBtn").click();
             getBookmarks();
         }
     })
