@@ -13,7 +13,7 @@ $(document).ready(function() {
         };
     });
 
-    //delete an item form the list
+    //delete an item from the list
     var deleteListItemModal = document.getElementById('deleteListItemModal');
     deleteListItemModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
@@ -25,6 +25,29 @@ $(document).ready(function() {
         const deleteListItemBtn = document.getElementById("deleteListItemBtn");
         deleteListItemBtn.onclick = function () {
             deleteListItem(objectId, userListId);
+        };
+    });
+
+    //delete an item from the read later list
+    var deleteBookmarkModal = document.getElementById('deleteBookmarkModal');
+    deleteBookmarkModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        var objectId = button.getAttribute('data-bs-objectId');
+        var userId = Number(button.getAttribute('data-bs-userId'));
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        // var modalTitle = exampleModal.querySelector('.modal-title')
+        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
+        //
+        // modalTitle.textContent = 'New message to ' + recipient
+        // modalBodyInput.value = recipient
+        const deleteBookmarkBtn = document.getElementById("deleteBookmarkBtn");
+        deleteBookmarkBtn.onclick = function () {
+            deleteBookmark(objectId, userId);
         };
     });
 
