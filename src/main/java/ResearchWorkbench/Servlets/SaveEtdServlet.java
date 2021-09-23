@@ -15,19 +15,22 @@ import java.util.ArrayList;
 
 @WebServlet(name = "SaveEtdServlet", value = "/SaveEtdServlet")
 public class SaveEtdServlet extends HttpServlet {
+    /**
+     * Populates the Add To List popup when saving a resource to a list
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //get the request parameters
         int userId = Integer.parseInt(request.getParameter("userId"));
+        //create business layer to access db
         BusinessLayer layer = new BusinessLayer();
+        //get all the user lists
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         userLists = layer.getUserLists(userId);
 
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-
-//        out.println("<a class=\"d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom\">");
-//        out.println("<span class=\"fs-5 fw-semibold\">Your Lists</span></a>");
 
         //show the read later list
         out.println("<a onclick=\"addEtdtoReadLater()\" class=\"list-group-item list-group-item-action\">");
@@ -48,26 +51,32 @@ public class SaveEtdServlet extends HttpServlet {
         out.close();
     }
 
+    /**
+     * Method checks if a resource is already bookmarked or checks if a resource is already on a list via HTTP post
+     * Also bookmarks a resource or adds a resource to a list
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //get the request methods
         String method = request.getParameter("method");
         String objectId = request.getParameter("id");
         int userId = Integer.parseInt(request.getParameter("userId"));
 
+        //create business layer to access db
         BusinessLayer layer = new BusinessLayer();
 
         response.setContentType("application/json");
-
         PrintWriter responseWriter = response.getWriter();
         JSONObject jsonObject = new JSONObject();
 
+        //check if a resource is bookmarked
         if (method.equals("checkBookmark")){
             boolean bookmarked = layer.isObjectBookmarked(objectId, userId);
             jsonObject.put("bookmarked", bookmarked);
             responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }
-
+        //check if a resource is on a list
         if (method.equals("checkList")){
             boolean bookmarked = layer.isObjectBookmarked(objectId, userId);
             jsonObject.put("bookmarked", bookmarked);
@@ -75,6 +84,7 @@ public class SaveEtdServlet extends HttpServlet {
             responseWriter.close();
         }
 
+        //bookmark a resource
         if (method.equals("bookmark")){
             String title = request.getParameter("title");
             String author = request.getParameter("creator");
@@ -90,6 +100,7 @@ public class SaveEtdServlet extends HttpServlet {
             responseWriter.close();
         }
 
+        //add a resource to a user list
         if (method.equals("list")){
             String title = request.getParameter("title");
             String author = request.getParameter("creator");
@@ -102,7 +113,6 @@ public class SaveEtdServlet extends HttpServlet {
             } else {
                 jsonObject.put("added", true);
             }
-
             responseWriter.print(jsonObject.toString());
             responseWriter.close();
         }

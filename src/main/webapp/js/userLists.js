@@ -1,12 +1,11 @@
 $(document).ready(function() {
     //delete the user list
-    var deleteUserListModal = document.getElementById('deleteUserListModal');
+    const deleteUserListModal = document.getElementById('deleteUserListModal');
     deleteUserListModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
-        var button = event.relatedTarget;
+        const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
-        var userListId = Number(button.getAttribute('data-bs-listId'));
-
+        const userListId = Number(button.getAttribute('data-bs-listId'));
         const deleteUserListBtn = document.getElementById("deleteUserListBtn");
         deleteUserListBtn.onclick = function () {
             deleteUserList(userListId);
@@ -14,14 +13,13 @@ $(document).ready(function() {
     });
 
     //delete an item from the list
-    var deleteListItemModal = document.getElementById('deleteListItemModal');
+    const deleteListItemModal = document.getElementById('deleteListItemModal');
     deleteListItemModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
-        var button = event.relatedTarget;
+        const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
-        var objectId = button.getAttribute('data-bs-objectId');
-        var userListId = Number(button.getAttribute('data-bs-listId'));
-
+        const objectId = button.getAttribute('data-bs-objectId');
+        const userListId = Number(button.getAttribute('data-bs-listId'));
         const deleteListItemBtn = document.getElementById("deleteListItemBtn");
         deleteListItemBtn.onclick = function () {
             deleteListItem(objectId, userListId);
@@ -29,22 +27,13 @@ $(document).ready(function() {
     });
 
     //delete an item from the read later list
-    var deleteBookmarkModal = document.getElementById('deleteBookmarkModal');
+    const deleteBookmarkModal = document.getElementById('deleteBookmarkModal');
     deleteBookmarkModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
-        var button = event.relatedTarget;
+        const button = event.relatedTarget;
         // Extract info from data-bs-* attributes
-        var objectId = button.getAttribute('data-bs-objectId');
-        var userId = Number(button.getAttribute('data-bs-userId'));
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        // var modalTitle = exampleModal.querySelector('.modal-title')
-        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
-        //
-        // modalTitle.textContent = 'New message to ' + recipient
-        // modalBodyInput.value = recipient
+        const objectId = button.getAttribute('data-bs-objectId');
+        const userId = Number(button.getAttribute('data-bs-userId'));
         const deleteBookmarkBtn = document.getElementById("deleteBookmarkBtn");
         deleteBookmarkBtn.onclick = function () {
             deleteBookmark(objectId, userId);
@@ -61,6 +50,7 @@ function hideButtons(id){
     document.getElementById(id).classList = "pull-right list-button-hide";
 }
 
+//get all the user's reading lists
 function getUserLists(){
     $.get({
         url: "UserListServlet",
@@ -73,6 +63,7 @@ function getUserLists(){
     });
 }
 
+//create a new user list for the user
 function createUserList(listName, isPrivate){
     if (listName === null ) {
         alert("Please enter a name for your list");
@@ -95,7 +86,7 @@ function createUserList(listName, isPrivate){
     }
 }
 
-
+//delete the user's reading list
 function deleteUserList(userListId){
     $.post({
         url: "UserListServlet",
@@ -113,6 +104,7 @@ function deleteUserList(userListId){
     })
 }
 
+//update the privacy of the user list
 function updateUserList(userListId, isPrivate){
     $.post({
         url: "UserListServlet",
@@ -131,7 +123,7 @@ function updateUserList(userListId, isPrivate){
     })
 }
 
-
+//get all the list items on a user list
 function getListItems(userListId){
     $.get({
         url: "ListItemsServlet",
@@ -142,6 +134,8 @@ function getListItems(userListId){
         $("#userListItems").html(response);
     });
 }
+
+//get the user's bookmarks
 function getBookmarks(){
     $.get({
         url: "ReadLaterServlet",
@@ -154,6 +148,7 @@ function getBookmarks(){
     });
 }
 
+//delete the user's bookmark
 function deleteBookmark(objectId, userId){
     console.log("clicked delete");
     $.post({
@@ -171,6 +166,7 @@ function deleteBookmark(objectId, userId){
     })
 }
 
+//remove a item/ETD from a user list
 function deleteListItem(objectId, userListId){
     console.log("clicked delete");
     $.post({
@@ -188,21 +184,10 @@ function deleteListItem(objectId, userListId){
     })
 }
 
+//build the URL to view the list item
 function showListItem(id){
     location.href = `show.html?id=${id}&user_list=`;
 }
 
-// $(function(){
-//     console.log('ready');
-//
-//     $('.list-group a').click(function(e) {
-//         e.preventDefault()
-//
-//         $that = $(this);
-//
-//         $('.list-group').find('a').removeClass('active');
-//         $that.addClass('active');
-//     });
-// })
 
 

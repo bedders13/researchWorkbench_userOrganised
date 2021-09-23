@@ -56,28 +56,14 @@
                 <div class="text-center text-white">
                     <!-- Page heading-->
                     <h1 class="mb-5">Global ETD Search</h1>
-                    <!-- Signup form-->
-                    <!-- * * * * * * * * * * * * * * *-->
-                    <!-- * * SB Forms Contact Form * *-->
-                    <!-- * * * * * * * * * * * * * * *-->
-                    <!-- This form is pre-integrated with SB Forms.-->
-                    <!-- To make this form functional, sign up at-->
-                    <!-- https://startbootstrap.com/solution/contact-forms-->
-                    <!-- to get an API token!-->
                     <form action="search.html" method="get" class="form-subscribe" id="searchForm">
                         <!-- Email address input-->
                         <div class="row">
                             <div class="col">
                                 <input class="form-control form-control-lg" id="searchField" type="text" name="q" placeholder="Type something to start searching... " />
-<%--                                <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:required">Email Address is required.</div>--%>
-<%--                                <div class="invalid-feedback text-white" data-sb-feedback="emailAddress:email">Email Address Email is not valid.</div>--%>
                             </div>
                             <div class="col-auto"><button class="btn btn-primary btn-lg" id="submitSearchButton" type="submit">Search</button></div>
                         </div>
-                        <!-- Submit success message-->
-                        <!---->
-                        <!-- This is what your users will see when the form-->
-                        <!-- has successfully submitted-->
                         <div class="d-none" id="submitSuccessMessageEmail">
                             <div class="text-center mb-3">
                                 <div class="fw-bolder">Form submission successful!</div>
@@ -85,10 +71,6 @@
                                 <a class="text-white" href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
                             </div>
                         </div>
-                        <!-- Submit error message-->
-                        <!---->
-                        <!-- This is what your users will see when there is-->
-                        <!-- an error submitting the form-->
                         <div class="d-none" id="submitErrorMessageEmail"><div class="text-center text-danger mb-3">Error sending message!</div></div>
                     </form>
                 </div>
@@ -152,14 +134,6 @@
 </div>
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-<!-- * *                               SB Forms JS                               * *-->
-<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
 <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-<!-- Modal -->
-
 </body>
 </html>

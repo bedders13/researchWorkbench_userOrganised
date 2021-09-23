@@ -1,21 +1,19 @@
-
 $(document).ready(function() {
-
-    //show log in buttons in navbar is not logged in
+    //initialise tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
+    //show log in buttons in navbar is not logged in
     if(Number(sessionStorage.getItem("logged_in")) === 1) {
         document.getElementById("signUpAndLogInBtn").classList.toggle("hideP");
         console.log("this should fire");
         document.getElementById("loggedInNavBar").classList.toggle("hideP");
         document.getElementById("loggedInMessage").innerHTML= `Welcome, ${sessionStorage.getItem("user_name")}!`
     }
-
-
 })
 
+//log the user out
 function logOut(){
     sessionStorage.removeItem("logged_in");
     sessionStorage.removeItem("user_id");
@@ -24,11 +22,12 @@ function logOut(){
 
 }
 
+//log the user in
 function logIn(emailAddress){
     if (emailAddress === null ) {
         alert("Please enter an email address");
     } else {
-        console.log("this part works lol");
+        //post user email address to servlet
         $.post({
             url: "ProfileServlet",
             data: {
@@ -52,11 +51,12 @@ function logIn(emailAddress){
     }
 }
 
+//create a user profile
 function createProfile(userName, emailAddress) {
     if (emailAddress === null || userName === null) {
         alert("Please make sure both fields are filled in.");
     } else {
-
+        //post data to servlet
         $.post({
             url: "ProfileServlet",
             data: {

@@ -1,7 +1,9 @@
+//the read later/bookmark button is clicked by the user
 function readLaterBtnClicked(id, title, creator, date){
     const bookmarkBtn = document.getElementById('bookmarkBtn');
-    //add bookmark
+    //add bookmark if the bookmarkBtn value is 0
     if (bookmarkBtn.value === "0"){
+        //post data to servlet
         $.post({
             url: "SaveEtdServlet",
             data: {
@@ -16,6 +18,7 @@ function readLaterBtnClicked(id, title, creator, date){
             success: function (data){
                 console.log('bookmarked');
                 console.log(data);
+                //change the button CSS if the ETD is bookmarked
                 if (data.bookmarked){
                     bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
                     bookmarkBtn.innerHTML = "";
@@ -28,7 +31,7 @@ function readLaterBtnClicked(id, title, creator, date){
                 }
             }
         })
-        //delete bookmark
+        //delete bookmark if the button is already clicked
     } else {
         $.post({
             url: "ReadLaterServlet",
@@ -47,6 +50,7 @@ function readLaterBtnClicked(id, title, creator, date){
     }
 }
 
+//add the ETD to the read later/bookmark list
 function addEtdtoReadLater(){
     const bookmarkBtn = document.getElementById('bookmarkBtn');
     //add bookmark
@@ -65,7 +69,7 @@ function addEtdtoReadLater(){
             success: function (data){
                 console.log('bookmarked');
                 console.log(data);
-
+                //update the Bookmark CSS to show the item has been added the bookmarks
                 if (data.bookmarked){
                     bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
                     bookmarkBtn.innerHTML = "";
@@ -84,6 +88,7 @@ function addEtdtoReadLater(){
     }
 }
 
+//add the ETD to a list
 function addEtdToList(userListId){
     $.post({
         url: "SaveEtdServlet",
@@ -106,7 +111,6 @@ function addEtdToList(userListId){
 
             }
             if (data.added){
-                // document.getElementById('addToListBtn').className = "btn btn-primary btn-sm float-right disabled";
                 $("#closeAddToListModal").click();
                 getUserListsContainingEtd();
             }
@@ -114,6 +118,7 @@ function addEtdToList(userListId){
     })
 }
 
+//check if the ETD has already been bookmarked/added to read later
 function isEtdAddedToReadLater(id){
     $.post({
         url: "SaveEtdServlet",
@@ -126,6 +131,7 @@ function isEtdAddedToReadLater(id){
         success: function (data){
             console.log('bookmarked');
             console.log(data);
+            //if the ETD is already bookmarked, update the bookmark button
             if (data.bookmarked){
                 const bookmarkBtn = document.getElementById('bookmarkBtn');
                 bookmarkBtn.style = "margin-top: 15px; float: right; margin-right: 2px; background-color: #5C636A; border-color: #5C636A;";
@@ -137,12 +143,11 @@ function isEtdAddedToReadLater(id){
                 bookmarkBtn.append("Added");
                 bookmarkBtn.value = "1";
             }
-
         }
     })
 }
 
-//for add to list modal
+//show the list names for add to list modal
 function getListNames(){
     const userId = sessionStorage.getItem("user_id");
     if (userId !== null){
@@ -155,9 +160,9 @@ function getListNames(){
             $("#addToListModalBody").html(response);
         });
     }
-
 }
 
+//get all the user lists that contain the user list that is currently being viewed
 function getUserListsContainingEtd(){
     const queryString = window.location.search;
     const getParams = new URLSearchParams(queryString);
@@ -178,6 +183,7 @@ function getUserListsContainingEtd(){
     });
 }
 
+//create a new user list
 function createUserList(listName, isPrivate){
     if (listName === null ) {
         alert("Please enter a name for your list");
@@ -201,6 +207,7 @@ function createUserList(listName, isPrivate){
     }
 }
 
+//show the list item
 function showListItem(id){
     location.href = `show.html?id=${id}&search=`;
 }
@@ -226,12 +233,12 @@ let backUrlExists = false;
 let doc;
 let readLater = false;
 let userList = false;
-
 let docId;
 let docTitle;
 let docAuthor;
 let docDate;
 
+//get the ETD details that the user wants to view
 $.get({
     url: "SolrServlet",
     data: {
@@ -242,16 +249,11 @@ $.get({
     success: function (data){
         doc = data.doc;
         console.log(data);
-        // document.getElementById("currentDocId").value = data.doc.id;
-        // document.getElementById("currentDocTitle").value = data.doc.title;
-        // document.getElementById("currentDocAuthor").value = data.doc.author;
-        // document.getElementById("currentDocDate").value = data.doc.date;
         docId = data.doc.id;
         docTitle = data.doc.title;
         docAuthor = ((doc.hasOwnProperty("creator")) ? doc.creator.join(', ') : 'null' );
         docDate = data.doc.date_printable;
         loadScript();
-
     },
     error: function(data) {
         console.log('error getting query');
@@ -260,6 +262,7 @@ $.get({
 
 })
 
+//build the main query string that is used for Solr
 function buildMainQueryString(){
     const queryString = window.location.search;
     const getParams = new URLSearchParams(queryString);
@@ -277,7 +280,6 @@ function buildMainQueryString(){
     if (getParams.has("user_list")){
         userList = true;
     }
-
     return `id=${encodeURI(id)}`;
 
 }
@@ -287,7 +289,6 @@ function getLinkForTagSearch(tag){
     return `search.html?q=subject:"${tag}"`;
 }
 //load the html tags after the json query has loaded
-
 function loadScript(){
 
     const showDocDiv = document.getElementById("showDocDiv");
@@ -323,8 +324,6 @@ function loadScript(){
         backSymbol.className = "bi bi-chevron-left";
         aTag.appendChild(backSymbol);
         aTag.append("Search");
-
-
         buttonColDiv.appendChild(aTag);
     } else if (readLater){
             const aTag = document.createElement("a");
@@ -361,14 +360,14 @@ function loadScript(){
     }
 
 
-    //doc title
+    //load ETD title
     const titleColDiv = document.getElementById("titleColDiv");
     const docTitle = document.createElement("h2");
     docTitle.textContent = doc.title;
     titleColDiv.appendChild(docTitle);
     showDocDiv.appendChild(titleColDiv);
 
-    //doc description
+    //load ETD description
     if (doc.hasOwnProperty("description")){
         const descriptionColDiv = document.getElementById("descriptionColDiv");
         const descriptionHeaderDiv = document.createElement("div");
@@ -396,7 +395,7 @@ function loadScript(){
         showDocDiv.appendChild(descriptionColDiv);
     }
 
-    //doc urls
+    //load ETD urls
     if (doc.has_links) {
         const linksColDiv = document.getElementById("linksColDiv");
         const linksHeaderDiv = document.createElement("div");
@@ -405,8 +404,8 @@ function loadScript(){
         linksHeading.style = "margin-top: 15px";
         linksHeading.append("Links & Downloads");
         linksHeaderDiv.appendChild(linksHeading);
-
         const linksList = document.createElement("ol");
+
         for (let l = 0; l < doc.urls.length; l++){
             const listItem = document.createElement("li");
             const aTag = document.createElement("a");
@@ -421,7 +420,7 @@ function loadScript(){
         showDocDiv.appendChild(linksColDiv);
     }
 
-    //doc tags
+    //load ETD tags
     if (doc.hasOwnProperty("subject") && !doc["subject"].every(item => (item.length > 40))){
         const tagsColDiv = document.getElementById("tagsColDiv");
         const tagsHeaderDiv = document.createElement("div");
@@ -432,10 +431,7 @@ function loadScript(){
         tagsHeaderDiv.appendChild(tagsHeading);
         tagsColDiv.appendChild(tagsHeaderDiv);
         for (let m = 0; m < doc.subject.length; m++){
-            if (doc.subject[m].length > 40) {
-                continue;
-
-            } else{
+            if (doc.subject[m].length < 40) {
                 const tagsDiv = document.createElement("div");
                 tagsDiv.className = "widget-26-job-category bg-soft-info2";
                 const indicator = document.createElement("i");
@@ -445,18 +441,15 @@ function loadScript(){
                 const textSpan = document.createElement("span");
                 textSpan.textContent = doc.subject[m];
                 aTag.appendChild(textSpan);
-
                 tagsDiv.appendChild(indicator);
                 tagsDiv.appendChild(aTag);
-
                 tagsColDiv.appendChild(tagsDiv);
-
             }
         }
         showDocDiv.appendChild(tagsColDiv);
     }
 
-    //doc additional fields
+    //load ETD additional fields
     const additionalColDiv = document.getElementById("additionalColDiv");
     const additionalFieldsDiv = document.createElement("div");
     additionalFieldsDiv.className = "page-header";
@@ -485,9 +478,8 @@ function loadScript(){
         }
     }
     additionalFieldsTable.appendChild(additionalFieldsTableBody);
-
     additionalColDiv.appendChild(additionalFieldsDiv);
     additionalColDiv.appendChild(additionalFieldsTable);
+    //add everything to the show doc div
     showDocDiv.appendChild(additionalColDiv);
-
 }

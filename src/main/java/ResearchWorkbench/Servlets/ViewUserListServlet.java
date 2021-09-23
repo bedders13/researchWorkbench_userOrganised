@@ -14,11 +14,15 @@ import java.util.ArrayList;
 
 @WebServlet(name = "ViewUserListServlet", value = "/ViewUserListServlet")
 public class ViewUserListServlet extends HttpServlet {
+    /**
+     * Get all the list items on a user's list and return HTML to front-end
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //get the parameters
+        //get the request parameters
         int userListId = Integer.parseInt(request.getParameter("userListId"));
         int currentUserId = Integer.parseInt(request.getParameter("userId"));
+
         boolean userLoggedIn = currentUserId != -1;
         //create business layer to access db
         BusinessLayer layer = new BusinessLayer();
@@ -29,12 +33,14 @@ public class ViewUserListServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
+        //list name and the creator name
         out.println("<button style=\"margin-top: 16px;\" class=\"btn  btn-primary btn-sm\" onclick=\"goBack()\"><i class=\"bi bi-chevron-left\"></i> Back </button>");
         out.println("<h1 style=\"margin-top: 16px; margin-bottom: 32px; text-align: center;\">" + userList.getUserListName()  +  "</h1>");
-//        out.println("<button id=\"backButton\" class=\"btn btn-primary btn-sm float-right\" style=\"margin-top: 15px; float: left; margin-right: 2px;\" ><i class=\"bi bi-chevron-left\"></i>Back</button>");
         out.println("<p style=\"text-align: center;\">Created by: " + layer.getUser(userList.getUserId()).getUserName() + "</p>");
         out.println("<div class=\"list-group\">");
         out.println("<input type=\"hidden\" id=\"refresh\" value=\"no\">");
+
+        //the list items
         for (int i = 0; i < listItems.size(); i++){
             //if user is not logged in, then don't hide and show buttons on mouse over
             if (userLoggedIn){
@@ -46,17 +52,13 @@ public class ViewUserListServlet extends HttpServlet {
             out.println("<div class=\"col-lg-10\">");
             out.println("<div class=\"d-flex w-100 justify-content-between\">");
             out.println("<h5 class=\"mb-1\">" + listItems.get(i).getObjectTitle() + " </h5>");
-//            out.println("<div class=\"pull-right\">");
-
             out.println("</div>");
-
             out.println("<p class=\"mb-1\">" + listItems.get(i).getObjectAuthor() + "</p>");
             out.println("<small>" + listItems.get(i).getObjectDate() + "</small>");
-
             out.println("</div>");
             out.println("<div class=\"col-lg-2 align-self-center\">");
 
-
+            //if the user is logged in, then show the feature buttons
             if (userLoggedIn) {
                 out.println("<div id=\"wrapper\">");
                 out.println("<button id=\"list-" + listItems.get(i).getListItemId() + "\" style=\"border: 0; background: none; padding: 0.5rem;\" class=\"btn-lg list-button-hide\" onclick=\"event.stopPropagation();\" data-bs-toggle=\"modal\" data-bs-target=\"#addToListModal\" data-bs-objectId=\"" + listItems.get(i).getListObjectId() + "\"" +
@@ -73,10 +75,8 @@ public class ViewUserListServlet extends HttpServlet {
                             listItems.get(i).getObjectAuthor() + "', '" + listItems.get(i).getObjectDate() + "'); event.stopPropagation();\">" +
                             "<i class=\"bi bi-bookmark\" title=\"Bookmark This\"></i></Button>");
                 }
+            //show prompts to create profile/log in
             } else {
-//                out.println("<button type=\"button\" class=\"btn-lg\" data-bs-container=\"body\" data-bs-toggle=\"popover\" data-bs-placement=\"left\" data-bs-content=\"Sign in to use these features!\">" +
-//                        "<i class=\"bi bi-info-circle\"></i></button>");
-
                 out.println("<div id=\"wrapper\">");
                 out.println("<button style=\"border: 0; background: none; padding: 0.5rem;\" class=\"btn-lg disabled\">" +
                         "<i class=\"bi bi-plus-circle bi-lg\" onmouseover=\"showTooltips(this)\" onmouseout=\"hideTooltips(this)\" tabindex=\"0\" data-bs-toggle=\"tooltip\" title=\"Sign in to use these features!\"></i></Button>");
@@ -86,19 +86,9 @@ public class ViewUserListServlet extends HttpServlet {
             out.println("</div>");
             out.println("</div>");
             out.println("</div>");
-//            out.println("</div>");
-
-
             out.println("</a>");
         }
         out.println("</div>");
         out.close();
-
-
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 }

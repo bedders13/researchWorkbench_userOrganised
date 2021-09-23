@@ -1,4 +1,3 @@
-
 //variables needed for search
 let docs;
 let data;
@@ -204,6 +203,7 @@ $.get({
 
 //load the html tags after the json query has loaded
 function loadScript(){
+    //query parameters
     const queryString = window.location.search;
     const getParams = new URLSearchParams(queryString);
     const q = getParams.get('q');
@@ -265,9 +265,7 @@ function loadScript(){
             listItem.appendChild(checkboxInput);
             listItem.appendChild(checkboxLabel);
             languageListDiv.appendChild(listItem);
-
         }
-
     }
     if (nonZeroFacets === 0){
         const listItem = document.createElement("li");
@@ -309,9 +307,6 @@ function loadScript(){
         listItem.appendChild(checkboxInput);
         listItem.appendChild(checkboxLabel);
         subjectListDiv.appendChild(listItem);
-        // subjectListDiv.innerHTML +=  `<li class="list-group-item"> <div class="checkbox"> <label class="plain"> <input type="checkbox" name="subject[]" value='${subjectFacets[i]}'`;
-
-        // subjectListDiv.innerHTML += `</label> <span class="badge document-count pull-right ">${subjectFacets[i+1]}</span> </div> </li>`;
     }
     //check if there are any subject tags
     if (nonZeroFacets === 0){
@@ -370,23 +365,11 @@ function loadScript(){
             resultsAndSuggestionsDiv.appendChild(resultsDiv);
         }
     }
-
-
     // populate the search results
     const searchResultsTableBody = document.getElementById("searchResultsTableBody");
 
-
-
-
     let loopIndex = cursor + 1;
     for (let i = 0; i < docs.length; i++){
-        //create a row for the table
-        // const rowTable = document.createElement("table");
-        // rowTable.className = "table table-borderless";
-        // const rowTableBody = document.createElement("tbody");
-        //
-        // const mainRow = document.createElement("tr");
-        // mainRow.className = "border-bottom: 10px solid #73af00;";
         const resultRow = document.createElement("tr");
 
         //index column
@@ -431,26 +414,12 @@ function loadScript(){
         } else {
             descriptionSpanTag.textContent = "No description available";
         }
-        // const aDes = document.createElement("a");
-        // aDes.role="button";
-        // aDes.id = "more";
-        // aDes.setAttribute("data-toggle", "collapse");
-        // aDes.href = "#";
-        // aDes.textContent = "Read more";
-        // aDes.setAttribute("aria-expanded", "false");
-        // aDes.setAttribute("aria-controls", "collapseDes"+ docs[i].id);
-
-
-        // descriptionDiv.appendChild(aDes);
         descriptionTag.appendChild(descriptionSpanTag);
         descriptionDiv.appendChild(descriptionTag);
-        // descriptionDiv.appendChild(aDes);
-
         titleDiv.appendChild(titleTag);
         titleDiv.appendChild(dateTag);
         titleDiv.appendChild(descriptionDiv);
         titleCol.appendChild(titleDiv);
-
         resultRow.appendChild(titleCol);
 
         //author column
@@ -486,15 +455,12 @@ function loadScript(){
             linksDiv.appendChild(spanLinks);
             linksDiv.appendChild(iText);
         }
-
         linksCol.appendChild(linksDiv);
-
         resultRow.appendChild(linksCol);
 
         //tags column
         const tagsCol = document.createElement("td");
         if (docs[i].hasOwnProperty("subject")){
-
             for (let j = 0; j < docs[i].subject.length; j++){
                 if (docs[i].subject[j].length > 40) {
                     continue;
@@ -514,56 +480,24 @@ function loadScript(){
                     tagsDiv.appendChild(aTag);
 
                     tagsCol.appendChild(tagsDiv);
-
                 }
             }
-
         }
         resultRow.appendChild(tagsCol);
-
-        // const descriptionRow = document.createElement("tr");
-        // const descriptionCol = document.createElement("td");
-        // const blankCol = document.createElement("td");
-        // descriptionRow.appendChild(blankCol);
-        // descriptionCol.colSpan = 4;
-        //
-        // const descriptionTag = document.createElement("p");
-        // descriptionTag.className = "m-0";
-        // const descriptionSpanTag = document.createElement("span");
-        // descriptionSpanTag.className = "text-muted time"
-        // if (docs[i].hasOwnProperty("description")){
-        //     descriptionSpanTag.textContent = docs[i].description;
-        // } else {
-        //     descriptionSpanTag.textContent = "No description available";
-        // }
-        // descriptionTag.appendChild(descriptionSpanTag);
-        // descriptionCol.appendChild(descriptionTag);
-        // descriptionRow.appendChild(descriptionCol);
-        //
-        // rowTableBody.appendChild(resultRow);
-        // rowTableBody.appendChild(descriptionRow);
-        //
-        // rowTable.appendChild(rowTableBody);
-        //
-        // mainRow.appendChild(rowTable);
+        //add the result row to the search results table
         searchResultsTableBody.appendChild(resultRow);
-
         loopIndex++;
     }
 
+    //set the search bar on the search results page to the search query using a hidden field
     if ((new URLSearchParams(window.location.search)).has('q')){
-
         const qString = (new URLSearchParams(window.location.search)).get('q');
         console.log(qString);
-        // console.log(decodeURI(qString));
         document.getElementById("hiddenQ").value = (new URLSearchParams(window.location.search)).get('q');
         document.getElementById("refineQuery").value = (new URLSearchParams(window.location.search)).get('q');
-
         console.log(document.getElementById("refineQuery").value);
     }
     if ((new URLSearchParams(window.location.search)).has("query")){
-        // console.log(escapeHtml((new URLSearchParams(window.location.search)).get("query")));
-        // console.log((new URLSearchParams(window.location.search)).get("query"));
         document.getElementById("hiddenQ").value = (new URLSearchParams(window.location.search)).get("query");
         document.getElementById("refineQuery").value = (new URLSearchParams(window.location.search)).get("query");
     }

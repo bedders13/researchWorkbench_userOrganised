@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    //delete an item form the list
+    //delete an item from the list
     var deleteBookmarkModal = document.getElementById('deleteBookmarkModal');
     deleteBookmarkModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
@@ -7,15 +7,6 @@ $(document).ready(function() {
         // Extract info from data-bs-* attributes
         var objectId = button.getAttribute('data-bs-objectId');
         var userId = Number(button.getAttribute('data-bs-userId'));
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        // var modalTitle = exampleModal.querySelector('.modal-title')
-        // var modalBodyInput = exampleModal.querySelector('.modal-body input')
-        //
-        // modalTitle.textContent = 'New message to ' + recipient
-        // modalBodyInput.value = recipient
         const deleteBookmarkBtn = document.getElementById("deleteBookmarkBtn");
         deleteBookmarkBtn.onclick = function () {
             deleteBookmark(objectId, userId);
@@ -31,7 +22,9 @@ function hideButtons(id){
     document.getElementById(id).classList = "list-button-hide";
 }
 
+//get all the user bookmarks
 function getBookmarks(){
+    //get bookmark html from servlet
     $.get({
         url: "ReadLaterServlet",
         data: {
@@ -43,10 +36,10 @@ function getBookmarks(){
     });
 }
 
-
-
+//delete bookmark
 function deleteBookmark(objectId, userId){
     console.log("clicked delete");
+    //post data to servlet
     $.post({
         url: "ReadLaterServlet",
         data: {
