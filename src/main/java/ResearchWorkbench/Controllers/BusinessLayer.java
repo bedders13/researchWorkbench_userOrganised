@@ -12,7 +12,7 @@ public class BusinessLayer {
     ResearchWorkbench.Data.DataLayer dataLayer;
     String connectionString = "jdbc:mysql://localhost/user_organised";
     String databaseUser = "user";
-    String databasePassword = "AZURE-mysql99";
+    String databasePassword = "password";
 
 //    public BusinessLayer() {
 //        dataLayer = new DataLayer();
@@ -204,7 +204,7 @@ public class BusinessLayer {
     //general methods region
 
     /**
-     * Calls the isObjectBookmarked method in the DataLayer
+     * Calls getBookmark method from DataLayer to check if the bookmark exists
      * @param objectId the objectId of the item that needs to be checked
      * @param userId the userId of the user that is logged in
      * @return returns true/false if resource is bookmarked

@@ -4,51 +4,55 @@ import ResearchWorkbench.Models.Bookmark;
 import ResearchWorkbench.Models.ListItem;
 import ResearchWorkbench.Models.User;
 import ResearchWorkbench.Models.UserList;
-
-import java.awt.print.Book;
-import java.io.File;
-import java.io.PrintStream;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class DataLayer {
-    private String connectionString;
-    private String databaseUser;
-    private String databaseUserPassword;
     protected java.sql.Connection databaseConnection;
 
+    /**
+     * Simple constructor
+     */
     public DataLayer(){
-        connectionString = "";
-        databaseUser = "";
-        databaseUserPassword = "";
         databaseConnection = null;
     }
 
+    /**
+     * Constructor calls initConnection() to create database connection when an instance is created
+     * @param connectionString the string that is used to connect to the MySQL database
+     * @param databaseUser the user for the database
+     * @param databaseUserPassword the user password for the database
+     */
     public DataLayer(String connectionString, String databaseUser, String databaseUserPassword) {
-        this.connectionString = connectionString;
-        this.databaseUser = databaseUser;
-        this.databaseUserPassword = databaseUserPassword;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.initConnection();
+            this.initConnection(connectionString, databaseUser, databaseUserPassword);
         } catch (Exception e) {
             System.out.println("JDBC driver not found");
         }
     }
 
-    public void initConnection() {
+    /**
+     * Initiates the connection with the database using JDBC
+     * @param connectionString the string that is used to connect to the MySQL database
+     * @param databaseUser the user for the database
+     * @param databaseUserPassword the user password for the database
+     */
+    public void initConnection(String connectionString, String databaseUser, String databaseUserPassword) {
         try {
-//            PrintStream outStream = new PrintStream(new File("out.txt"));
-//            System.setOut(outStream);
-//            System.out.println("initConnection: connect: " + connectionString + " user: " + databaseUser + " pass: " + databaseUserPassword);
             databaseConnection = java.sql.DriverManager.getConnection(connectionString, databaseUser, databaseUserPassword);
-//            outStream.close();
         } catch (Exception e) {
             System.out.println("Error. Couldn't open database");
         }
     }
 
-    //create methods
+    //create methods region
+
+    /**
+     * Inserts a row into the User table
+     * @param user user object of the user that needs to be created in the database
+     * @return returns the userId of the newly created row of User in the database
+     */
     public int createUser(User user){
         int userId = -1;
         try {
@@ -74,6 +78,11 @@ public class DataLayer {
 
     }
 
+    /**
+     * Inserts data into the UserList table
+     * @param userList userList object of the user list that needs to be created in the database
+     * @return returns the userListId of the newly created row of UserList in the database
+     */
     public int createUserList(UserList userList) {
         int userListId = -1;
         ResultSet resultSet = null;
@@ -84,8 +93,6 @@ public class DataLayer {
             //set parameters for the statement
             pStatement.setString(1, userList.getUserListName());
             pStatement.setBoolean(2, userList.getIsPrivate());
-//            pStatement.setDate(3, (new java.sql.Date(userList.getDateCreated())));
-//            pStatement.setDate(4, (java.sql.Date)userList.getDateModified());
             pStatement.setInt(3, userList.getUserId());
             //execute the query
             boolean result = pStatement.execute();
@@ -109,6 +116,11 @@ public class DataLayer {
         return userListId;
     }
 
+    /**
+     * Inserts data into the ListItem table
+     * @param listItem listItem object that needs to be created in the database
+     * @return returns the listItemId of the newly created row of ListItem in the database
+     */
     public int createListItem(ListItem listItem) {
         int listItemId = -1;
         ResultSet resultSet = null;
@@ -144,6 +156,11 @@ public class DataLayer {
         return listItemId;
     }
 
+    /**
+     * Inserts data into the Bookmark table
+     * @param bookmark bookmark object that needs to be saved in the database
+     * @return returns the bookmarkId of the newly created row of Bookmark in the database
+     */
     public int createBookmark(Bookmark bookmark){
         int bookmarkId = -1;
         ResultSet resultSet = null;
@@ -179,12 +196,17 @@ public class DataLayer {
         return bookmarkId;
     }
 
-    //read methods
+    //read methods region
+
+    /**
+     * Retrieve user info from the User table
+     * @param userEmail the email address of the User that needs to be fetched from the database
+     * @return returns a User object
+     */
     public User getUser(String userEmail){
         User user = new User();
 
         try{
-//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
             PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM User WHERE user_email = ?;");
             //execute the query
             pStatement.setString(1, userEmail);
@@ -204,11 +226,15 @@ public class DataLayer {
         return user;
     }
 
+    /**
+     * Retrieve user info from the User table
+     * @param userId the userId of the User that needs to be fetched from the database
+     * @return returns a User object
+     */
     public User getUser(int userId){
         User user = new User();
 
         try{
-//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
             PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM User WHERE user_id = ?;");
             //execute the query
             pStatement.setInt(1, userId);
@@ -228,6 +254,11 @@ public class DataLayer {
         return user;
     }
 
+    /**
+     * Retrieve user list data from the UserList table
+     * @param userListId the userListId of the UserList that needs to be fetched from the database
+     * @return returns a UserList object
+     */
     public UserList getUserList(int userListId){
         UserList userList = new UserList();
 
@@ -253,6 +284,11 @@ public class DataLayer {
         return userList;
     }
 
+    /**
+     * Retrieve all user lists from the UserList table
+     * @param userId the userId of the user that is retrieving all the lists
+     * @return returns an ArrayList of all the UserList objects
+     */
     public ArrayList<UserList> getUserLists(int userId){
         ArrayList<UserList> userLists = new ArrayList<UserList>();
 
@@ -282,11 +318,16 @@ public class DataLayer {
         return userLists;
     }
 
+    /**
+     * Retrieve the user's lists from the UserList table
+     * @param objectId the objectId of the listItem that needs to be fetched
+     * @param userListId the userListId of the listItem that needs to be fetched
+     * @return returns a ListItem object
+     */
     public ListItem getListItem(String objectId, int userListId){
         ListItem listItem = new ListItem();
 
         try{
-//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
             PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM ListItem WHERE object_id = ? AND " +
                     "user_list_id = ?;");
             //execute the query
@@ -310,6 +351,11 @@ public class DataLayer {
         return listItem;
     }
 
+    /**
+     * Retrieve all the items on a user list
+     * @param userListId the userListId of the list that contains all the items
+     * @return returns an ArrayList of all the ListItem objects
+     */
     public ArrayList<ListItem> getListItems(int userListId){
         ArrayList<ListItem> listItems = new ArrayList<ListItem>();
 
@@ -339,6 +385,11 @@ public class DataLayer {
         return listItems;
     }
 
+    /**
+     * Retrieve all user lists that contain a given list item
+     * @param objectId objectId of the ListItem that is searched for on other user lists
+     * @return returns an ArrayList of UserList objects that contain the list item with the given objectId
+     */
     public ArrayList<UserList> getUserListsContainingListItem(String objectId){
         ArrayList<UserList> userLists = new ArrayList<UserList>();
         try{
@@ -369,6 +420,11 @@ public class DataLayer {
         return userLists;
     }
 
+    /**
+     * Retrieve all bookmarks for a user
+     * @param userId the userId of User of the bookmarks that need to be fetched
+     * @return returns an ArrayList of bookmark objects
+     */
     public ArrayList<Bookmark> getBookmarks(int userId){
         ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
 
@@ -398,11 +454,16 @@ public class DataLayer {
         return bookmarks;
     }
 
+    /**
+     * Retrieve a bookmark from the Bookmark table
+     * @param objectId the objectId of the bookmark that needs to be fetched
+     * @param userId the userId of the bookmark
+     * @return returns a Bookmark object
+     */
     public Bookmark getBookmark(String objectId, int userId){
         Bookmark bookmark = new Bookmark();
 
         try{
-//            databaseConnection = java.sql.DriverManager.getConnection("jdbc:mysql://3.135.208.122/user_organised", "hugh", "AWS-mysql99");
             PreparedStatement pStatement = databaseConnection.prepareStatement("SELECT * FROM Bookmark WHERE object_id = ? AND " +
                     "user_id = ?;");
             //execute the query
@@ -426,7 +487,14 @@ public class DataLayer {
         }
         return bookmark;
     }
-    //update methods
+
+    //update methods region
+
+    /**
+     * Update the user list in the UserList table
+     * @param userList userList object that needs to be updated in the database
+     * @return returns 1 if successful
+     */
     public int updateUserList(UserList userList) {
         int userListId = -1;
         ResultSet resultSet = null;
@@ -463,40 +531,13 @@ public class DataLayer {
         return userListId;
     }
 
-//    public int updateListItem(ListItem listItem) {
-//        int listItemId = -1;
-//        ResultSet resultSet = null;
-//        try {
-//            //prepare the sql statement
-//            PreparedStatement pStatement = databaseConnection.prepareStatement("UPDATE ListItem " +
-//                    "SET object_id = ?, user_list_id = ? WHERE list_item_id = ?;", Statement.RETURN_GENERATED_KEYS);
-//            //set parameters for the statement
-//            pStatement.setString(1, listItem.get());
-//            pStatement.setInt(2, listItem.getUserListId());
-//            pStatement.setInt(3, listItem.getListItemId());
-//            //execute the query
-//            boolean result = pStatement.execute();
-//            if (result == true){
-//                //get the userListId
-//                resultSet = pStatement.getGeneratedKeys();
-//                if (resultSet.next()){
-//                    listItemId = resultSet.getInt(1);
-//                }
-//            }
-//        } catch(SQLException e){
-//            System.out.println("Error inserting ListItem: " + e.getMessage());
-//        } finally {
-//            try{
-//                if(resultSet != null){resultSet.close();}
-//            } catch (SQLException e){
-//                System.out.println("Couldn't close connection: " + e.getMessage());
-//            }
-//
-//        }
-//        return listItemId;
-//    }
+    //delete methods region
 
-    //delete methods
+    /**
+     * Delete a user from the User table
+     * @param userId the userId of the User that needs to be deleted
+     * @return returns true/false depending on delete success
+     */
     public boolean deleteUser(int userId){
         boolean result = false;
         try{
@@ -510,6 +551,12 @@ public class DataLayer {
         return result;
     }
 
+    /**
+     * Delete a user list from the UserList table
+     * @param userListId the userListId of the user list that needs to be deleted
+     * @param userId the userId of the user that is deleting the list
+     * @return returns true/false depending on delete success
+     */
     public boolean deleteUserList(int userListId, int userId){
         boolean result = false;
         try{
@@ -525,6 +572,12 @@ public class DataLayer {
         return result;
     }
 
+    /**
+     * Delete a list item from the list item table
+     * @param objectId the objectId of the list item that needs to be deleted
+     * @param userListId the userListId of the user list the item needs to be deleted from
+     * @return returns true/false depending on delete success
+     */
     public boolean deleteListItem(String objectId, int userListId){
         boolean result = false;
         try{
@@ -540,6 +593,12 @@ public class DataLayer {
         return result;
     }
 
+    /**
+     * Delete a bookmark from the Bookmark table
+     * @param objectId the objectId of the item that needs to be removed from bookmarks
+     * @param userId the userId of the user that is removing the bookmark
+     * @return returns true/false depending on delete success
+     */
     public boolean deleteBookmark(String objectId, int userId){
         boolean result = false;
         try{
